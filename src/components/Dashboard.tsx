@@ -1,18 +1,20 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
 import { TrendingUp, Database, Target, Zap, FileText, Brain } from "lucide-react";
+import { EditableData } from "./EditableData";
 
 // Sample data for demonstrations
-const performanceData = [
+const initialPerformanceData = [
   { model: 'Random Forest', accuracy: 0.94, precision: 0.92, recall: 0.89 },
   { model: 'XGBoost', accuracy: 0.96, precision: 0.94, recall: 0.91 },
   { model: 'Neural Network', accuracy: 0.91, precision: 0.88, recall: 0.93 },
   { model: 'SVM', accuracy: 0.89, precision: 0.87, recall: 0.85 },
 ];
 
-const featureImportance = [
+const initialFeatureImportance = [
   { feature: 'Income', importance: 0.35 },
   { feature: 'Age', importance: 0.28 },
   { feature: 'Education', importance: 0.22 },
@@ -34,6 +36,8 @@ const dataDistribution = [
 ];
 
 export const Dashboard = () => {
+  const [performanceData, setPerformanceData] = useState(initialPerformanceData);
+  const [featureImportance, setFeatureImportance] = useState(initialFeatureImportance);
   return (
     <div className="min-h-screen bg-background py-8">
       <div className="container mx-auto px-4">
@@ -95,11 +99,12 @@ export const Dashboard = () => {
 
         {/* Main Dashboard */}
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="models">Models</TabsTrigger>
             <TabsTrigger value="features">Features</TabsTrigger>
             <TabsTrigger value="data">Data Analysis</TabsTrigger>
+            <TabsTrigger value="edit">Edit Data</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -289,6 +294,15 @@ export const Dashboard = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="edit" className="space-y-6">
+            <EditableData
+              performanceData={performanceData}
+              featureData={featureImportance}
+              onPerformanceUpdate={setPerformanceData}
+              onFeatureUpdate={setFeatureImportance}
+            />
           </TabsContent>
         </Tabs>
       </div>
