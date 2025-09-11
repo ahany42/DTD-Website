@@ -1,13 +1,13 @@
 import { Navigation } from "@/components/Navigation";
-import { HeroSection } from "@/components/HeroSection";
+import { FileUpload } from "@/components/FileUpload";
 
-const Index = () => {
+const Upload = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <HeroSection />
+      <FileUpload />
     </div>
   );
 };
 
-export default Index;
+export default Upload;

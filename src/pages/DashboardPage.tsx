@@ -1,13 +1,13 @@
 import { Navigation } from "@/components/Navigation";
-import { HeroSection } from "@/components/HeroSection";
+import { Dashboard } from "@/components/Dashboard";
 
-const Index = () => {
+const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <HeroSection />
+      <Dashboard />
     </div>
   );
 };
 
-export default Index;
+export default DashboardPage;
