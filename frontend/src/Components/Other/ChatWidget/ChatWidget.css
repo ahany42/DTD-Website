@@ -45,7 +45,7 @@
 
 /* Header */
 .chat-header {
-  background: #07294b;
+  background: var(--primary-color);
   color: white;
   padding: 1rem;
   display: flex;
@@ -104,7 +104,7 @@
 }
 
 .chat-bubble.user {
-  background: #07294b;
+  background: var(--primary-color);
   color: white;
 }
 
@@ -148,7 +148,7 @@
 
 .chat-input-row button {
   padding: 0.6rem 1rem;
-  background: #07294b;
+  background: var(--primary-color);
   color: white;
   border: none;
   border-radius: 8px;

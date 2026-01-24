@@ -27,14 +27,14 @@
   scroll-behavior: smooth;
   font-family: "Poppins", sans-serif;
 }
-.yellow-bg {
+.primary-bg {
   background-color: var(--primary-color) !important;
   color: black !important;
 }
-.yellow-border {
+.primary-border {
   border: 1px solid var(--primary-color) !important;
 }
-.yellow-txt {
+.primary-txt {
   color: var(--primary-color);
 }
 .page-paragraph {
