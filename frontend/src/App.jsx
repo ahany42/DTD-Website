@@ -3,6 +3,7 @@ import HomePage from "./Components/Pages/HomePage/HomePage.jsx";
 import "./App.css";
 import ChatWidget from "./Components/Other/ChatWidget/ChatWidget.jsx";
 import NavBar from "./Components/Sections/NavBar/NavBar.jsx";
+import Footer from "./Components/Sections/Footer/Footer.jsx";
 function App() {
   return (
     <>
@@ -11,6 +12,7 @@ function App() {
         <Route path="/" element={<HomePage />} />{" "}
       </Routes>
       <ChatWidget />
+      <Footer />
     </>
   );
 }

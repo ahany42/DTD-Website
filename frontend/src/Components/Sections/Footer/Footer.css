@@ -1,0 +1,51 @@
+.Footer {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--dark-bg-color);
+  margin-top: 100px;
+}
+.SocialLinks {
+  margin-bottom: 1em;
+  margin-top: 1em;
+}
+.SocialLinks > a {
+  color: white;
+  text-decoration: none;
+  margin: 0.4em;
+  font-size: 1.4em;
+}
+.SocialLinks > i {
+  margin: 0.5em;
+}
+.CopyRightsText {
+  font-size: 0.8em;
+  font-weight: 400;
+  margin-bottom: 1em;
+  margin-top: 10px;
+  color: white;
+}
+.FooterLogo {
+  width: 5em;
+  margin: auto;
+  height: auto;
+}
+.social-icons {
+  color: var(--primary-color);
+}
+@media (max-width: 650px) {
+  .FooterLogo {
+    width: 4em;
+  }
+  .Footer {
+    height: 180px;
+    margin-top: 50px;
+  }
+  .FooterSection {
+    font-size: 0.9em;
+  }
+  .Footer {
+    font-size: 0.9em;
+  }
+}
