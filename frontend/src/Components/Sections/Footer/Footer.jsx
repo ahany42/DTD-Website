@@ -1,11 +1,16 @@
 import { memo, useCallback } from "react";
+import footerlogo from "../../../assets/footerlogo.png";
 import "./Footer.css";
 
 const Footer = memo(() => {
   const year = new Date().getFullYear();
 
   const openRefundPolicy = useCallback(() => {
-    window.open("", "_blank", "noopener,noreferrer");
+    window.open(
+      "../../../assets/privacy policy.pdf",
+      "_blank",
+      "noopener,noreferrer"
+    );
   }, []);
 
   return (
@@ -13,7 +18,7 @@ const Footer = memo(() => {
       <div className="Footer">
         <img
           className="FooterLogo"
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLXn84m0ldNEy4b-doui_GKkeziMRUfEl71g&s"
+          src={footerlogo}
           alt="Footer Logo"
           loading="lazy"
         />

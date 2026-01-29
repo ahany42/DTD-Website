@@ -3,7 +3,7 @@
   position: fixed;
   bottom: 2%;
   right: 2%;
-  background: var(--primary-color) !important;
+  background: var(--dark-bg-color) !important;
   color: white;
   width: 60px;
   height: 60px;

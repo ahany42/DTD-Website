@@ -1,9 +1,10 @@
 .hero {
   display: flex;
   align-items: first baseline;
-  padding: 0 40px;
+  margin: 0 10px;
   background: var(--dark-bg-color);
   color: #fff;
+  margin-top: 80px;
 }
 
 .hero-content {

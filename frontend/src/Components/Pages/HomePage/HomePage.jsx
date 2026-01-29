@@ -1,5 +1,9 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import Carousel from "../../Other/Carousel/Carousel";
+import img1 from "../../../assets/1.png";
+import img2 from "../../../assets/2.png";
+import img3 from "../../../assets/3.png";
 import "./Homepage.css";
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -26,6 +30,7 @@ const stats = [
   { value: "2K+", label: "Training Minutes Saved" },
 ];
 export default function HomePage() {
+  const navigate = useNavigate();
   const statsContainer = {
     hidden: { opacity: 0 },
     visible: {
@@ -46,25 +51,22 @@ export default function HomePage() {
   };
   const slides = [
     {
-      image:
-        "https://advertisingupdates.com/wp-content/uploads/2025/12/Machine-Learning.jpg",
+      image: img1,
       text: "Machine Learning",
     },
     {
-      image:
-        "https://advertisingupdates.com/wp-content/uploads/2025/12/Machine-Learning.jpg",
+      image: img2,
       text: "Machine Learning",
     },
     {
-      image:
-        "https://advertisingupdates.com/wp-content/uploads/2025/12/Machine-Learning.jpg",
+      image: img3,
       text: "Machine Learning",
     },
   ];
   return (
     <div className="page">
       {slides.length > 0 && <Carousel slides={slides} />}
-      <section className="hero">
+      <div className="hero">
         <motion.div
           className="hero-content"
           variants={containerVariants}
@@ -72,7 +74,9 @@ export default function HomePage() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.5 }}
         >
-          <motion.h1 variants={itemVariants}>AutoML Platform</motion.h1>
+          <motion.h1 variants={itemVariants}>
+            Data to Deployment <br />
+          </motion.h1>
           <motion.p variants={itemVariants}>
             Upload your datasets and let Al automatically analyze, visualize,
             and generate insights. No coding required - just pure machine
@@ -80,13 +84,12 @@ export default function HomePage() {
           </motion.p>
 
           <motion.div className="quick-links" variants={containerVariants}>
-            {["Docs", "Dashboard", "Reports"].map((item) => (
+            {["Dashboard", "Reports"].map((item) => (
               <motion.a
                 key={item}
-                href="#"
+                onClick={() => navigate(`/${item.toLowerCase()}`)}
                 className="quick-link"
                 variants={itemVariants}
-                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
               >
                 {item}
@@ -94,7 +97,7 @@ export default function HomePage() {
             ))}
           </motion.div>
         </motion.div>
-      </section>
+      </div>
       <motion.div
         className="hero-stats"
         variants={statsContainer}
@@ -114,6 +117,42 @@ export default function HomePage() {
           </motion.div>
         ))}
       </motion.div>
+      <div className="hero">
+        <motion.div
+          className="hero-content"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+        >
+          <motion.h1 variants={itemVariants}>AutoML</motion.h1>
+          <motion.p variants={itemVariants}>
+            Automated Data Analysis and Machine Learning Pipeline with
+            Generative AI Agents proposes the development of an intelligent
+            platform that integrates Generative AI, Large Language Models
+            (LLMs), and multi-agent frameworks such as LangGraph to automate the
+            complete data science workflow. Generative AI and LLMs are advanced
+            systems capable of understanding and generating human-like language,
+            making them powerful tools for reasoning, automation, and decision
+            support. Retrieval-Augmented Generation (RAG) is incorporated to
+            enhance accuracy, retrieving the most relevant information and then
+            generating reliable outputs
+          </motion.p>
+          <motion.div className="quick-links" variants={containerVariants}>
+            {["Read More"].map((item) => (
+              <motion.a
+                key={item}
+                onClick={() => navigate(`/${item.toLowerCase()}`)}
+                className="quick-link"
+                variants={itemVariants}
+                whileTap={{ scale: 0.97 }}
+              >
+                {item}
+              </motion.a>
+            ))}
+          </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 }

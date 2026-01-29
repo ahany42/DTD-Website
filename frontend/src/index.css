@@ -156,6 +156,9 @@ hr {
   background-color: #ccc;
   border: none;
 }
+h1 {
+  font-size: 40px;
+}
 input:focus {
   border-color: var(--secondary-color);
   outline: none;
@@ -226,8 +229,8 @@ input:focus {
 .page {
   padding-top: var(--page-margin-top) !important;
   min-height: 80dvh !important;
-  margin-left: 0px !important;
-  overflow-x: hidden !important;
+  margin: 0px 40px !important;
+  overflow: hidden !important;
 }
 
 .admin-page {
@@ -235,7 +238,10 @@ input:focus {
   margin-left: 40px !important;
   overflow-x: auto !important;
 }
-
+.readme-div {
+  margin: 10px;
+  margin-top: 40px;
+}
 input::placeholder,
 .placeholder,
 textarea::placeholder,
@@ -335,4 +341,9 @@ strong {
 img {
   user-drag: none;
   -webkit-user-drag: none;
+}
+@media (max-width: 992px) {
+  .page {
+    margin: 0px 0px !important;
+  }
 }
