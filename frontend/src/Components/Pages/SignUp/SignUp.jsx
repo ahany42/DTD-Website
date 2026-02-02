@@ -1,23 +1,32 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "./Login.css";
+import "../Login/Login.css";
 import { AppContext } from "../../../App";
 
-const Login = () => {
+const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
   const navigate = useNavigate();
   const { BACKEND_URL } = useContext(AppContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!confirmPassword || !password || !name || !email) {
+      toast.warn("Please Fill All Fields");
+      return;
+    } else if (confirmPassword !== password) {
+      toast.warn("Passwords Does Not Match");
+      return;
+    } else {
+    }
     try {
-      const res = await fetch(`${BACKEND_URL}/auth/login`, {
+      const res = await fetch(`${BACKEND_URL}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, name }),
       });
 
       const data = await res.json();
@@ -34,6 +43,10 @@ const Login = () => {
       console.error(err);
       toast.error("Something went wrong. Please try again.");
     }
+    if (!confirmPassword || !password || !name || !email) {
+      toast.warn("Please Fill All Fields");
+      return;
+    }
   };
 
   return (
@@ -42,6 +55,16 @@ const Login = () => {
         <form className="form-card" onSubmit={handleSubmit}>
           <h2 className="form-title">Login</h2>
 
+          <div className="login-field">
+            <label>Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
+              required
+            />
+          </div>
           <div className="login-field">
             <label>Email</label>
             <input
@@ -63,15 +86,25 @@ const Login = () => {
               required
             />
           </div>
+          <div className="login-field">
+            <label>Confirm Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm your password"
+              required
+            />
+          </div>
 
           <button type="submit" className="submit-btn">
-            Log In
+            Sign Up
           </button>
           <div className="login-form-link forgot-text">
             <span onClick={() => navigate("/forgot-password")}>
               Forgot Password
             </span>
-            <span onClick={() => navigate("/signup")}>Sign Up</span>
+            <span onClick={() => navigate("/login")}>Log in</span>
           </div>
         </form>
       </div>
@@ -79,4 +112,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

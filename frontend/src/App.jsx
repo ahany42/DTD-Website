@@ -13,6 +13,7 @@ import Reports from "./Components/Pages/Reports/Reports.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ScrollToTop from "./Components/Other/ScrollToTop/ScrollToTop.jsx";
+import SignUp from "./Components/Pages/SignUp/SignUp.jsx";
 
 export const AppContext = createContext();
 const BACKEND_URL = "http://localhost:4000";
@@ -64,6 +65,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route
           path="/reports"
