@@ -1,0 +1,15 @@
+/* Login.css */
+
+.forgot-text {
+  margin-top: 25px !important;
+  text-align: center;
+  color: var(--primary-color) !important;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+.login-form-link {
+  display: flex;
+  flex-direction: column;
+}

@@ -1,23 +1,38 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
 import { generateToken } from "../auth.js";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 dotenv.config();
 
+const verifyToken = (req) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    throw new Error("No token provided");
+  }
+
+  const token = authHeader.split(" ")[1];
+  return jwt.verify(token, process.env.JWT_SECRET);
+};
+
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
+
   try {
     const existing = await User.findOne({ email });
-    if (existing)
+    if (existing) {
       return res.status(400).json({ message: "Email already exists" });
+    }
 
     const hashed = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hashed });
 
     const token = generateToken(user);
+
     res.json({
       token,
       user: { id: user._id, name: user.name, email: user.email },
@@ -29,14 +44,20 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ message: "Invalid credentials" });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
     const valid = await bcrypt.compare(password, user.password);
-    if (!valid) return res.status(401).json({ message: "Invalid credentials" });
+    if (!valid) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
     const token = generateToken(user);
+
     res.json({
       token,
       user: { id: user._id, name: user.name, email: user.email },
@@ -48,14 +69,16 @@ export const login = async (req, res) => {
 
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
+
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
     const token = crypto.randomBytes(32).toString("hex");
     user.resetToken = token;
-    // 1 hour
-    user.resetTokenExpiry = Date.now() + 3600000;
+    user.resetTokenExpiry = Date.now() + 3600000; // 1 hour
     await user.save();
 
     const transporter = nodemailer.createTransport({
@@ -67,6 +90,7 @@ export const forgotPassword = async (req, res) => {
     });
 
     const resetUrl = `${process.env.FRONT_END}/reset-password/${token}`;
+
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: user.email,
@@ -79,22 +103,29 @@ export const forgotPassword = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 export const getAllUsers = async (req, res) => {
   try {
-    // exclude password
+    verifyToken(req);
+
     const users = await User.find().select("-password");
     res.json(users);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(401).json({ message: err.message });
   }
 };
 
 export const getUserById = async (req, res) => {
   try {
+    verifyToken(req);
+
     const user = await User.findById(req.params.id).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     res.json(user);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(401).json({ message: err.message });
   }
 };
