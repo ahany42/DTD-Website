@@ -21,31 +21,31 @@ const SignUp = () => {
       toast.warn("Passwords Does Not Match");
       return;
     } else {
-    }
-    try {
-      const res = await fetch(`${BACKEND_URL}/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
-      });
+      try {
+        const res = await fetch(`${BACKEND_URL}/auth/signup`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, name }),
+        });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (!res.ok) {
-        return toast.error(data.message || "Wrong email or password");
+        if (!res.ok) {
+          return toast.error(data.message || "Wrong email or password");
+        }
+
+        localStorage.setItem("token", data.token);
+        toast.success(`Welcome back ${data.user.name}`);
+
+        navigate("/");
+      } catch (err) {
+        console.error(err);
+        toast.error("Something went wrong. Please try again.");
       }
-
-      localStorage.setItem("token", data.token);
-      toast.success(`Welcome back ${data.user.name}`);
-
-      navigate("/");
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong. Please try again.");
-    }
-    if (!confirmPassword || !password || !name || !email) {
-      toast.warn("Please Fill All Fields");
-      return;
+      if (!confirmPassword || !password || !name || !email) {
+        toast.warn("Please Fill All Fields");
+        return;
+      }
     }
   };
 
@@ -53,7 +53,7 @@ const SignUp = () => {
     <div className="page">
       <div className="form-container">
         <form className="form-card" onSubmit={handleSubmit}>
-          <h2 className="form-title">Login</h2>
+          <h2 className="form-title">Sign Up</h2>
 
           <div className="login-field">
             <label>Name</label>

@@ -72,15 +72,18 @@ export const forgotPassword = async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
+    // Generate reset token
     const token = crypto.randomBytes(32).toString("hex");
     user.resetToken = token;
     user.resetTokenExpiry = Date.now() + 3600000; // 1 hour
     await user.save();
 
+    const resetUrl = `${process.env.FRONT_END}/reset-password/${token}`;
+    const currentYear = new Date().getFullYear();
+
+    // Nodemailer transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -89,16 +92,107 @@ export const forgotPassword = async (req, res) => {
       },
     });
 
-    const resetUrl = `${process.env.FRONT_END}/reset-password/${token}`;
+    // Styled HTML email for DTD Data
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Password Reset</title>
+        </head>
+        <body style="margin:0; padding:0; font-family: Arial, sans-serif; background-color: #f5f5f5; color: #333;">
+          <table align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+              <td align="center" style="padding: 20px;">
+                <table width="600" cellpadding="20" cellspacing="0" border="0" style="background-color:#ffffff; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+                  <tr>
+                    <td align="center">
+                      <img src="https://www.wiz.ai/content/uploads/2025/09/Blog-images-scaled.jpg" alt="DTD Data Logo" width="320">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center" style="padding: 15px; font-size: 22px; font-weight: bold;">
+                      Reset Your Password
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 20px; font-size: 16px; line-height: 1.5; text-align:center;">
+                      You requested to reset your password for your DTD Data Deployment account.<br><br>
+                      Click the button below to reset your password:
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center">
+                      <a href="${resetUrl}" style="display:inline-block; padding: 12px 25px; background-color: #00a3ff; color: #ffffff; font-weight:bold; border-radius: 5px; text-decoration:none;">
+                        Reset Password
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 20px; font-size: 14px; color: #555; text-align:center;">
+                      If you did not request this, please ignore this email.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center" style="background-color: #00a3ff; padding: 20px; color: #ffffff; border-radius: 0 0 8px 8px;">
+                      <p style="margin:0; font-size:12px;">&copy; ${currentYear} DTD Data to Deployment</p>
+                      <p style="margin:5px 0 0;">
+                        <a href="https://www.linkedin.com/" style="margin:0 5px;"><img src="https://cdn-icons-png.flaticon.com/512/145/145807.png" width="25" alt="LinkedIn" /></a>
+                        <a href="https://www.facebook.com/" style="margin:0 5px;"><img src="https://cdn-icons-png.flaticon.com/512/145/145802.png" width="25" alt="Facebook" /></a>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
+    `;
 
+    // Send email
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: user.email,
-      subject: "Password Reset",
-      html: `<p>Click <a href="${resetUrl}">here</a> to reset your password</p>`,
+      subject: "Reset Your DTD Data To Deployment Password",
+      html: htmlContent,
     });
 
     res.json({ message: "Reset link sent to your email" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+export const resetPassword = async (req, res) => {
+  const { token, password, confirmPassword } = req.body;
+
+  if (!token || !password || !confirmPassword) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: "Passwords do not match" });
+  }
+
+  try {
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: Date.now() }, // token not expired
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+    user.password = hashed;
+    user.resetToken = undefined;
+    user.resetTokenExpiry = undefined;
+
+    await user.save();
+
+    res.json({ message: "Password reset successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

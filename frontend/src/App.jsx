@@ -14,7 +14,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ScrollToTop from "./Components/Other/ScrollToTop/ScrollToTop.jsx";
 import SignUp from "./Components/Pages/SignUp/SignUp.jsx";
-
+import ForgotPassword from "./Components/Pages/ForgotPassword/ForgotPassword.jsx";
+import ResetPassword from "./Components/Pages/ResetPassword/ResetPassword.jsx";
 export const AppContext = createContext();
 const BACKEND_URL = "http://localhost:4000";
 
@@ -67,6 +68,8 @@ function App() {
         />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route
           path="/reports"
           element={
