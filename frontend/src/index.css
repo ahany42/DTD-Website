@@ -239,8 +239,12 @@ input:focus {
 .page {
   padding-top: var(--page-margin-top) !important;
   min-height: 80dvh !important;
-  margin: 0px 40px !important;
+  margin: 0px 0px !important;
   overflow: hidden !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .admin-page {

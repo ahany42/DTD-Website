@@ -171,7 +171,15 @@ export default function HomePage() {
           <motion.h1 variants={itemVariants}>AutoML</motion.h1>
           <motion.p variants={itemVariants}>
             Automated Data Analysis and Machine Learning Pipeline with
-            Generative AI Agents...
+            Generative AI Agents proposes the development of an intelligent
+            platform that integrates Generative AI, Large Language Models
+            (LLMs), and multi-agent frameworks such as LangGraph to automate the
+            complete data science workflow. Generative AI and LLMs are advanced
+            systems capable of understanding and generating human-like language,
+            making them powerful tools for reasoning, automation, and decision
+            support. Retrieval-Augmented Generation (RAG) is incorporated to
+            enhance accuracy, retrieving the most relevant information and then
+            generating reliable outputs
           </motion.p>
           <motion.div className="quick-links" variants={containerVariants}>
             <motion.a
