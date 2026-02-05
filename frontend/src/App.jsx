@@ -49,7 +49,7 @@ function App() {
       <NavBar />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/read more" element={<ReadMore />} />
+        <Route path="/read-more" element={<ReadMore />} />
         <Route
           path="/upload-dataset"
           element={

@@ -8,30 +8,38 @@
 }
 
 .hero-content {
-  max-width: 900px;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 0 10px;
 }
 
 .hero h1 {
-  font-size: 56px;
+  font-size: 50px;
   font-weight: 700;
   margin-bottom: 30px;
 }
-
+.contact-form {
+  width: 100% !important;
+  margin-bottom: 30px;
+}
 .quick-links {
   display: flex;
   gap: 24px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .quick-link {
   margin-top: 30px;
   padding: 14px 26px;
   border-radius: 12px;
+  text-align: center;
   background: var(--primary-color);
   color: #fff;
   text-decoration: none;
   font-weight: 500;
   transition: background 0.2s ease;
+  width: 150px;
 }
 
 .quick-link:hover {
@@ -58,7 +66,7 @@
   display: block;
   font-size: 32px;
   font-weight: 700;
-  color: var(--primary-color);
+  color: white;
 }
 
 .stat-label {

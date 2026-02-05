@@ -5,12 +5,13 @@ import img1 from "../../../assets/1.png";
 import img2 from "../../../assets/2.png";
 import img3 from "../../../assets/3.png";
 import "./Homepage.css";
+import { TextField, TextArea, Button } from "@radix-ui/themes";
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.25,
+      staggerChildren: 0.15,
       delayChildren: 0.2,
     },
   },
@@ -21,7 +22,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" },
+    transition: { duration: 0.2, ease: "easeOut" },
   },
 };
 const stats = [
@@ -46,7 +47,7 @@ export default function HomePage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5, ease: "easeOut" },
+      transition: { duration: 0.2, ease: "easeOut" },
     },
   };
   const slides = [
@@ -72,7 +73,7 @@ export default function HomePage() {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.5 }}
+          viewport={{ once: false, amount: 0.25 }}
         >
           <motion.h1 variants={itemVariants}>
             Data to Deployment <br />
@@ -90,7 +91,6 @@ export default function HomePage() {
                 onClick={() => navigate(`/${item.toLowerCase()}`)}
                 className="quick-link"
                 variants={itemVariants}
-                whileTap={{ scale: 0.97 }}
               >
                 {item}
               </motion.a>
@@ -103,7 +103,7 @@ export default function HomePage() {
         variants={statsContainer}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.4 }}
+        viewport={{ once: false, amount: 0.25 }}
       >
         {stats.map((stat) => (
           <motion.div
@@ -123,7 +123,7 @@ export default function HomePage() {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.5 }}
+          viewport={{ once: false, amount: 0.25 }}
         >
           <motion.h1 variants={itemVariants}>AutoML</motion.h1>
           <motion.p variants={itemVariants}>
@@ -139,17 +139,74 @@ export default function HomePage() {
             generating reliable outputs
           </motion.p>
           <motion.div className="quick-links" variants={containerVariants}>
-            {["Read More"].map((item) => (
-              <motion.a
-                key={item}
-                onClick={() => navigate(`/${item.toLowerCase()}`)}
-                className="quick-link"
+            <motion.a
+              onClick={() => navigate(`/read-more`)}
+              className="quick-link"
+              variants={itemVariants}
+            >
+              Read More
+            </motion.a>
+          </motion.div>
+        </motion.div>
+      </div>
+      <div className="hero">
+        <motion.div
+          className="hero-content"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.25 }}
+        >
+          <motion.h1 variants={itemVariants}>Reach US</motion.h1>
+          <motion.form className="contact-form">
+            <motion.div
+              variants={itemVariants}
+              className="input-label-container"
+            >
+              <motion.label>Name</motion.label>
+              <TextField.Root
+                color="indigo"
+                variant="outline"
                 variants={itemVariants}
-                whileTap={{ scale: 0.97 }}
-              >
-                {item}
-              </motion.a>
-            ))}
+                size="3"
+                placeholder="Name"
+              />
+            </motion.div>
+            <motion.div
+              variants={itemVariants}
+              className="input-label-container"
+            >
+              <motion.label>Email</motion.label>
+              <TextField.Root
+                color="indigo"
+                variant="outline"
+                variants={itemVariants}
+                size="3"
+                placeholder="example@example.com"
+              />
+            </motion.div>
+            <motion.div
+              variants={itemVariants}
+              className="input-label-container"
+            >
+              <motion.label>Message</motion.label>
+              <TextArea
+                color="indigo"
+                variant="outline"
+                variants={itemVariants}
+                size="3"
+                placeholder="Message"
+              />
+            </motion.div>
+          </motion.form>
+          <motion.div className="quick-links" variants={containerVariants}>
+            <motion.a
+              onClick={() => navigate(`/read-more`)}
+              className="quick-link"
+              variants={itemVariants}
+            >
+              Read More
+            </motion.a>
           </motion.div>
         </motion.div>
       </div>

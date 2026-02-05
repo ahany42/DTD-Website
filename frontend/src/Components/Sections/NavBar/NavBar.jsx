@@ -59,31 +59,23 @@ const NavBar = () => {
               >
                 <IoHome /> Home
               </TabNav.Link>
-
-              {isAuthenticated && (
-                <>
-                  <TabNav.Link
-                    onClick={() => navigate("/upload-dataset")}
-                    active={location.pathname === "/upload-dataset"}
-                    className={
-                      location.pathname === "/upload-dataset" && "primary-bg"
-                    }
-                  >
-                    <MdFileUpload />
-                    Upload Dataset
-                  </TabNav.Link>
-
-                  <TabNav.Link
-                    onClick={() => navigate("/dashboard")}
-                    active={location.pathname === "/dashboard"}
-                    className={
-                      location.pathname === "/dashboard" && "primary-bg"
-                    }
-                  >
-                    <IoIosStats /> Dashboard
-                  </TabNav.Link>
-                </>
-              )}
+              <TabNav.Link
+                onClick={() => navigate("/upload-dataset")}
+                active={location.pathname === "/upload-dataset"}
+                className={
+                  location.pathname === "/upload-dataset" && "primary-bg"
+                }
+              >
+                <MdFileUpload />
+                Upload Dataset
+              </TabNav.Link>
+              <TabNav.Link
+                onClick={() => navigate("/dashboard")}
+                active={location.pathname === "/dashboard"}
+                className={location.pathname === "/dashboard" && "primary-bg"}
+              >
+                <IoIosStats /> Dashboard
+              </TabNav.Link>
             </div>
 
             {isAuthenticated ? (
@@ -91,7 +83,7 @@ const NavBar = () => {
                 Logout
               </Button>
             ) : (
-              <Button color="Gray" variant="surface" onClick={login}>
+              <Button color="indigo" variant="surface" onClick={login}>
                 Get Started
               </Button>
             )}
@@ -122,25 +114,18 @@ const NavBar = () => {
               <button onClick={() => navigate("/")}>
                 <IoHome /> Home
               </button>
-
-              {isAuthenticated && (
-                <>
-                  <button onClick={() => navigate("/upload-dataset")}>
-                    <MdFileUpload /> Upload Dataset
-                  </button>
-
-                  <button onClick={() => navigate("/dashboard")}>
-                    <IoIosStats /> Dashboard
-                  </button>
-                </>
-              )}
-
+              <button onClick={() => navigate("/upload-dataset")}>
+                <MdFileUpload /> Upload Dataset
+              </button>
+              <button onClick={() => navigate("/dashboard")}>
+                <IoIosStats /> Dashboard
+              </button>
               {isAuthenticated ? (
                 <Button color="red" variant="surface" onClick={logout}>
                   Logout
                 </Button>
               ) : (
-                <Button color="Gray" variant="surface" onClick={login}>
+                <Button color="indigo" variant="surface" onClick={login}>
                   Get Started
                 </Button>
               )}

@@ -1,13 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 :root {
-  --primary-color: #00a3ff;
-  --hover-color: #266285;
+  --primary-color: #002147;
+  --hover-color: #032e5f;
   --primary-rgb: 255, 178, 2;
   --navbar-height: 5em;
   --partners-bar-height: 50px;
   --page-margin-top: 20px;
   --dark-bg-color: black;
-  --light-blue: #0063a6;
   --blueish-color: rgba(0, 99, 166, 0.05);
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
@@ -29,7 +28,7 @@
 }
 .primary-bg {
   background-color: var(--primary-color) !important;
-  color: black !important;
+  color: white !important;
 }
 .primary-border {
   border: 1px solid var(--primary-color) !important;
@@ -57,6 +56,7 @@
   padding: 12px;
   margin-top: 15px;
   border: none;
+  color: white;
 }
 h2 {
   min-height: 2rem;
