@@ -124,6 +124,16 @@ label {
 .admin-title {
   text-align: center !important;
 }
+.table-icon-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.table-scroll-wrapper {
+  overflow-x: auto; /* horizontal scroll */
+  margin: 0 15px 20px 15px;
+  display: block; /* flex is unnecessary for table scroll */
+}
 .toggle-container,
 .drop-down-container {
   display: flex;
@@ -207,7 +217,7 @@ input:focus {
 }
 .title {
   text-align: left;
-  font-size: 20px;
+  font-size: 25px;
   font-weight: 700;
   margin-top: 1em;
   margin-left: 50px;
@@ -345,5 +355,10 @@ img {
 @media (max-width: 992px) {
   .page {
     margin: 0px 0px !important;
+  }
+}
+@media (max-width: 768px) {
+  .page {
+    margin-top: 60px !important;
   }
 }

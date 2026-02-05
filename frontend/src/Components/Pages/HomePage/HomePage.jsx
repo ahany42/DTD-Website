@@ -205,7 +205,7 @@ export default function HomePage() {
               className="quick-link"
               variants={itemVariants}
             >
-              Read More
+              Submit
             </motion.a>
           </motion.div>
         </motion.div>

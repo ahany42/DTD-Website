@@ -76,6 +76,13 @@ const NavBar = () => {
               >
                 <IoIosStats /> Dashboard
               </TabNav.Link>
+              <TabNav.Link
+                onClick={() => navigate("/reports")}
+                active={location.pathname === "/reports"}
+                className={location.pathname === "/reports" && "primary-bg"}
+              >
+                <IoIosStats /> Reports
+              </TabNav.Link>
             </div>
 
             {isAuthenticated ? (
@@ -83,7 +90,12 @@ const NavBar = () => {
                 Logout
               </Button>
             ) : (
-              <Button color="indigo" variant="surface" onClick={login}>
+              <Button
+                color="indigo"
+                className="mobile-nav-btn"
+                variant="surface"
+                onClick={login}
+              >
                 Get Started
               </Button>
             )}
@@ -111,15 +123,36 @@ const NavBar = () => {
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <button onClick={() => navigate("/")}>
-                <IoHome /> Home
-              </button>
-              <button onClick={() => navigate("/upload-dataset")}>
-                <MdFileUpload /> Upload Dataset
-              </button>
-              <button onClick={() => navigate("/dashboard")}>
-                <IoIosStats /> Dashboard
-              </button>
+              <div
+                className="mobile-nav-icon-text"
+                onClick={() => navigate("/")}
+              >
+                <IoHome />
+                <button>Home</button>
+              </div>
+
+              <div
+                className="mobile-nav-icon-text"
+                onClick={() => navigate("/upload-dataset")}
+              >
+                <MdFileUpload />
+                <button>Upload Dataset</button>
+              </div>
+              <div
+                className="mobile-nav-icon-text"
+                onClick={() => navigate("/dashboard")}
+              >
+                <IoIosStats />
+                <button>Dashboard</button>
+              </div>
+
+              <div
+                className="mobile-nav-icon-text"
+                onClick={() => navigate("/reports")}
+              >
+                <IoIosStats />
+                <button>Reports</button>
+              </div>
               {isAuthenticated ? (
                 <Button color="red" variant="surface" onClick={logout}>
                   Logout
