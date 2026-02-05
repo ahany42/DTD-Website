@@ -1,12 +1,26 @@
-import { Table, IconButton, Button } from "@radix-ui/themes";
-import { FaThumbsDown } from "react-icons/fa";
-import { FaThumbsUp } from "react-icons/fa";
+import {
+  Table,
+  IconButton,
+  Button,
+  Dialog,
+  TextField,
+  TextArea,
+} from "@radix-ui/themes";
+import { FaThumbsDown, FaThumbsUp, FaEye } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
-import { FaEye } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 const Reports = () => {
-  // Temporary mock data (replace with API later)
   const [filter, setFilter] = useState("ALL");
+  const [showComplaintDialog, setShowComplaintDialog] = useState(false);
+  const [complaintData, setComplaintData] = useState({
+    name: "",
+    email: "",
+    message: "",
+    reportId: "",
+  });
+  const [user, setUser] = useState(null);
+
   const reports = [
     {
       id: "REP-001",
@@ -22,9 +36,71 @@ const Reports = () => {
     },
   ];
 
-  const handleReportProblem = (id) => {
-    console.log("Report problem for:", id);
-    // later: open modal or send API request
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      try {
+        const parsedUser = JSON.parse(userData);
+        setUser(parsedUser);
+        setComplaintData((prev) => ({
+          ...prev,
+          name: parsedUser.name || "",
+          email: parsedUser.email || "",
+        }));
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
+  }, []);
+
+  const handleShowComplaintDialog = (reportId) => {
+    setComplaintData((prev) => ({
+      ...prev,
+      reportId: reportId,
+    }));
+    setShowComplaintDialog(true);
+  };
+
+  const handleComplaintSubmit = async () => {
+    try {
+      if (!complaintData.message.trim()) {
+        toast.warn("Please Enter Complaint Message");
+        return;
+      }
+
+      const response = await fetch("http://localhost:4000/api/complaint", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(complaintData),
+      });
+
+      if (response.ok) {
+        toast.success("We Have Received your complain");
+
+        setShowComplaintDialog(false);
+        setComplaintData({
+          name: user?.name || "",
+          email: user?.email || "",
+          message: "",
+          reportId: "",
+        });
+      } else {
+        throw new Error("Failed to submit complaint");
+      }
+    } catch (error) {
+      console.error("Error submitting complaint:", error);
+      toast.error("Couldn't Send Complaint Please Try Again Later");
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setComplaintData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   return (
@@ -36,7 +112,7 @@ const Reports = () => {
         <Button
           variant={filter === "ALL" ? "outline" : "soft"}
           onClick={() => setFilter("ALL")}
-          arial-label="All Reports Filter"
+          aria-label="All Reports Filter"
         >
           All
         </Button>
@@ -44,7 +120,7 @@ const Reports = () => {
           color="green"
           variant={filter === "LIKED" ? "outline" : "soft"}
           onClick={() => setFilter("LIKED")}
-          arial-label="Liked Reports Filter"
+          aria-label="Liked Reports Filter"
         >
           Liked
         </Button>
@@ -82,31 +158,28 @@ const Reports = () => {
                     <IconButton
                       color="indigo"
                       variant="surface"
-                      // onClick={() => handleReportProblem(report.id)}
-                      // aria-label="Report a problem"
+                      aria-label="Download report"
                     >
                       <FiDownload />
                     </IconButton>
                     <IconButton
                       color="indigo"
                       variant="surface"
-                      // onClick={() => handleReportProblem(report.id)}
-                      // aria-label="Report a problem"
+                      aria-label="View report"
                     >
                       <FaEye />
                     </IconButton>
                     <IconButton
                       color="green"
                       variant="surface"
-                      onClick={() => handleReportProblem(report.id)}
-                      aria-label="Report a problem"
+                      aria-label="Like"
                     >
                       <FaThumbsUp />
                     </IconButton>
                     <IconButton
                       color="red"
                       variant="surface"
-                      onClick={() => handleReportProblem(report.id)}
+                      onClick={() => handleShowComplaintDialog(report.id)}
                       aria-label="Report a problem"
                     >
                       <FaThumbsDown />
@@ -118,6 +191,52 @@ const Reports = () => {
           </Table.Body>
         </Table.Root>
       </div>
+
+      {/* Complaint Dialog - Using same pattern as ProductsAdmin */}
+      {showComplaintDialog && (
+        <Dialog.Root
+          open={showComplaintDialog}
+          onOpenChange={setShowComplaintDialog}
+        >
+          <Dialog.Content style={{ maxWidth: 500 }}>
+            <Dialog.Title>Submit Complaint</Dialog.Title>
+
+            <div className="input-label-container">
+              <label>Message</label>
+              <TextArea
+                name="message"
+                value={complaintData.message}
+                onChange={handleInputChange}
+                placeholder="Describe the problem you're experiencing..."
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "10px",
+                marginTop: "20px",
+              }}
+            >
+              <Button
+                onClick={() => setShowComplaintDialog(false)}
+                color="red"
+                variant="surface"
+              >
+                Cancel
+              </Button>
+              <Button
+                color="cyan"
+                variant="surface"
+                onClick={handleComplaintSubmit}
+              >
+                Submit Complaint
+              </Button>
+            </div>
+          </Dialog.Content>
+        </Dialog.Root>
+      )}
     </div>
   );
 };

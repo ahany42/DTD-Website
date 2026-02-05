@@ -2,18 +2,21 @@ import Complaint from "../models/Complaint.js";
 
 export const createComplaint = async (req, res) => {
   try {
-    const { name, email, message } = req.body;
+    const { name, email, message, reportId } = req.body;
 
     if (!name || !email || !message) {
       return res
         .status(400)
         .json({ message: "Name, email, and message are required" });
+    } else if (!reportId) {
+      return res.status(404).json({ message: "Missing or Invalid Report" });
     }
 
     const newComplaint = await Complaint.create({
       name,
       email,
       message,
+      reportId,
     });
 
     res.status(201).json({
