@@ -1,11 +1,15 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
 import Carousel from "../../Other/Carousel/Carousel";
 import img1 from "../../../assets/1.png";
 import img2 from "../../../assets/2.png";
 import img3 from "../../../assets/3.png";
 import "./Homepage.css";
-import { TextField, TextArea, Button } from "@radix-ui/themes";
+import { AppContext } from "../../../App";
+import { toast } from "react-toastify";
+import { TextField, TextArea } from "@radix-ui/themes";
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -25,23 +29,74 @@ const itemVariants = {
     transition: { duration: 0.2, ease: "easeOut" },
   },
 };
+
 const stats = [
   { value: "99GB", label: "Processed Datasets" },
   { value: "5K+", label: "Automated Models" },
   { value: "2K+", label: "Training Minutes Saved" },
 ];
+
 export default function HomePage() {
   const navigate = useNavigate();
+  const { BACKEND_URL } = useContext(AppContext);
+
+  // Contact form state
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        toast.error("Message Not Received Please Try Again Later");
+      }
+
+      toast.success("Thank You , We Have Received Your Message");
+
+      setFormData({ name: "", email: "", message: "" });
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const slides = [
+    { image: img1, text: "Machine Learning" },
+    { image: img2, text: "Machine Learning" },
+    { image: img3, text: "Machine Learning" },
+  ];
+
   const statsContainer = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
+      transition: { staggerChildren: 0.2, delayChildren: 0.3 },
     },
   };
+
   const statItem = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -50,23 +105,11 @@ export default function HomePage() {
       transition: { duration: 0.2, ease: "easeOut" },
     },
   };
-  const slides = [
-    {
-      image: img1,
-      text: "Machine Learning",
-    },
-    {
-      image: img2,
-      text: "Machine Learning",
-    },
-    {
-      image: img3,
-      text: "Machine Learning",
-    },
-  ];
+
   return (
     <div className="page">
       {slides.length > 0 && <Carousel slides={slides} />}
+
       <div className="hero">
         <motion.div
           className="hero-content"
@@ -75,11 +118,9 @@ export default function HomePage() {
           whileInView="visible"
           viewport={{ once: false, amount: 0.25 }}
         >
-          <motion.h1 variants={itemVariants}>
-            Data to Deployment <br />
-          </motion.h1>
+          <motion.h1 variants={itemVariants}>Data to Deployment</motion.h1>
           <motion.p variants={itemVariants}>
-            Upload your datasets and let Al automatically analyze, visualize,
+            Upload your datasets and let AI automatically analyze, visualize,
             and generate insights. No coding required - just pure machine
             learning power at your fingertips.
           </motion.p>
@@ -98,6 +139,7 @@ export default function HomePage() {
           </motion.div>
         </motion.div>
       </div>
+
       <motion.div
         className="hero-stats"
         variants={statsContainer}
@@ -117,6 +159,7 @@ export default function HomePage() {
           </motion.div>
         ))}
       </motion.div>
+
       <div className="hero">
         <motion.div
           className="hero-content"
@@ -128,15 +171,7 @@ export default function HomePage() {
           <motion.h1 variants={itemVariants}>AutoML</motion.h1>
           <motion.p variants={itemVariants}>
             Automated Data Analysis and Machine Learning Pipeline with
-            Generative AI Agents proposes the development of an intelligent
-            platform that integrates Generative AI, Large Language Models
-            (LLMs), and multi-agent frameworks such as LangGraph to automate the
-            complete data science workflow. Generative AI and LLMs are advanced
-            systems capable of understanding and generating human-like language,
-            making them powerful tools for reasoning, automation, and decision
-            support. Retrieval-Augmented Generation (RAG) is incorporated to
-            enhance accuracy, retrieving the most relevant information and then
-            generating reliable outputs
+            Generative AI Agents...
           </motion.p>
           <motion.div className="quick-links" variants={containerVariants}>
             <motion.a
@@ -149,6 +184,7 @@ export default function HomePage() {
           </motion.div>
         </motion.div>
       </div>
+
       <div className="hero">
         <motion.div
           className="hero-content"
@@ -158,7 +194,7 @@ export default function HomePage() {
           viewport={{ once: false, amount: 0.25 }}
         >
           <motion.h1 variants={itemVariants}>Reach US</motion.h1>
-          <motion.form className="contact-form">
+          <motion.form className="contact-form" onSubmit={handleSubmit}>
             <motion.div
               variants={itemVariants}
               className="input-label-container"
@@ -167,11 +203,15 @@ export default function HomePage() {
               <TextField.Root
                 color="indigo"
                 variant="outline"
-                variants={itemVariants}
                 size="3"
+                name="name"
+                required
                 placeholder="Name"
+                value={formData.name}
+                onChange={handleChange}
               />
             </motion.div>
+
             <motion.div
               variants={itemVariants}
               className="input-label-container"
@@ -180,11 +220,16 @@ export default function HomePage() {
               <TextField.Root
                 color="indigo"
                 variant="outline"
-                variants={itemVariants}
                 size="3"
+                name="email"
+                type="email"
+                required
                 placeholder="example@example.com"
+                value={formData.email}
+                onChange={handleChange}
               />
             </motion.div>
+
             <motion.div
               variants={itemVariants}
               className="input-label-container"
@@ -193,21 +238,29 @@ export default function HomePage() {
               <TextArea
                 color="indigo"
                 variant="outline"
-                variants={itemVariants}
                 size="3"
+                name="message"
+                required
                 placeholder="Message"
+                value={formData.message}
+                onChange={handleChange}
               />
             </motion.div>
+
+            <motion.div className="quick-links" variants={containerVariants}>
+              <motion.button
+                type="submit"
+                className="quick-link"
+                variants={itemVariants}
+                disabled={loading}
+              >
+                {loading ? "Sending..." : "Submit"}
+              </motion.button>
+            </motion.div>
+
+            {success && <p style={{ color: "green" }}>{success}</p>}
+            {error && <p style={{ color: "red" }}>{error}</p>}
           </motion.form>
-          <motion.div className="quick-links" variants={containerVariants}>
-            <motion.a
-              onClick={() => navigate(`/read-more`)}
-              className="quick-link"
-              variants={itemVariants}
-            >
-              Submit
-            </motion.a>
-          </motion.div>
         </motion.div>
       </div>
     </div>
