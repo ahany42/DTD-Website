@@ -27,7 +27,7 @@ const Login = () => {
       }
 
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", data.user);
+      localStorage.setItem("dtd_user", data.user);
       toast.success(`Welcome back ${data.user.name}`);
 
       navigate("/");

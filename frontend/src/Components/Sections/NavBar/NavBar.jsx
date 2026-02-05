@@ -2,6 +2,7 @@ import { TabNav, Button } from "@radix-ui/themes";
 import { IoHome } from "react-icons/io5";
 import { MdFileUpload } from "react-icons/md";
 import { IoIosStats } from "react-icons/io";
+import { HiOutlineDocumentReport } from "react-icons/hi";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
@@ -81,7 +82,7 @@ const NavBar = () => {
                 active={location.pathname === "/reports"}
                 className={location.pathname === "/reports" && "primary-bg"}
               >
-                <IoIosStats /> Reports
+                <HiOutlineDocumentReport /> Reports
               </TabNav.Link>
             </div>
 
@@ -150,7 +151,7 @@ const NavBar = () => {
                 className="mobile-nav-icon-text"
                 onClick={() => navigate("/reports")}
               >
-                <IoIosStats />
+                <HiOutlineDocumentReport />
                 <button>Reports</button>
               </div>
               {isAuthenticated ? (

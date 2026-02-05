@@ -8,7 +8,7 @@
 }
 
 .hero-content {
-  /* width: 100%; */
+  width: 100%;
   margin-bottom: 20px;
   padding: 0 10px;
 }
@@ -48,11 +48,12 @@
   background: var(--hover-color);
 }
 .hero-stats {
-  margin-top: 60px;
+  margin: 60px auto 0 auto;
   display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 32px;
   flex-wrap: wrap;
-  padding: 0 40px;
 }
 
 .stat-card {

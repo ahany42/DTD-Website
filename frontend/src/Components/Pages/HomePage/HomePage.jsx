@@ -32,8 +32,8 @@ const itemVariants = {
 
 const stats = [
   { value: "99GB", label: "Processed Datasets" },
-  { value: "5K+", label: "Automated Models" },
-  { value: "2K+", label: "Training Minutes Saved" },
+  { value: "5K+", label: "Users" },
+  { value: "2K+", label: "Run Time Minutes" },
 ];
 
 export default function HomePage() {
@@ -141,7 +141,7 @@ export default function HomePage() {
       </div>
 
       <motion.div
-        className="hero-stats"
+        className="hero-stats hero"
         variants={statsContainer}
         initial="hidden"
         whileInView="visible"

@@ -6,7 +6,9 @@ import {
   TextField,
   TextArea,
 } from "@radix-ui/themes";
-import { FaThumbsDown, FaThumbsUp, FaEye } from "react-icons/fa";
+import { CiStar } from "react-icons/ci";
+import { FaEye } from "react-icons/fa";
+import { MdOutlineReportProblem } from "react-icons/md";
 import { FiDownload } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -37,7 +39,7 @@ const Reports = () => {
   ];
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
+    const userData = localStorage.getItem("dtd_user");
     if (userData) {
       try {
         const parsedUser = JSON.parse(userData);
@@ -117,12 +119,12 @@ const Reports = () => {
           All
         </Button>
         <Button
-          color="green"
+          color="yellow"
           variant={filter === "LIKED" ? "outline" : "soft"}
           onClick={() => setFilter("LIKED")}
           aria-label="Liked Reports Filter"
         >
-          Liked
+          Starred
         </Button>
       </div>
 
@@ -156,7 +158,7 @@ const Reports = () => {
                 <Table.Cell>
                   <div className="table-icon-container">
                     <IconButton
-                      color="indigo"
+                      color="green"
                       variant="surface"
                       aria-label="Download report"
                     >
@@ -170,11 +172,11 @@ const Reports = () => {
                       <FaEye />
                     </IconButton>
                     <IconButton
-                      color="green"
+                      color="yellow"
                       variant="surface"
-                      aria-label="Like"
+                      aria-label="Star"
                     >
-                      <FaThumbsUp />
+                      <CiStar />
                     </IconButton>
                     <IconButton
                       color="red"
@@ -182,7 +184,7 @@ const Reports = () => {
                       onClick={() => handleShowComplaintDialog(report.id)}
                       aria-label="Report a problem"
                     >
-                      <FaThumbsDown />
+                      <MdOutlineReportProblem />
                     </IconButton>
                   </div>
                 </Table.Cell>

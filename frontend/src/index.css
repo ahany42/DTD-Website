@@ -243,8 +243,7 @@ input:focus {
   overflow: hidden !important;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  align-items: normal;
 }
 
 .admin-page {
