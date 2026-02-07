@@ -34,7 +34,8 @@ const SignUp = () => {
           return toast.error(data.message || "Wrong email or password");
         }
 
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("DTD_token", data.token);
+        localStorage.setItem("DTD_user", data.user);
         toast.success(`Welcome back ${data.user.name}`);
 
         navigate("/");

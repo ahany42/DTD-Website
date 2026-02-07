@@ -19,7 +19,8 @@ const NavBar = () => {
   // Check localStorage directly
 
   function logout() {
-    localStorage.removeItem("token");
+    localStorage.removeItem("DTD_token");
+    localStorage.removeItem("DTD_user");
     // Force re-render by navigating to current page or using window.location
     window.location.href = "/login";
     setMenuOpen(false);
@@ -31,12 +32,12 @@ const NavBar = () => {
   }
   useEffect(() => {
     // Check auth on mount
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("DTD_token");
     setIsAuthenticated(!!token);
 
     // Listen for storage events (changes from other tabs/windows)
     const handleStorageChange = () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("DTD_token");
       setIsAuthenticated(!!token);
     };
 

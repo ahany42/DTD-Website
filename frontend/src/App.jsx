@@ -21,7 +21,7 @@ const BACKEND_URL = "http://localhost:4000";
 
 // Simple function to check if user is authenticated
 const checkAuth = () => {
-  return !!localStorage.getItem("token");
+  return !!localStorage.getItem("DTD_token");
 };
 
 // Protected Route Component - depends only on localStorage
