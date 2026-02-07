@@ -1,6 +1,7 @@
 // ======================= COMPLAINT CONTROLLER =======================
 import Complaint from "../models/Complaint.js";
-
+import mongoose from "mongoose";
+import Report from "../models/Report.js";
 /**
  * Create Complaint
  * Automatically marks the related report as complained

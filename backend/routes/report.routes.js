@@ -7,6 +7,7 @@ import {
   getAllReports,
   toggleStarReport,
   deleteReport,
+  getStarredReportsByUser,
 } from "../controllers/report.controller.js";
 
 const router = express.Router();
@@ -132,4 +133,22 @@ router.patch("/star/:id", toggleStarReport);
  */
 router.delete("/:id", deleteReport);
 
+/**
+ * @swagger
+ * /reports/starred/{userId}:
+ *   get:
+ *     summary: Get all reports for a specific user
+ *     tags: [Reports]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: User ID
+ *     responses:
+ *       200:
+ *         description: List of reports
+ */
+router.get("/starred/:userId", getStarredReportsByUser);
 export default router;

@@ -33,7 +33,11 @@ const NavBar = () => {
   useEffect(() => {
     // Check auth on mount
     const token = localStorage.getItem("DTD_token");
-    setIsAuthenticated(!!token);
+    if (token) {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
 
     // Listen for storage events (changes from other tabs/windows)
     const handleStorageChange = () => {

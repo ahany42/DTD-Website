@@ -8,7 +8,10 @@ const ReportSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-
+    dataSize: {
+      type: Number,
+      default: 0,
+    },
     isComplained: {
       type: Boolean,
       default: false,

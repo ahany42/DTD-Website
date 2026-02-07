@@ -22,7 +22,7 @@ const SignUp = () => {
       return;
     } else {
       try {
-        const res = await fetch(`${BACKEND_URL}/auth/signup`, {
+        const res = await fetch(`${BACKEND_URL}/api/auth/signup`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password, name }),
@@ -35,7 +35,8 @@ const SignUp = () => {
         }
 
         localStorage.setItem("DTD_token", data.token);
-        localStorage.setItem("DTD_user", data.user);
+        // When storing user data
+        localStorage.setItem("DTD_user", JSON.stringify(data.user));
         toast.success(`Welcome back ${data.user.name}`);
 
         navigate("/");

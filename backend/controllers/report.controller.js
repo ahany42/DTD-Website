@@ -44,7 +44,51 @@ export const createReport = async (req, res) => {
     });
   }
 };
+/**
+ * Get Starred Reports By User
+ */
+export const getStarredReportsByUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid userId",
+      });
+    }
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Get all starred reports for this user
+    const starredReports = await Report.find({
+      userId,
+      isStarred: true,
+    }).sort({
+      createdAt: -1,
+    });
+
+    res.json({
+      success: true,
+      data: starredReports,
+      count: starredReports.length,
+    });
+  } catch (error) {
+    console.error("Error fetching starred reports:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch starred reports",
+      error: error.message,
+    });
+  }
+};
 /**
  * Get Report By ID
  */

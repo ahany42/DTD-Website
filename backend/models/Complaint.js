@@ -1,3 +1,4 @@
+// models/Complaint.js
 import mongoose from "mongoose";
 
 const complaintSchema = new mongoose.Schema(
@@ -14,4 +15,5 @@ const complaintSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Complaint", complaintSchema);
+const Complaint = mongoose.model("Complaint", complaintSchema);
+export default Complaint;
