@@ -1,4 +1,4 @@
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { createContext, useMemo } from "react";
 import HomePage from "./Components/Pages/HomePage/HomePage.jsx";
 import "./App.css";
@@ -17,15 +17,17 @@ import SignUp from "./Components/Pages/SignUp/SignUp.jsx";
 import ForgotPassword from "./Components/Pages/ForgotPassword/ForgotPassword.jsx";
 import ResetPassword from "./Components/Pages/ResetPassword/ResetPassword.jsx";
 import AdminLayout from "./Layouts/AdminLayout.jsx";
+
 export const AppContext = createContext();
+
 const BACKEND_URL = "http://localhost:4000";
 
-// Simple function to check if user is authenticated
+// Check if user is authenticated
 const checkAuth = () => {
   return !!localStorage.getItem("DTD_token");
 };
 
-// Protected Route Component - depends only on localStorage
+// Protected Route
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = checkAuth();
 
@@ -37,22 +39,27 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
+  const location = useLocation(); // reactive location
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
   const contextValue = useMemo(
     () => ({
       BACKEND_URL,
-      checkAuth, // Optional: expose checkAuth function
+      checkAuth,
     }),
-    [BACKEND_URL]
+    []
   );
-  const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
     <AppContext.Provider value={contextValue}>
+      {/* Hide NavBar on admin routes */}
       {!isAdminRoute && <NavBar />}
+
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/read-more" element={<ReadMore />} />
         <Route path="/admin/*" element={<AdminLayout />} />
+
         <Route
           path="/upload-dataset"
           element={
@@ -61,6 +68,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/dashboard"
           element={
@@ -69,10 +77,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
+
         <Route
           path="/reports"
           element={
@@ -81,11 +86,19 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>
 
+      {/* Hide widgets on admin routes */}
       {!isAdminRoute && <ChatWidget />}
       {!isAdminRoute && <Footer />}
+
       <ScrollToTop />
+
       <ToastContainer
         position="top-right"
         autoClose={3000}
