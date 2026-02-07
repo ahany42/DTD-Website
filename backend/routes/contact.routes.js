@@ -2,8 +2,9 @@ import express from "express";
 import {
   createContact,
   getAllContacts,
+  updateContactStatus,
 } from "../controllers/contact.controller.js";
-
+import { verifyRole } from "../auth.js";
 const router = express.Router();
 
 /**
@@ -91,6 +92,51 @@ router.post("/", createContact);
  *       500:
  *         description: Server error
  */
-router.get("/", getAllContacts);
+router.get("/", verifyRole(["ADMIN"]), getAllContacts);
+/**
+ * @swagger
+ * /contact/change-status/{id}:
+ *   patch:
+ *     summary: Change contact message status by ID
+ *     tags: [Contacts]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Contact ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [RECEIVED, PENDING, REPLIED]
+ *                 example: PENDING
+ *     responses:
+ *       200:
+ *         description: Contact status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *
+ *       404:
+ *         description: Contact not found
+ *       500:
+ *         description: Server error
+ */
+
+router.patch("/change-status/:id", verifyRole(["ADMIN"]), updateContactStatus);
 
 export default router;

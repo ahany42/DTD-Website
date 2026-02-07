@@ -16,6 +16,7 @@ import ScrollToTop from "./Components/Other/ScrollToTop/ScrollToTop.jsx";
 import SignUp from "./Components/Pages/SignUp/SignUp.jsx";
 import ForgotPassword from "./Components/Pages/ForgotPassword/ForgotPassword.jsx";
 import ResetPassword from "./Components/Pages/ResetPassword/ResetPassword.jsx";
+import AdminLayout from "./Layouts/AdminLayout.jsx";
 export const AppContext = createContext();
 const BACKEND_URL = "http://localhost:4000";
 
@@ -43,13 +44,15 @@ function App() {
     }),
     [BACKEND_URL]
   );
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
     <AppContext.Provider value={contextValue}>
-      <NavBar />
+      {!isAdminRoute && <NavBar />}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/read-more" element={<ReadMore />} />
+        <Route path="/admin/*" element={<AdminLayout />} />
         <Route
           path="/upload-dataset"
           element={
@@ -80,8 +83,8 @@ function App() {
         />
       </Routes>
 
-      <ChatWidget />
-      <Footer />
+      {!isAdminRoute && <ChatWidget />}
+      {!isAdminRoute && <Footer />}
       <ScrollToTop />
       <ToastContainer
         position="top-right"

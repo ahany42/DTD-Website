@@ -20,7 +20,7 @@ const verifyToken = (req) => {
 };
 
 export const signup = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
 
   try {
     const existing = await User.findOne({ email });
@@ -29,13 +29,18 @@ export const signup = async (req, res) => {
     }
 
     const hashed = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashed });
+    const user = await User.create({ name, email, password: hashed, role });
 
     const token = generateToken(user);
 
     res.json({
       token,
-      user: { id: user._id, name: user.name, email: user.email },
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -60,7 +65,12 @@ export const login = async (req, res) => {
 
     res.json({
       token,
-      user: { id: user._id, name: user.name, email: user.email },
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -208,7 +218,6 @@ export const getAllUsers = async (req, res) => {
     res.status(401).json({ message: err.message });
   }
 };
-
 export const getUserById = async (req, res) => {
   try {
     verifyToken(req);

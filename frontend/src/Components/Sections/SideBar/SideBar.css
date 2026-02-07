@@ -1,0 +1,26 @@
+.collapse-side-bar-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  margin-bottom: 20px;
+  border: none;
+  background-color: transparent;
+}
+.log-out-text {
+  color: red;
+  font-weight: 600;
+}
+.side-bar-link {
+  text-decoration: none;
+}
+.side-bar {
+  position: fixed !important; /* Fix sidebar on left */
+  top: 0;
+  left: 0;
+  height: 100vh !important; /* Full viewport height */
+  min-height: 100vh !important;
+  overflow-y: auto !important; /* Scroll independently */
+  z-index: 1000;
+  border: none;
+}

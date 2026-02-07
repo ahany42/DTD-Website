@@ -226,7 +226,7 @@ const Reports = () => {
       </div>
 
       <div className="table-scroll-wrapper">
-        <Table.Root variant="surface" layout="auto">
+        <Table.Root variant="surface" layout="auto" className="admin-table">
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeaderCell minWidth="100px">

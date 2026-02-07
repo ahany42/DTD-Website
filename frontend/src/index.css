@@ -131,8 +131,14 @@ label {
 }
 .table-scroll-wrapper {
   overflow-x: auto; /* horizontal scroll */
-  margin: 0 15px 20px 15px;
+  margin: 0 80px 20px 20px;
   display: block; /* flex is unnecessary for table scroll */
+}
+.admin-table {
+  min-width: 100%;
+  width: max-content;
+  padding-right: 20px;
+  border-collapse: collapse;
 }
 .toggle-container,
 .drop-down-container {
@@ -176,7 +182,7 @@ input:focus {
 }
 @media (max-width: 992px) {
   ::-webkit-scrollbar {
-    width: 5px;
+    width: 3px;
   }
   ::-webkit-scrollbar-thumb {
     background-color: var(--primary-color) !important;
@@ -200,8 +206,8 @@ input:focus {
   }
 }
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 3px;
+  height: 3px;
 }
 ::-webkit-scrollbar-thumb {
   background-color: var(--primary-color);
@@ -248,8 +254,17 @@ input:focus {
 
 .admin-page {
   padding-top: 0 !important;
-  margin-left: 40px !important;
-  overflow-x: auto !important;
+  overflow-x: hidden !important;
+  width: 100%;
+}
+.admin-page > * {
+  width: 100%;
+}
+.admin-page-layout {
+  padding-left: 60px;
+  width: 100%;
+  overflow-x: hidden;
+  margin-bottom: 100px;
 }
 .readme-div {
   margin: 10px;
