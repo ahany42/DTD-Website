@@ -26,6 +26,9 @@
   scroll-behavior: smooth;
   font-family: "Poppins", sans-serif;
 }
+p {
+  color: white !important;
+}
 .primary-bg {
   background-color: var(--primary-color) !important;
   color: white !important;

@@ -58,7 +58,6 @@ export const getStarredReportsByUser = async (req, res) => {
       });
     }
 
-    // Verify user exists
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({
@@ -67,13 +66,13 @@ export const getStarredReportsByUser = async (req, res) => {
       });
     }
 
-    // Get all starred reports for this user
     const starredReports = await Report.find({
       userId,
       isStarred: true,
-    }).sort({
-      createdAt: -1,
-    });
+    })
+      .populate("dataset", "fileName fileSize") // dataset info
+      .populate("userId", "name email")
+      .sort({ createdAt: -1 });
 
     res.json({
       success: true,
@@ -161,6 +160,7 @@ export const getAllReports = async (req, res) => {
   try {
     const reports = await Report.find()
       .populate("userId", "name email")
+      .populate("dataset", "fileName fileSize") // dataset info
       .sort({ createdAt: -1 });
 
     res.json({
@@ -176,7 +176,7 @@ export const getAllReports = async (req, res) => {
 };
 
 /**
- * Toggle Star (Admin only usually)
+ * Toggle Star
  */
 export const toggleStarReport = async (req, res) => {
   try {
@@ -200,7 +200,7 @@ export const toggleStarReport = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to update report",
+      message: error.message,
     });
   }
 };

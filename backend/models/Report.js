@@ -16,7 +16,11 @@ const ReportSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-
+    dataset: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Dataset", // Reference to the Dataset model
+      required: true,
+    },
     isStarred: {
       type: Boolean,
       default: false,

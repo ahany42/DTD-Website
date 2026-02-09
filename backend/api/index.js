@@ -2,18 +2,18 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import contactRoutes from "./routes/contact.routes.js";
-import authRoutes from "./routes/auth.routes.js";
-import complaintRoutes from "./routes/complaint.routes.js";
-import reportRoutes from "./routes/report.routes.js";
+import contactRoutes from "../routes/contact.routes.js";
+import authRoutes from "../routes/auth.routes.js";
+import complaintRoutes from "../routes/complaint.routes.js";
+import reportRoutes from "../routes/report.routes.js";
+import datasetRoutes from "../routes/dataset.routes.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
-import datasetRoutes from "./routes/dataset.routes.js";
 dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static("uploads"));
+app.use("/datasets", express.static("uploads"));
 app.use("/api/dataset", datasetRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/contact", contactRoutes);
@@ -32,7 +32,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:4000/api",
+        url: process.env.BACKEND_URL || `http://localhost:${PORT}`,
       },
     ],
   },
@@ -46,7 +46,7 @@ mongoose
   .then(() => {
     console.log("MongoDB connected");
     app.listen(PORT, () =>
-      console.log(`🚀 Server running on http://localhost:${PORT}`)
+      console.log(`🚀 Server running on ${process.env.BACKEND_URL}`)
     );
   })
   .catch((err) => console.log("MongoDB connection error:", err));

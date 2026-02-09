@@ -37,7 +37,20 @@ const ProtectedRoute = ({ children }) => {
 
   return children;
 };
+const AdminRoute = ({ children }) => {
+  const isAuthenticated = checkAuth();
+  const user = JSON.parse(localStorage.getItem("DTD_user")); // assume you store user info on login
 
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!user || user.role !== "ADMIN") {
+    return <Navigate to="/" replace />; // redirect non-admins to home
+  }
+
+  return children;
+};
 function App() {
   const location = useLocation(); // reactive location
   const isAdminRoute = location.pathname.startsWith("/admin");
@@ -59,7 +72,16 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/read-more" element={<ReadMore />} />
-        <Route path="/admin/*" element={<AdminLayout />} />
+        {
+          <Route
+            path="/admin/*"
+            element={
+              <AdminRoute>
+                <AdminLayout />
+              </AdminRoute>
+            }
+          />
+        }
 
         <Route
           path="/upload-dataset"

@@ -48,10 +48,8 @@ const Reports = () => {
   // Fetch reports based on filter
   const fetchReports = async (userId) => {
     try {
-      setLoading(true);
-
       let url;
-      if (filter === "LIKED") {
+      if (filter === "STARRED") {
         // Fetch starred reports
         url = `${BACKEND_URL}/api/reports/starred/${userId}`;
       } else {
@@ -217,9 +215,9 @@ const Reports = () => {
         </Button>
         <Button
           color="yellow"
-          variant={filter === "LIKED" ? "outline" : "soft"}
-          onClick={() => setFilter("LIKED")}
-          aria-label="Liked Reports Filter"
+          variant={filter === "STARRED" ? "outline" : "soft"}
+          onClick={() => setFilter("STARRED")}
+          aria-label="Stared Reports Filter"
         >
           Starred
         </Button>
@@ -261,7 +259,7 @@ const Reports = () => {
                   colSpan={5}
                   style={{ textAlign: "center", padding: "20px" }}
                 >
-                  {filter === "LIKED"
+                  {filter === "STARRED"
                     ? "No starred reports found"
                     : "No reports found"}
                 </Table.Cell>

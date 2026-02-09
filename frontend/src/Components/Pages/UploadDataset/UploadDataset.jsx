@@ -3,13 +3,14 @@ import { FiSend, FiPaperclip } from "react-icons/fi";
 import { AppContext } from "../../../App";
 import "./UploadDataset.css";
 import { Button } from "@radix-ui/themes";
+import { toast } from "react-toastify";
 const UploadDataset = () => {
   const [text, setText] = useState("");
   const [file, setFile] = useState(null);
   const { BACKEND_URL } = useContext(AppContext);
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
-
+  const user = JSON.parse(localStorage.getItem("DTD_user"));
   // Resize whenever text changes
   useEffect(() => {
     const el = textareaRef.current;
@@ -50,7 +51,8 @@ const UploadDataset = () => {
     if (file) {
       formData.append("file", file);
       formData.append("fileSize", file.size); // send size
-      formData.append("fileName", file.name); // optional but useful
+      formData.append("fileName", file.name);
+      formData.append("userId", user.id); // optional but useful
     }
 
     try {
@@ -58,11 +60,15 @@ const UploadDataset = () => {
         method: "POST",
         body: formData,
       });
-
+      if (res.ok) {
+        toast.success("Dataset uploaded successfully!");
+      } else {
+        toast.error("Upload failed. Please try again.");
+      }
       const data = await res.json();
       console.log(data);
     } catch (err) {
-      console.error(err);
+      toast.error(err.message || "An error occurred. Please try again.");
     }
 
     setText("");
