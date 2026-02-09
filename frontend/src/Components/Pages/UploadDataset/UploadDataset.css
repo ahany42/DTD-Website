@@ -1,0 +1,62 @@
+.chat-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: black;
+  width: 90%;
+  margin: auto auto 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.chat-textarea {
+  flex: 1;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 14px;
+  height: 40px;
+  max-height: 180px;
+  overflow-y: auto;
+  line-height: 1.4;
+  background: transparent;
+}
+
+.circle-btn {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  border: none;
+  background: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.discard-btn {
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+}
+.circle-btn:hover {
+  background: #e5e5e5;
+}
+
+.circle-btn.send {
+  background: var(--primary-color);
+  color: white;
+}
+
+.circle-btn.send:hover {
+  background: var(--hover-color);
+}
+
+.file-preview {
+  font-size: 13px;
+  color: #ffffff;
+  display: flex;
+  gap: 15px;
+}

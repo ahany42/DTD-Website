@@ -41,6 +41,7 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   const location = useLocation(); // reactive location
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const isUploadDataSet = location.pathname.startsWith("/upload-dataset");
 
   const contextValue = useMemo(
     () => ({
@@ -94,7 +95,7 @@ function App() {
       </Routes>
 
       {/* Hide widgets on admin routes */}
-      {!isAdminRoute && <ChatWidget />}
+      {!isAdminRoute && !isUploadDataSet && <ChatWidget />}
       {!isAdminRoute && <Footer />}
 
       <ScrollToTop />
