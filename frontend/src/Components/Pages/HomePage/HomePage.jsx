@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import Carousel from "../../Other/Carousel/Carousel";
 import img1 from "../../../assets/1.png";
 import img2 from "../../../assets/2.png";
@@ -30,12 +30,6 @@ const itemVariants = {
   },
 };
 
-const stats = [
-  { value: "99GB", label: "Processed Datasets" },
-  { value: "5K+", label: "Users" },
-  { value: "2K+", label: "Run Time Minutes" },
-];
-
 export default function HomePage() {
   const navigate = useNavigate();
   const { BACKEND_URL } = useContext(AppContext);
@@ -49,7 +43,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-
+  const [stats, setStats] = useState([]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -102,10 +96,19 @@ export default function HomePage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.2, ease: "easeOut" },
+      transition: { duration: 0.1, ease: "easeOut" },
     },
   };
-
+  useEffect(() => {
+    const fetchStats = async () => {
+      const response = await fetch(`${BACKEND_URL}/api/stats`);
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      }
+    };
+    fetchStats();
+  }, [BACKEND_URL]);
   return (
     <div className="page">
       {slides.length > 0 && <Carousel slides={slides} />}
@@ -140,25 +143,22 @@ export default function HomePage() {
         </motion.div>
       </div>
 
-      <motion.div
-        className="hero-stats hero"
-        variants={statsContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, amount: 0.25 }}
-      >
-        {stats.map((stat) => (
-          <motion.div
-            key={stat.label}
-            className="stat-card"
-            variants={statItem}
-            whileHover={{ scale: 1.05 }}
-          >
-            <span className="stat-value">{stat.value}</span>
-            <span className="stat-label">{stat.label}</span>
-          </motion.div>
-        ))}
-      </motion.div>
+      <div className="hero-stats hero">
+        {stats &&
+          stats.map((stat) => (
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.25 }}
+              key={stat.label}
+              className="stat-card"
+            >
+              <span className="stat-value">{stat.value}</span>
+              <span className="stat-label">{stat.label}</span>
+            </motion.div>
+          ))}
+      </div>
 
       <div className="hero">
         <motion.div

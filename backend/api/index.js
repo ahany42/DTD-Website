@@ -7,6 +7,7 @@ import authRoutes from "../routes/auth.routes.js";
 import complaintRoutes from "../routes/complaint.routes.js";
 import reportRoutes from "../routes/report.routes.js";
 import datasetRoutes from "../routes/dataset.routes.js";
+import statsRoutes from "../routes/stats.routes.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 dotenv.config();
@@ -19,6 +20,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/complaint", complaintRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/stats", statsRoutes);
 app.get("/", (req, res) => res.json({ status: "API running" }));
 
 const PORT = process.env.PORT || 4000;

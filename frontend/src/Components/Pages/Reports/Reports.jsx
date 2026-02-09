@@ -191,7 +191,17 @@ const Reports = () => {
       toast.error("Couldn't Send Complaint Please Try Again Later");
     }
   };
-
+  const viewReport = (report) => {
+    if (!report) {
+      toast.info("Your report is being generated");
+    }
+  };
+  const downLoadReport = (report) => {
+    if (!report) {
+      toast.info("Your report is being generated");
+    }
+    //TODO:Generate the pdf on spot
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setComplaintData((prev) => ({
@@ -276,6 +286,7 @@ const Reports = () => {
                       <IconButton
                         color="green"
                         variant="surface"
+                        onClick={() => downLoadReport(report.report)}
                         aria-label="Download report"
                       >
                         <FiDownload />
@@ -283,6 +294,7 @@ const Reports = () => {
                       <IconButton
                         color="indigo"
                         variant="surface"
+                        onClick={() => viewReport(report.report)}
                         aria-label="View report"
                       >
                         <FaEye />
