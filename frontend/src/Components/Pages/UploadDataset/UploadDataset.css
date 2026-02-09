@@ -36,6 +36,9 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
+.allowed-files-text {
+  text-align: center;
+}
 .discard-btn {
   width: 18px !important;
   height: 18px !important;

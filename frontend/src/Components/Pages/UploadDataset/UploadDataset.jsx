@@ -1,11 +1,12 @@
-import { useRef, useState, useEffect } from "react";
-import { FiSend, FiPaperclip, FiX } from "react-icons/fi";
+import { useRef, useState, useEffect, useContext } from "react";
+import { FiSend, FiPaperclip } from "react-icons/fi";
+import { AppContext } from "../../../App";
 import "./UploadDataset.css";
 import { Button } from "@radix-ui/themes";
 const UploadDataset = () => {
   const [text, setText] = useState("");
   const [file, setFile] = useState(null);
-
+  const { BACKEND_URL } = useContext(AppContext);
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -40,10 +41,29 @@ const UploadDataset = () => {
     }
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!text && !file) return;
 
-    console.log("Send:", text, file);
+    const formData = new FormData();
+    formData.append("prompt", text);
+
+    if (file) {
+      formData.append("file", file);
+      formData.append("fileSize", file.size); // send size
+      formData.append("fileName", file.name); // optional but useful
+    }
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/dataset/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      console.log(data);
+    } catch (err) {
+      console.error(err);
+    }
 
     setText("");
     setFile(null);
@@ -52,6 +72,9 @@ const UploadDataset = () => {
 
   return (
     <div className="page">
+      <span className="allowed-files-text">
+        Allowed File Formats .xls,.xlsx,.csv,.json
+      </span>
       <div className="chat-input-wrapper">
         <button type="button" onClick={handleFileClick} className="circle-btn">
           <FiPaperclip size={18} />

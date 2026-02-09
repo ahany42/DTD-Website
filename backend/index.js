@@ -8,11 +8,13 @@ import complaintRoutes from "./routes/complaint.routes.js";
 import reportRoutes from "./routes/report.routes.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
+import datasetRoutes from "./routes/dataset.routes.js";
 dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.use("/uploads", express.static("uploads"));
+app.use("/api/dataset", datasetRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/complaint", complaintRoutes);
