@@ -38,8 +38,7 @@ const NavBar = () => {
     } else {
       setIsAuthenticated(false);
     }
-
-    // Listen for storage events (changes from other tabs/windows)
+    setMenuOpen(false);
     const handleStorageChange = () => {
       const token = localStorage.getItem("DTD_token");
       setIsAuthenticated(!!token);
