@@ -1,8 +1,7 @@
 import Dataset from "../models/dataset.js";
 import User from "../models/User.js";
 import Report from "../models/Report.js";
-import { formatBytes } from "../utils/utils.js";
-import { formatNumber } from "../utils/utils.js";
+import { formatBytes, formatNumber } from "../utils/utils.js";
 
 export const getStats = async (req, res) => {
   try {
