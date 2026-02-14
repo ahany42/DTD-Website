@@ -102,7 +102,9 @@ export const getReportById = async (req, res) => {
       });
     }
 
-    const report = await Report.findById(id).populate("userId", "name email");
+    const report = await Report.findById(id)
+      .populate("userId", "name email")
+      .populate("dataset", "fileName fileSize");
 
     if (!report) {
       return res.status(404).json({
@@ -137,9 +139,9 @@ export const getReportsByUser = async (req, res) => {
       });
     }
 
-    const reports = await Report.find({ userId }).sort({
-      createdAt: -1,
-    });
+    const reports = await Report.find({ userId })
+      .populate("dataset", "fileName fileSize")
+      .sort({ createdAt: -1 });
 
     res.json({
       success: true,

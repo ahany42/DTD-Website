@@ -18,7 +18,6 @@ export const uploadDataset = async (req, res) => {
     const report = await Report.create({
       userId: req.body.userId, // make sure frontend sends userId
       dataset: dataset._id,
-      dataSize: dataset.fileSize,
       isComplained: false,
       isStarred: false,
       report: {}, // will be filled later

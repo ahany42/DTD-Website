@@ -16,7 +16,7 @@ const Reports = () => {
     message: "",
     reportId: "",
   });
-  const { BACKEND_URL } = useContext(AppContext);
+  const { BACKEND_URL, formatFileSize, formatDate } = useContext(AppContext);
   const [user, setUser] = useState(null);
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -75,7 +75,6 @@ const Reports = () => {
         const formattedReports = data.data.map((report) => ({
           ...report,
           runTime: "3m 25s", // Static runtime
-          datasetSize: formatFileSize(report.dataSize),
         }));
 
         setReports(formattedReports);
@@ -123,28 +122,6 @@ const Reports = () => {
       console.error("Error toggling star:", error);
       toast.error("Failed to update star status");
     }
-  };
-
-  // Format file size
-  const formatFileSize = (bytes) => {
-    if (!bytes) return "0 B";
-    const k = 1024;
-    const sizes = ["B", "KB", "MB", "GB", "TB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
-
-  // Format date
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
   };
 
   const handleShowComplaintDialog = (reportId) => {
@@ -246,6 +223,9 @@ const Reports = () => {
               <Table.ColumnHeaderCell minWidth="150px">
                 Dataset Size
               </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell minWidth="150px">
+                Dataset Name
+              </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell minWidth="100px">
                 Run Time
               </Table.ColumnHeaderCell>
@@ -279,7 +259,10 @@ const Reports = () => {
                 <Table.Row key={report._id}>
                   <Table.Cell>{report._id}</Table.Cell>
                   <Table.Cell>{formatDate(report.createdAt)}</Table.Cell>
-                  <Table.Cell>{report.datasetSize}</Table.Cell>
+                  <Table.Cell>
+                    {formatFileSize(report.dataset.fileSize)}
+                  </Table.Cell>
+                  <Table.Cell>{report.dataset.fileName}</Table.Cell>
                   <Table.Cell>{report.runTime}</Table.Cell>
                   <Table.Cell>
                     <div className="table-icon-container">
