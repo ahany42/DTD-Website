@@ -39,7 +39,6 @@ export const createComplaint = async (req, res) => {
       reportId,
     });
 
-    // 🔥 mark report as complained ON CREATE
     if (!report.isComplained) {
       report.isComplained = true;
       await report.save();

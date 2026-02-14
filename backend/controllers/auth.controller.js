@@ -84,10 +84,9 @@ export const forgotPassword = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Generate reset token
     const token = crypto.randomBytes(32).toString("hex");
     user.resetToken = token;
-    user.resetTokenExpiry = Date.now() + 3600000; // 1 hour
+    user.resetTokenExpiry = Date.now() + 3600000;
     await user.save();
 
     const resetUrl = `${process.env.FRONT_END}/reset-password/${token}`;

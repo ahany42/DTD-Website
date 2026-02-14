@@ -66,18 +66,30 @@ export const getStarredReportsByUser = async (req, res) => {
       });
     }
 
+    // pagination params
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const total = await Report.countDocuments({ userId, isStarred: true });
+
     const starredReports = await Report.find({
       userId,
       isStarred: true,
     })
-      .populate("dataset", "fileName fileSize") // dataset info
+      .populate("dataset", "fileName fileSize")
       .populate("userId", "name email")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.json({
       success: true,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
       data: starredReports,
-      count: starredReports.length,
     });
   } catch (error) {
     console.error("Error fetching starred reports:", error);
@@ -88,6 +100,7 @@ export const getStarredReportsByUser = async (req, res) => {
     });
   }
 };
+
 /**
  * Get Report By ID
  */
@@ -139,18 +152,33 @@ export const getReportsByUser = async (req, res) => {
       });
     }
 
+    // Pagination parameters
+    const page = parseInt(req.query.page) || 1; // default page 1
+    const limit = parseInt(req.query.limit) || 10; // default 10 items per page
+    const skip = (page - 1) * limit;
+
+    // Get total count for the user
+    const total = await Report.countDocuments({ userId });
+
     const reports = await Report.find({ userId })
       .populate("dataset", "fileName fileSize")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.json({
       success: true,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
       data: reports,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Failed to fetch reports",
+      error: error.message,
     });
   }
 };
@@ -160,19 +188,32 @@ export const getReportsByUser = async (req, res) => {
  */
 export const getAllReports = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const total = await Report.countDocuments();
+
     const reports = await Report.find()
       .populate("userId", "name email")
-      .populate("dataset", "fileName fileSize") // dataset info
-      .sort({ createdAt: -1 });
+      .populate("dataset", "fileName fileSize")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.json({
       success: true,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
       data: reports,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Failed to fetch reports",
+      error: error.message,
     });
   }
 };

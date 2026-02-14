@@ -6,6 +6,7 @@ import { FiDownload } from "react-icons/fi";
 import { useState, useEffect, useContext } from "react";
 import { AppContext } from "../../../App";
 import { toast } from "react-toastify";
+import Pagination from "../../Other/Pagination/Pagination.jsx";
 import Loader from "../../Other/Loader/Loader.jsx";
 const Reports = () => {
   const [filter, setFilter] = useState("ALL");
@@ -16,11 +17,13 @@ const Reports = () => {
     message: "",
     reportId: "",
   });
+  const [pagination, setPagination] = useState({ page: 1, totalPages: 0 });
   const { BACKEND_URL, formatFileSize, formatDate } = useContext(AppContext);
   const [user, setUser] = useState(null);
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [page, setPage] = useState(1);
+  const limit = 10;
   useEffect(() => {
     const userData = localStorage.getItem("DTD_user");
     if (userData) {
@@ -43,7 +46,7 @@ const Reports = () => {
     if (user?.id) {
       fetchReports(user.id);
     }
-  }, [user, filter]); // Re-fetch when user or filter changes
+  }, [user, filter, page]); // Re-fetch when user or filter changes
 
   // Fetch reports based on filter
   const fetchReports = async (userId) => {
@@ -51,10 +54,10 @@ const Reports = () => {
       let url;
       if (filter === "STARRED") {
         // Fetch starred reports
-        url = `${BACKEND_URL}/api/reports/starred/${userId}`;
+        url = `${BACKEND_URL}/api/reports/starred/${userId}?limit=${limit}&page=${page}`;
       } else {
         // Fetch all reports
-        url = `${BACKEND_URL}/api/reports/user/${userId}`;
+        url = `${BACKEND_URL}/api/reports/user/${userId}?limit=${limit}&page=${page}`;
       }
 
       const response = await fetch(url, {
@@ -78,6 +81,10 @@ const Reports = () => {
         }));
 
         setReports(formattedReports);
+        setPagination({
+          page: data.page ?? 1,
+          totalPages: data.totalPages ?? 0,
+        });
       } else {
         toast.error(data.message || "Failed to load reports");
         setReports([]);
@@ -186,7 +193,12 @@ const Reports = () => {
       [name]: value,
     }));
   };
-
+  const handleSetFilter = (newFilter) => {
+    if (filter !== newFilter) {
+      setFilter(newFilter);
+      setPage(1);
+    }
+  };
   return (
     <div className="page">
       <h1 className="title">Reports</h1>
@@ -195,7 +207,7 @@ const Reports = () => {
       >
         <Button
           variant={filter === "ALL" ? "outline" : "soft"}
-          onClick={() => setFilter("ALL")}
+          onClick={() => handleSetFilter("ALL")}
           aria-label="All Reports Filter"
         >
           All
@@ -203,7 +215,7 @@ const Reports = () => {
         <Button
           color="yellow"
           variant={filter === "STARRED" ? "outline" : "soft"}
-          onClick={() => setFilter("STARRED")}
+          onClick={() => handleSetFilter("STARRED")}
           aria-label="Stared Reports Filter"
         >
           Starred
@@ -361,6 +373,7 @@ const Reports = () => {
           </Dialog.Content>
         </Dialog.Root>
       )}
+      <Pagination pagination={pagination} onPageChange={setPage} />
     </div>
   );
 };
