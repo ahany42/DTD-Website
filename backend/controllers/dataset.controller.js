@@ -1,4 +1,4 @@
-import Dataset from "../models/dataset.js";
+import Dataset from "../models/Dataset.js";
 import Report from "../models/Report.js";
 export const uploadDataset = async (req, res) => {
   try {

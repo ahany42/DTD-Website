@@ -1,4 +1,4 @@
-import Dataset from "../models/dataset.js";
+import Dataset from "../models/Dataset.js";
 import User from "../models/User.js";
 import Report from "../models/Report.js";
 import { formatBytes, formatNumber } from "../utils/utils.js";
