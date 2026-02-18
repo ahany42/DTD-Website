@@ -11,7 +11,7 @@ import complaintRoutes from "../routes/complaint.routes.js";
 import reportRoutes from "../routes/report.routes.js";
 import datasetRoutes from "../routes/dataset.routes.js";
 import statsRoutes from "../routes/stats.routes.js";
-
+import mongoose from "mongoose";
 const app = express();
 
 // Middleware
@@ -39,6 +39,14 @@ app.use("/api/stats", statsRoutes);
 // Health checks
 app.get("/", (req, res) => res.json({ status: "API running" }));
 app.get("/api", (req, res) => res.json({ message: "API is working!" }));
-
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("MongoDB connected");
+    app.listen(4000, () =>
+      console.log(`🚀 Server running on ${process.env.BACKEND_URL}`)
+    );
+  })
+  .catch((err) => console.log("MongoDB connection error:", err));
 console.log("App initialized...");
 export default app;

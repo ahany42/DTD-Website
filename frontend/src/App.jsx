@@ -20,7 +20,7 @@ import AdminLayout from "./Layouts/AdminLayout.jsx";
 
 export const AppContext = createContext();
 
-const BACKEND_URL = "http://localhost:4000";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
 // Check if user is authenticated
 const checkAuth = () => {
