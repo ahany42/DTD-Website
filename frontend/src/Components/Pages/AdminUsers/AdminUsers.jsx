@@ -1,4 +1,4 @@
-import { Table } from "@radix-ui/themes";
+import { Table, Badge } from "@radix-ui/themes";
 import { useState, useEffect, useContext } from "react";
 import { AppContext } from "../../../App";
 import { toast } from "react-toastify";
@@ -95,7 +95,7 @@ const AdminUsers = () => {
                   <Table.Cell>{user._id}</Table.Cell>
                   <Table.Cell>{user.name}</Table.Cell>
                   <Table.Cell>{user.email}</Table.Cell>
-                  <Table.Cell>{user.role}</Table.Cell>
+                  <Table.Cell><Badge variant="soft" color={user.role === "ADMIN" ? "blue" : "green"}>{user.role}</Badge></Table.Cell>
                   <Table.Cell>{formatDate(user.createdAt)}</Table.Cell>
                 </Table.Row>
               ))
