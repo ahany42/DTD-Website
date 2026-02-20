@@ -73,13 +73,19 @@ const AdminUsers = () => {
           <Table.Body>
             {loading ? (
               <Table.Row>
-                <Table.Cell colSpan={5} style={{ textAlign: "center", padding: "20px" }}>
+                <Table.Cell
+                  colSpan={5}
+                  style={{ textAlign: "center", padding: "20px" }}
+                >
                   <Loader />
                 </Table.Cell>
               </Table.Row>
             ) : users.length === 0 ? (
               <Table.Row>
-                <Table.Cell colSpan={5} style={{ textAlign: "center", padding: "20px" }}>
+                <Table.Cell
+                  colSpan={5}
+                  style={{ textAlign: "center", padding: "20px" }}
+                >
                   No users found
                 </Table.Cell>
               </Table.Row>
