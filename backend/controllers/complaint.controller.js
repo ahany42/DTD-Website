@@ -63,15 +63,30 @@ export const createComplaint = async (req, res) => {
  */
 export const getAllComplaints = async (req, res) => {
   try {
+    // Parse pagination query params
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Total number of complaints
+    const total = await Complaint.countDocuments();
+
     const complaints = await Complaint.find()
       .populate("reportId")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       success: true,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      total: total,
       data: complaints,
     });
   } catch (error) {
+    console.error("Error fetching complaints:", error);
     res.status(500).json({
       success: false,
       message: "Failed to fetch complaints",
