@@ -212,7 +212,10 @@ export const getAllUsers = async (req, res) => {
     verifyToken(req);
 
     const users = await User.find().select("-password");
-    res.json(users);
+    res.json({
+      success: true,
+      data: users,
+    });
   } catch (err) {
     res.status(401).json({ message: err.message });
   }
