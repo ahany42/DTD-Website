@@ -3,29 +3,38 @@ import { useState, useEffect, useContext } from "react";
 import { AppContext } from "../../../App";
 import { toast } from "react-toastify";
 import Loader from "../../Other/Loader/Loader.jsx";
-
+import Pagination from "../../Other/Pagination/Pagination.jsx";
 const Messages = () => {
   const { BACKEND_URL, formatDate } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
-
+  const [pagination, setPagination] = useState({ page: 1, totalPages: 0 });
+  const [page, setPage] = useState(1);
+  const limit = 10;
   const token = localStorage.getItem("DTD_token"); // get token from localStorage
   // Fetch contact messages
   const fetchMessages = async () => {
     try {
       setLoading(true);
 
-      const response = await fetch(`${BACKEND_URL}/api/contact`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // pass the token here
-          "Cache-Control": "no-cache", // optional: prevent 304 Not Modified
-        },
-      });
+      const response = await fetch(
+        `${BACKEND_URL}/api/contact?page=${page}&limit=${limit}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // pass the token here
+            "Cache-Control": "no-cache", // optional: prevent 304 Not Modified
+          },
+        }
+      );
       const data = await response.json();
       if (data.success) {
         setMessages(data.data);
+        setPagination({
+          page: data.page ?? 1,
+          totalPages: data.totalPages ?? 0,
+        });
       } else {
         toast.error(data.message || "Failed to load messages");
         setMessages([]);
@@ -41,7 +50,7 @@ const Messages = () => {
 
   useEffect(() => {
     fetchMessages();
-  }, []);
+  }, [page]);
 
   // Update status
   const handleStatusChange = async (messageId, newStatus) => {
@@ -150,6 +159,7 @@ const Messages = () => {
           </Table.Body>
         </Table.Root>
       </div>
+      <Pagination pagination={pagination} onPageChange={setPage} />
     </div>
   );
 };

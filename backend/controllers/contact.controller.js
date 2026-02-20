@@ -30,11 +30,27 @@ export const createContact = async (req, res) => {
 // Get all messages
 export const getAllContacts = async (req, res) => {
   try {
-    const contacts = await Contact.find().sort({ createdAt: -1 });
+    // Parse page & limit from query params, default to page 1 & 10 items per page
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Total number of contacts
+    const total = await Contact.countDocuments();
+
+    // Fetch contacts with pagination, sorted by newest first
+    const contacts = await Contact.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       success: true,
-      data: contacts, // wrap the array in data
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      total: total,
+      data: contacts,
     });
   } catch (error) {
     console.error("Error fetching contacts:", error);
