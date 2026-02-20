@@ -134,7 +134,7 @@ label {
 }
 .table-scroll-wrapper {
   overflow-x: auto; /* horizontal scroll */
-  margin: 0 80px 20px 20px;
+  margin: 0 20px 20px 20px;
   display: block; /* flex is unnecessary for table scroll */
 }
 .admin-table {
