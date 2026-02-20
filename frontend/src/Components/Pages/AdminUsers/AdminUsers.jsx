@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import Loader from "../../Other/Loader/Loader.jsx";
 
 const AdminUsers = () => {
-  const { BACKEND_URL } = useContext(AppContext);
+  const { BACKEND_URL, formatDate } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
 
@@ -41,18 +41,6 @@ const AdminUsers = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "-";
-    const date = new Date(dateString);
-    return date.toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   return (
     <div>

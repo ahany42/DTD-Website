@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import Loader from "../../Other/Loader/Loader.jsx";
 
 const Messages = () => {
-  const { BACKEND_URL } = useContext(AppContext);
+  const { BACKEND_URL, formatDate } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
 
@@ -77,19 +77,6 @@ const Messages = () => {
     }
   };
 
-  // Format date
-  const formatDate = (dateString) => {
-    if (!dateString) return "-";
-    const date = new Date(dateString);
-    return date.toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   return (
     <div>
       <h1 className="title">Contact Messages</h1>
@@ -145,8 +132,8 @@ const Messages = () => {
                           msg.status === "RECEIVED"
                             ? "yellow"
                             : msg.status === "PENDING"
-                            ? "cyan"
-                            : "green"
+                              ? "cyan"
+                              : "green"
                         }
                       />
                       <Select.Content color="yellow">
