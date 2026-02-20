@@ -3,28 +3,37 @@ import { useState, useEffect, useContext } from "react";
 import { AppContext } from "../../../App";
 import { toast } from "react-toastify";
 import Loader from "../../Other/Loader/Loader.jsx";
-
+import Pagination from "../../Other/Pagination/Pagination.jsx";
 const AdminUsers = () => {
   const { BACKEND_URL, formatDate } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
-
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ page: 1, totalPages: 0 });
   const token = localStorage.getItem("DTD_token");
+  const limit = 10;
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${BACKEND_URL}/api/auth/users`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          "Cache-Control": "no-cache",
-        },
-      });
+      const response = await fetch(
+        `${BACKEND_URL}/api/auth/users?page=${page}&limit=${limit}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "Cache-Control": "no-cache",
+          },
+        }
+      );
       const data = await response.json();
       if (data.success) {
         setUsers(data.data);
+        setPagination({
+          page: data.page ?? 1,
+          totalPages: data.totalPages ?? 0,
+        });
       } else {
         toast.error(data.message || "Failed to load users");
         setUsers([]);
@@ -40,7 +49,7 @@ const AdminUsers = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [page]);
 
   return (
     <div>
@@ -83,7 +92,14 @@ const AdminUsers = () => {
                   <Table.Cell>{user._id}</Table.Cell>
                   <Table.Cell>{user.name}</Table.Cell>
                   <Table.Cell>{user.email}</Table.Cell>
-                  <Table.Cell><Badge variant="soft" color={user.role === "ADMIN" ? "blue" : "green"}>{user.role}</Badge></Table.Cell>
+                  <Table.Cell>
+                    <Badge
+                      variant="soft"
+                      color={user.role === "ADMIN" ? "blue" : "green"}
+                    >
+                      {user.role}
+                    </Badge>
+                  </Table.Cell>
                   <Table.Cell>{formatDate(user.createdAt)}</Table.Cell>
                 </Table.Row>
               ))
@@ -91,6 +107,7 @@ const AdminUsers = () => {
           </Table.Body>
         </Table.Root>
       </div>
+      <Pagination pagination={pagination} onPageChange={setPage} />
     </div>
   );
 };

@@ -211,9 +211,23 @@ export const getAllUsers = async (req, res) => {
   try {
     verifyToken(req);
 
-    const users = await User.find().select("-password");
+    // Read page & limit from query, default to page 1 and 10 items per page
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Get total number of users
+    const total = await User.countDocuments();
+
+    // Fetch users with pagination, exclude passwords
+    const users = await User.find().select("-password").skip(skip).limit(limit);
+
     res.json({
       success: true,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      total: total,
       data: users,
     });
   } catch (err) {
