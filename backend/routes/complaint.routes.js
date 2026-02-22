@@ -110,6 +110,6 @@ const router = express.Router();
  */
 
 router.post("/", createComplaint);
-router.get("/", getAllComplaints);
+router.get("/complaints", getAllComplaints);
 
 export default router;

@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import SideBar from "../Components/Sections/SideBar/SideBar.jsx";
 import Messages from "../Components/Pages/Messages/Messages.jsx";
 import AdminUsers from "../Components/Pages/AdminUsers/AdminUsers.jsx"; 
+import AdminComplaints from "../Components/Pages/AdminComplaints/AdminComplaints.jsx";
 export default function AdminLayout({ children }) {
   return (
     <div style={{ display: "flex" }} className="page">
@@ -11,6 +12,7 @@ export default function AdminLayout({ children }) {
         <Routes>
           <Route path="/messages" element={<Messages />} />
           <Route path="/users" element={<AdminUsers />} />
+          <Route path="/complaints" element={<AdminComplaints />} />
         </Routes>
       </div>
     </div>
