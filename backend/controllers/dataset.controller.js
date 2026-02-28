@@ -30,6 +30,8 @@ export const uploadDataset = async (req, res) => {
       dataset,
       report,
     });
+    datasetUrl = `http://localhost:4000/${dataset.filePath.replace(/\\/g, "/")}`;
+    runPipeline(req, res, datasetUrl, dataset.prompt); // Start the pipeline immediately after upload
   } catch (error) {
     res.status(500).json({
       message: "Upload failed",
@@ -38,9 +40,7 @@ export const uploadDataset = async (req, res) => {
   }
 };
 
-export const runPipeline = async (req, res) => {
-  const { data_path, target_column } = req.body;
-
+export const runPipeline = async (req, res, data_path, target_column) => {
   try {
     const response = await axios({
       method: "post",

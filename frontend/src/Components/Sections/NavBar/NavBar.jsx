@@ -74,13 +74,7 @@ const NavBar = () => {
                 <MdFileUpload />
                 Upload Dataset
               </TabNav.Link>
-              <TabNav.Link
-                onClick={() => navigate("/dashboard")}
-                active={location.pathname === "/dashboard"}
-                className={location.pathname === "/dashboard" && "primary-bg"}
-              >
-                <IoIosStats /> Dashboard
-              </TabNav.Link>
+
               <TabNav.Link
                 onClick={() => navigate("/reports")}
                 active={location.pathname === "/reports"}
@@ -142,13 +136,6 @@ const NavBar = () => {
               >
                 <MdFileUpload />
                 <button>Upload Dataset</button>
-              </div>
-              <div
-                className="mobile-nav-icon-text"
-                onClick={() => navigate("/dashboard")}
-              >
-                <IoIosStats />
-                <button>Dashboard</button>
               </div>
 
               <div
