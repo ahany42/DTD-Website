@@ -60,13 +60,48 @@ const UploadDataset = () => {
         method: "POST",
         body: formData,
       });
-      if (res.ok) {
-        toast.success("Dataset uploaded successfully!");
-      } else {
-        toast.error("Upload failed. Please try again.");
-      }
       const data = await res.json();
-      console.log(data);
+
+      if (!res.ok) {
+        toast.error("Upload failed. Please try again.");
+        return;
+      }
+
+      toast.success("Dataset uploaded successfully!");
+
+      console.log("Uploaded dataset:", data);
+
+      // get datasetId from backend response
+      const datasetId = data.dataset?._id;
+      console.log("Dataset ID:", datasetId);
+      if (!datasetId) {
+        toast.error("Dataset ID not returned from server");
+        return;
+      }
+      // Start listening to pipeline stream
+      const eventSource = new EventSource(
+        `${BACKEND_URL}/api/dataset/run-pipeline/${datasetId}`
+      );
+
+      eventSource.onmessage = (event) => {
+        const streamData = JSON.parse(event.data);
+        console.log("Pipeline update:", streamData);
+
+        if (streamData.status === "completed") {
+          toast.success("Pipeline completed!");
+          eventSource.close();
+        }
+
+        if (streamData.error) {
+          toast.error(streamData.error);
+          eventSource.close();
+        }
+      };
+
+      eventSource.onerror = () => {
+        console.error("SSE connection error");
+        eventSource.close();
+      };
     } catch (err) {
       toast.error(err.message || "An error occurred. Please try again.");
     }
