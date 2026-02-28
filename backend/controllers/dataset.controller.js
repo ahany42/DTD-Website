@@ -30,7 +30,7 @@ export const uploadDataset = async (req, res) => {
       dataset,
       report,
     });
-    datasetUrl = `http://localhost:4000/${dataset.filePath.replace(/\\/g, "/")}`;
+    const datasetUrl = "http://localhost:4000/datasets/1772312887680.csv";
     runPipeline(req, res, datasetUrl, dataset.prompt); // Start the pipeline immediately after upload
   } catch (error) {
     res.status(500).json({
