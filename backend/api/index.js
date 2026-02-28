@@ -4,7 +4,7 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-
+import path from "path";
 import contactRoutes from "../routes/contact.routes.js";
 import authRoutes from "../routes/auth.routes.js";
 import complaintRoutes from "../routes/complaint.routes.js";
@@ -35,7 +35,7 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/complaint", complaintRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/stats", statsRoutes);
-
+app.use("/datasets", express.static(path.join(process.cwd(), "datasets")));
 // Health checks
 app.get("/", (req, res) => res.json({ status: "API running" }));
 app.get("/api", (req, res) => res.json({ message: "API is working!" }));
