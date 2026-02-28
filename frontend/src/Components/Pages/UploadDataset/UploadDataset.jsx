@@ -45,6 +45,8 @@ const UploadDataset = () => {
   const handleSend = async () => {
     if (!text && !file) return;
 
+    text.replace(/[\[\]'"]/g, "").trim(); 
+    console.log("Cleaned prompt:", text);
     const formData = new FormData();
     formData.append("prompt", text);
 
