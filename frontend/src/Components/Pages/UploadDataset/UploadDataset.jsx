@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { FiSend, FiPaperclip } from "react-icons/fi";
 import { AppContext } from "../../../App";
 import "./UploadDataset.css";
@@ -11,6 +12,7 @@ const UploadDataset = () => {
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
   const user = JSON.parse(localStorage.getItem("DTD_user"));
+  const navigate = useNavigate();
   // Resize whenever text changes
   useEffect(() => {
     const el = textareaRef.current;
@@ -45,7 +47,7 @@ const UploadDataset = () => {
   const handleSend = async () => {
     if (!text && !file) return;
 
-    text.replace(/[\[\]'"]/g, "").trim(); 
+    text.replace(/[\[\]'"]/g, "").trim();
     console.log("Cleaned prompt:", text);
     const formData = new FormData();
     formData.append("prompt", text);
@@ -70,6 +72,7 @@ const UploadDataset = () => {
       }
 
       toast.success("Dataset uploaded successfully!");
+      navigate(`/view-report/${data.report._id}`); // navigate to report view
 
       console.log("Uploaded dataset:", data);
 

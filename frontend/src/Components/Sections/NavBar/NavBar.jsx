@@ -72,7 +72,7 @@ const NavBar = () => {
                 }
               >
                 <MdFileUpload />
-                Upload Dataset
+                Create Your Report
               </TabNav.Link>
 
               <TabNav.Link
@@ -135,7 +135,7 @@ const NavBar = () => {
                 onClick={() => navigate("/upload-dataset")}
               >
                 <MdFileUpload />
-                <button>Upload Dataset</button>
+                <button>Create Your Report</button>
               </div>
 
               <div

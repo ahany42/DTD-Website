@@ -7,7 +7,6 @@ import NavBar from "./Components/Sections/NavBar/NavBar.jsx";
 import Footer from "./Components/Sections/Footer/Footer.jsx";
 import ReadMore from "./Components/Pages/ReadMore/ReadMore.jsx";
 import UploadDataset from "./Components/Pages/UploadDataset/UploadDataset.jsx";
-import Dashboard from "./Components/Pages/Dashboard/Dashboard.jsx";
 import Login from "./Components/Pages/Login/Login.jsx";
 import Reports from "./Components/Pages/Reports/Reports.jsx";
 import { ToastContainer } from "react-toastify";
@@ -17,7 +16,7 @@ import SignUp from "./Components/Pages/SignUp/SignUp.jsx";
 import ForgotPassword from "./Components/Pages/ForgotPassword/ForgotPassword.jsx";
 import ResetPassword from "./Components/Pages/ResetPassword/ResetPassword.jsx";
 import AdminLayout from "./Layouts/AdminLayout.jsx";
-
+import ViewReport from "./Components/Pages/ViewReport/ViewReport.jsx";
 export const AppContext = createContext();
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
@@ -112,19 +111,18 @@ function App() {
         />
 
         <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
           path="/reports"
           element={
             <ProtectedRoute>
               <Reports />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/view-report/:id"
+          element={
+            <ProtectedRoute>
+              <ViewReport />
             </ProtectedRoute>
           }
         />
