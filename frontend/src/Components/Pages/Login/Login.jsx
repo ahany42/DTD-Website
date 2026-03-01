@@ -30,8 +30,9 @@ const Login = () => {
       // When storing user data
       localStorage.setItem("DTD_user", JSON.stringify(data.user));
       toast.success(`Welcome back ${data.user.name}`);
-
-      navigate("/");
+      if (data.user.role === "ADMIN") {
+        navigate("/admin");
+      } else navigate("/");
     } catch (err) {
       console.error(err);
       toast.error("Something went wrong. Please try again.");
