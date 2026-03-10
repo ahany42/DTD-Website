@@ -1,0 +1,30 @@
+.stat-title {
+  color: #ffffff;
+  border-bottom: 1px solid #444;
+  padding-bottom: 8px;
+}
+.stat-sub-container {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.stat-container {
+  padding: 20px;
+  background-color: #121212;
+  border-radius: 10px;
+}
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background-color: #1e1e1e;
+  border-radius: 6px;
+  color: #ddd;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+}
+.item-title {
+  font-weight: 600;
+  color: #fff;
+}
