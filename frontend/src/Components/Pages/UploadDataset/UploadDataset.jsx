@@ -79,13 +79,15 @@ const UploadDataset = () => {
       // get datasetId from backend response
       const datasetId = data.dataset?._id;
       console.log("Dataset ID:", datasetId);
+      const reportId = data.report?._id;
+      console.log("Report ID:", reportId);
       if (!datasetId) {
         toast.error("Dataset ID not returned from server");
         return;
       }
       // Start listening to pipeline stream
       const eventSource = new EventSource(
-        `${BACKEND_URL}/api/dataset/run-pipeline/${datasetId}`
+        `${BACKEND_URL}/api/dataset/run-pipeline/${datasetId}/${reportId}`
       );
 
       eventSource.onmessage = (event) => {
