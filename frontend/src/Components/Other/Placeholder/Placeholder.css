@@ -1,0 +1,35 @@
+.PlaceholderDiv {
+  margin: auto;
+  text-align: center;
+  min-height: 85vh;
+}
+.PlaceholderImage {
+  width: 50%;
+}
+.TextContainer {
+  margin: 0.5em;
+}
+.placeholder-btn {
+  width: 250px;
+  height: 60px;
+}
+.nomargin {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.PlaceholderImageSmall {
+  width: 25%;
+  margin: 0 auto;
+}
+@media (max-width: 650px) {
+  .PlaceholderDiv {
+    min-height: 72vh;
+  }
+  .PlaceholderImage {
+    width: 300px !important;
+    overflow: hidden !important;
+  }
+  .PlaceholderImageSmall {
+    width: 200px !important;
+  }
+}

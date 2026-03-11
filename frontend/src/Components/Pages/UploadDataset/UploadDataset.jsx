@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiSend, FiPaperclip } from "react-icons/fi";
-import { AppContext } from "../../../App";
+import { AppContext, ReportContext } from "../../../App";
 import "./UploadDataset.css";
 import { Button } from "@radix-ui/themes";
 import { toast } from "react-toastify";
@@ -9,6 +9,7 @@ const UploadDataset = () => {
   const [text, setText] = useState("");
   const [file, setFile] = useState(null);
   const { BACKEND_URL } = useContext(AppContext);
+  const { triggerReportRefresh } = useContext(ReportContext);
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
   const user = JSON.parse(localStorage.getItem("DTD_user"));
@@ -47,7 +48,7 @@ const UploadDataset = () => {
   const handleSend = async () => {
     if (!text && !file) return;
 
-    text.replace(/[\[\]'"]/g, "").trim();
+    text.replace(/\[\]'"]/g, "").trim();
     console.log("Cleaned prompt:", text);
     const formData = new FormData();
     formData.append("prompt", text);
@@ -79,26 +80,40 @@ const UploadDataset = () => {
       // get datasetId from backend response
       const datasetId = data.dataset?._id;
       console.log("Dataset ID:", datasetId);
+      const reportId = data.report?._id;
+      console.log("Report ID:", reportId);
       if (!datasetId) {
         toast.error("Dataset ID not returned from server");
         return;
       }
       // Start listening to pipeline stream
       const eventSource = new EventSource(
-        `${BACKEND_URL}/api/dataset/run-pipeline/${datasetId}`
+        `${BACKEND_URL}/api/dataset/run-pipeline/${datasetId}/${reportId}`
       );
 
       eventSource.onmessage = (event) => {
         const streamData = JSON.parse(event.data);
+        triggerReportRefresh();
         console.log("Pipeline update:", streamData);
+        console.log("here");
+        if (streamData.error) {
+          toast.error(streamData.error);
+          eventSource.close();
+          return;
+        }
+
+        // Push updates to context
+        console.log(streamData.agent);
+        if (streamData.agent && streamData.output) {
+          console.log(streamData.agent);
+          triggerReportRefresh(); // tell ViewReport to fetch new data
+        }
+        if (streamData) {
+          triggerReportRefresh();
+        }
 
         if (streamData.status === "completed") {
           toast.success("Pipeline completed!");
-          eventSource.close();
-        }
-
-        if (streamData.error) {
-          toast.error(streamData.error);
           eventSource.close();
         }
       };

@@ -3,7 +3,10 @@ import Report from "../models/Report.js";
 import axios from "axios";
 import fs from "fs";
 import FormData from "form-data";
+import dotenv from "dotenv";
 
+dotenv.config();
+const AI_BACKEND_URL = process.env.AI_BACKEND_URL;
 export const uploadDataset = async (req, res) => {
   try {
     if (!req.file) {
@@ -32,8 +35,6 @@ export const uploadDataset = async (req, res) => {
       dataset,
       report,
     });
-    // datasetUrl = `http://localhost:4000/${dataset.filePath.replace(/\\/g, "/")}`;
-    // runPipeline(req, res, datasetUrl, dataset.prompt); // Start the pipeline immediately after upload
   } catch (error) {
     res.status(500).json({
       message: "Upload failed",
@@ -42,63 +43,10 @@ export const uploadDataset = async (req, res) => {
   }
 };
 
-// export const runPipeline = async (req, res, filePath, target_column) => {
-//   try {
-//     const form = new FormData();
-
-//     // Attach actual CSV file
-//     form.append("file", fs.createReadStream(filePath));
-
-//     // Attach metadata
-//     form.append("target_column", target_column);
-//     form.append("task_type", "classification"); // or dynamic if needed
-
-//     const response = await axios({
-//       method: "post",
-//       url: "http://127.0.0.1:8000/run-pipeline",
-//       data: form,
-//       headers: form.getHeaders(),
-//       responseType: "stream",
-//     });
-
-//     // SSE headers to frontend
-//     res.setHeader("Content-Type", "text/event-stream");
-//     res.setHeader("Cache-Control", "no-cache");
-//     res.setHeader("Connection", "keep-alive");
-
-//     response.data.on("data", (chunk) => {
-//       const lines = chunk.toString().split("\n");
-
-//       for (const line of lines) {
-//         if (line.trim().startsWith("data: ")) {
-//           res.write(`${line}\n\n`);
-
-//           try {
-//             const rawJson = line.replace("data: ", "").trim();
-//             const jsonData = JSON.parse(rawJson);
-//             if (jsonData.agent) {
-//               console.log(`Step Complete: ${jsonData.agent}`);
-//               console.log(jsonData.output);
-//             }
-//           } catch (e) {
-//             // Ignore partial chunks
-//           }
-//         }
-//       }
-//     });
-
-//     response.data.on("end", () => {
-//       res.end();
-//     });
-//   } catch (error) {
-//     res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
-//     res.end();
-//   }
-// };
-
 export const runPipelineStream = async (req, res) => {
   try {
-    const datasetId = req.params.id;
+    const datasetId = req.params.datasetId;
+    const reportId = req.params.reportId;
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
@@ -116,7 +64,7 @@ export const runPipelineStream = async (req, res) => {
 
     const response = await axios({
       method: "post",
-      url: "http://127.0.0.1:8000/run-pipeline",
+      url: `${AI_BACKEND_URL}/run-pipeline/${datasetId}/${reportId}`,
       data: form,
       headers: form.getHeaders(),
       responseType: "stream",
