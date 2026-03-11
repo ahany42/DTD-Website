@@ -121,10 +121,10 @@ export default function ViewReport() {
         </Button>
         <Button
           onClick={handleNext}
-          disabled={
-            activeStep === steps.length - 1 ||
-            !steps.slice(activeStep + 1).some((s) => hasStepData(s.key))
-          }
+          // disabled={
+          //   activeStep === steps.length - 1 ||
+          //   !steps.slice(activeStep + 1).some((s) => hasStepData(s.key))
+          // }
           size="2"
           variant="soft"
           color="indigo"
