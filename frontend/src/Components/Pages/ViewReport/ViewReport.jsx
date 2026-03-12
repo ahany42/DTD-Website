@@ -22,7 +22,7 @@ export default function ViewReport() {
     { label: "Raw Data", key: "raw_analysis" },
     { label: "Preprocessing", key: "preprocessing" },
     { label: "Clean Data", key: "clean_analysis" },
-    { label: "Automl", key: "autom_ml" },
+    { label: "Automl", key: "automl_training" },
   ];
 
   const connectorStyleConfig = {
@@ -121,11 +121,10 @@ export default function ViewReport() {
         </Button>
         <Button
           onClick={handleNext}
-          //FIXME:Remove comments
-          // disabled={
-          //   activeStep === steps.length - 1 ||
-          //   !steps.slice(activeStep + 1).some((s) => hasStepData(s.key))
-          // }
+          disabled={
+            activeStep === steps.length - 1 ||
+            !steps.slice(activeStep + 1).some((s) => hasStepData(s.key))
+          }
           size="2"
           variant="soft"
           color="indigo"
@@ -144,7 +143,7 @@ export default function ViewReport() {
                 return <Preprocessing data={stepData} />;
               case "clean_analysis":
                 return <Clean data={stepData} />;
-              case "autom_ml":
+              case "automl_training":
                 return <Automl data={stepData} />;
               default:
                 return null;
