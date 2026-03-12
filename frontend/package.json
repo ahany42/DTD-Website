@@ -12,9 +12,11 @@
   "dependencies": {
     "@radix-ui/themes": "^3.2.1",
     "framer-motion": "^12.29.2",
+    "lucide-react": "^0.576.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-form-stepper": "^2.0.3",
+    "react-form-stepper-dynamic-color": "^2.0.3",
     "react-icons": "^5.5.0",
     "react-multi-carousel": "^2.8.6",
     "react-pro-sidebar": "^1.1.0",
