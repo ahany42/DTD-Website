@@ -35,7 +35,7 @@ const formatFileSize = (bytes) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
 const formatDate = (dateString) => {
-  if (!dateString) return "N/A";
+  if (!dateString) return "-";
   const date = new Date(dateString);
   return date.toLocaleString("en-US", {
     year: "numeric",
@@ -45,7 +45,29 @@ const formatDate = (dateString) => {
     minute: "2-digit",
   });
 };
+const formatCustomTimestamp = (timestamp) => {
+  if (!timestamp) return "-";
 
+  const [datePart, timePart] = timestamp.split("_");
+
+  const year = datePart.slice(0, 4);
+  const month = datePart.slice(4, 6) - 1; // JS months are 0-indexed
+  const day = datePart.slice(6, 8);
+
+  const hour = timePart.slice(0, 2);
+  const minute = timePart.slice(2, 4);
+  const second = timePart.slice(4, 6);
+
+  const date = new Date(year, month, day, hour, minute, second);
+
+  return date.toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 // Protected Routes
 const ProtectedRoute = ({ children }) => {
   if (!checkAuth()) return <Navigate to="/login" replace />;
@@ -65,7 +87,13 @@ function App() {
 
   // App-level context
   const appContextValue = useMemo(
-    () => ({ BACKEND_URL, checkAuth, formatFileSize, formatDate }),
+    () => ({
+      BACKEND_URL,
+      checkAuth,
+      formatFileSize,
+      formatDate,
+      formatCustomTimestamp,
+    }),
     []
   );
   const [reportRefreshFlag, setReportRefreshFlag] = useState(0);

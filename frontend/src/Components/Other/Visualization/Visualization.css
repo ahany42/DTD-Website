@@ -1,7 +1,9 @@
 .stat-title {
-  color: #ffffff;
+  color: var(--light-blue);
   border-bottom: 1px solid #444;
-  padding-bottom: 8px;
+  padding: 10px 0;
+  font-size: 18px;
+  font-weight: 400;
 }
 .stat-sub-container {
   display: grid;
@@ -12,9 +14,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
-  width: 70%;
   margin: 20px 0;
   max-width: 800px;
 }

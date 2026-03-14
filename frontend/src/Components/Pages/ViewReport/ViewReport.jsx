@@ -90,7 +90,7 @@ export default function ViewReport() {
   const stepData = report?.[currentStepKey];
 
   return (
-    <div style={{ padding: "20px" }} className="page">
+    <div style={{ padding: "15px" }} className="page">
       <Stepper
         activeStep={activeStep}
         steps={steps}

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Button, Badge } from "@radix-ui/themes";
+import { useContext } from "react";
+import { AppContext } from "../../../App";
 import "../Visualization/Visualization.css";
 const automlData = {
   run_timestamp: "20260228_155942",
@@ -89,12 +91,17 @@ function renderMessage(msg) {
   return msg.split(/(\*\*.*?\*\*|`.*?`)/).map((part, i) => {
     if (part.startsWith("**"))
       return (
-        <span key={i} style={{ color: "#58a6ff" }}>
+        <span key={i} className="light-blue-text">
           {part.slice(2, -2)}
         </span>
       );
 
-    if (part.startsWith("`")) return <code key={i}>{part.slice(1, -1)}</code>;
+    if (part.startsWith("`"))
+      return (
+        <code key={i} className="light-blue-text">
+          {part.slice(1, -1)}
+        </code>
+      );
 
     return part;
   });
@@ -107,10 +114,11 @@ export default function Automl() {
   const cm = tr.confusion_matrix;
 
   const score = (tr.best_score * 100).toFixed(2);
+  const { formatCustomTimestamp } = useContext(AppContext);
 
   return (
     <div className="stat-container">
-      <div className="stat-title">
+      <div>
         <h2 className="stat-title">⚙ AutoML Report</h2>
 
         <div className="stat-header-container">
@@ -123,10 +131,7 @@ export default function Automl() {
 
           <DownloadButton reportId={reportId} />
           <span className="timestamp">
-            {d.run_timestamp.replace(
-              /(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})/,
-              "$1-$2-$3 $4:$5:$6"
-            )}
+            {formatCustomTimestamp(d.run_timestamp)}
           </span>
         </div>
       </div>
@@ -177,7 +182,7 @@ export default function Automl() {
         </div>
       </div>
 
-      <div className="section-title">Confusion Matrix</div>
+      <h2 className="stat-title">Confusion Matrix</h2>
 
       <div className="card">
         <div className="matrix">
@@ -195,11 +200,11 @@ export default function Automl() {
         </div>
       </div>
 
-      <div className="section-title">Agent Messages</div>
+      <h2 className="stat-title">Agent Messages</h2>
 
       {d.agent_messages.map((m, i) => (
         <div key={i}>
-          <div style={{ color: "#58a6ff", fontSize: "12px" }}>{m.agent}</div>
+          <h2 className="stat-title">{m.agent}</h2>
 
           <div className="message-box">
             {m.message.split("\n\n").map((p, i) => (

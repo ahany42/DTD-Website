@@ -3,6 +3,7 @@ import { CiStar } from "react-icons/ci";
 import { FaEye } from "react-icons/fa";
 import { MdOutlineReportProblem } from "react-icons/md";
 import { FiDownload } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { AppContext } from "../../../App";
 import { toast } from "react-toastify";
@@ -10,6 +11,7 @@ import Pagination from "../../Other/Pagination/Pagination.jsx";
 import Loader from "../../Other/Loader/Loader.jsx";
 const Reports = () => {
   const [filter, setFilter] = useState("ALL");
+  const navigate = useNavigate();
   const [showComplaintDialog, setShowComplaintDialog] = useState(false);
   const [complaintData, setComplaintData] = useState({
     name: "",
@@ -175,9 +177,11 @@ const Reports = () => {
       toast.error("Couldn't Send Complaint Please Try Again Later");
     }
   };
-  const viewReport = (report) => {
-    if (!report) {
+  const viewReport = (id) => {
+    if (!id) {
       toast.info("Your report is being generated");
+    } else {
+      navigate(`/view-report/${id}`);
     }
   };
   const downLoadReport = (report) => {
@@ -289,7 +293,7 @@ const Reports = () => {
                       <IconButton
                         color="indigo"
                         variant="surface"
-                        onClick={() => viewReport(report.report)}
+                        onClick={() => viewReport(report._id)}
                         aria-label="View report"
                       >
                         <FaEye />
