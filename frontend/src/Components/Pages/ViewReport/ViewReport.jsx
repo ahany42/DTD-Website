@@ -22,18 +22,17 @@ export default function ViewReport() {
     { label: "Raw Data", key: "raw_analysis" },
     { label: "Preprocessing", key: "preprocessing" },
     { label: "Clean Data", key: "clean_analysis" },
-    { label: "Automl", key: "automl_training" },
+    { label: "AutoML", key: "automl_training" },
   ];
 
   const connectorStyleConfig = {
     circleFontSize: "1.2rem",
     activeBgColor: "blue",
     completedBgColor: "blue",
-    inactiveBgColor: "#ccc",
     activeColor: "blue",
     completedColor: "blue",
-    activeTextColor: "#fff",
-    completedTextColor: "#fff",
+    activeTextColor: "white",
+    completedTextColor: "white",
     inactiveTextColor: "#333",
     labelColor: "#333",
     borderRadius: "50%",
@@ -84,7 +83,12 @@ export default function ViewReport() {
     }
   };
 
-  if (error) return <div style={{ padding: "20px" }}>Report Not Found</div>;
+  if (error)
+    return (
+      <div style={{ padding: "20px" }} className="page">
+        Report Not Found
+      </div>
+    );
 
   const currentStepKey = steps[activeStep].key;
   const stepData = report?.[currentStepKey];

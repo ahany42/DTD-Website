@@ -25,7 +25,7 @@ const Reports = () => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const limit = 10;
+  const limit = 15;
   useEffect(() => {
     const userData = localStorage.getItem("DTD_user");
     if (userData) {
@@ -184,12 +184,12 @@ const Reports = () => {
       navigate(`/view-report/${id}`);
     }
   };
-  const downLoadReport = (report) => {
-    if (!report) {
-      toast.info("Your report is being generated");
-    }
-    //TODO:Generate the pdf on spot
-  };
+  // const downLoadReport = (report) => {
+  //   if (!report) {
+  //     toast.info("Your report is being generated");
+  //   }
+  //   //TODO:Generate the pdf on spot
+  // };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setComplaintData((prev) => ({
@@ -282,16 +282,16 @@ const Reports = () => {
                   <Table.Cell>{report.runTime}</Table.Cell>
                   <Table.Cell>
                     <div className="table-icon-container">
-                      <IconButton
+                      {/* <IconButton
                         color="green"
                         variant="surface"
                         onClick={() => downLoadReport(report.report)}
                         aria-label="Download report"
                       >
                         <FiDownload />
-                      </IconButton>
+                      </IconButton> */}
                       <IconButton
-                        color="indigo"
+                        color="green"
                         variant="surface"
                         onClick={() => viewReport(report._id)}
                         aria-label="View report"
