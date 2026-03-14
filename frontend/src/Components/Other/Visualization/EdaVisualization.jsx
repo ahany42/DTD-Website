@@ -120,7 +120,7 @@ export default function EdaVisualization({ dataJson }) {
         </div>
       </section>
       {/* FEATURE IMPORTANCE */}
-      <section className="stat-sub-container">
+      <section className="stat-container">
         <h2>Feature Importance (Cramer's V)</h2>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={relationshipData}>
@@ -135,7 +135,7 @@ export default function EdaVisualization({ dataJson }) {
       </section>
 
       {/* COLUMNS TOP VALUES */}
-      <section className="stat-sub-container">
+      <section className="stat-container">
         <h2>Columns Top Values</h2>
         {columns.map((col) => (
           <div key={col.title} style={{ marginBottom: 40 }}>
@@ -153,7 +153,7 @@ export default function EdaVisualization({ dataJson }) {
         ))}
       </section>
 
-      <section className="stat-sub-container">
+      <section className="stat-container">
         <h2>Warnings</h2>
 
         <div style={{ display: "grid", gap: "8px", marginTop: 12 }}>

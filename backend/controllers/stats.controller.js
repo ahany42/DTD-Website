@@ -12,18 +12,17 @@ export const getStats = async (req, res) => {
     const totalDatasetSizeBytes = datasetSizeAgg[0]?.totalSize || 0;
     const totalUsers = await User.countDocuments();
     const totalReports = await Report.countDocuments();
-    const datasetRunTimeAgg = await Dataset.aggregate([
-      { $group: { _id: null, totalRunTime: { $sum: "$runTimeMinutes" } } },
-    ]);
-    const totalRunTimeDatasets = datasetRunTimeAgg[0]?.totalRunTime || 0;
     const reportRunTimeAgg = await Report.aggregate([
       {
-        $group: { _id: null, totalRunTime: { $sum: "$report.runTimeMinutes" } },
+        $group: {
+          _id: null,
+          totalRunTime: { $sum: "$runtime_seconds" },
+        },
       },
     ]);
     const totalRunTimeReports = reportRunTimeAgg[0]?.totalRunTime || 0;
 
-    const totalRunTimeMinutes = totalRunTimeDatasets + totalRunTimeReports;
+    const totalRunTimeMinutes = totalRunTimeReports / 60;
 
     const stats = [
       {

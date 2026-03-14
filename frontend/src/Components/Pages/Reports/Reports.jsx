@@ -20,7 +20,8 @@ const Reports = () => {
     reportId: "",
   });
   const [pagination, setPagination] = useState({ page: 1, totalPages: 0 });
-  const { BACKEND_URL, formatFileSize, formatDate } = useContext(AppContext);
+  const { BACKEND_URL, formatFileSize, formatDate, formatRunTime } =
+    useContext(AppContext);
   const [user, setUser] = useState(null);
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -79,7 +80,6 @@ const Reports = () => {
         // Add static runtime and format dataset size
         const formattedReports = data.data.map((report) => ({
           ...report,
-          runTime: "3m 25s", // Static runtime
         }));
 
         setReports(formattedReports);
@@ -243,6 +243,12 @@ const Reports = () => {
                 Dataset Name
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell minWidth="100px">
+                Start Time
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell minWidth="100px">
+                End Time
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell minWidth="100px">
                 Run Time
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell></Table.ColumnHeaderCell>
@@ -279,7 +285,11 @@ const Reports = () => {
                     {formatFileSize(report.dataset.fileSize)}
                   </Table.Cell>
                   <Table.Cell>{report.dataset.fileName}</Table.Cell>
-                  <Table.Cell>{report.runTime}</Table.Cell>
+                  <Table.Cell>{formatDate(report.start_time)}</Table.Cell>
+                  <Table.Cell>{formatDate(report.end_time)}</Table.Cell>
+                  <Table.Cell>
+                    {formatRunTime(report.runtime_seconds)}
+                  </Table.Cell>
                   <Table.Cell>
                     <div className="table-icon-container">
                       {/* <IconButton

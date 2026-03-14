@@ -12,10 +12,9 @@ export default function ViewReport() {
   const [activeStep, setActiveStep] = useState(0);
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const { BACKEND_URL } = useContext(AppContext);
-  const { reportRefreshFlag } = useContext(ReportContext);
+  const { reportRefreshFlag, error, setError } = useContext(ReportContext);
   const { reportId } = useParams();
 
   const steps = [
@@ -131,7 +130,9 @@ export default function ViewReport() {
           }
           loading={
             !(activeStep === steps.length - 1) &&
-            !steps.slice(activeStep + 1).some((s) => hasStepData(s.key))
+            !steps.slice(activeStep + 1).some((s) => hasStepData(s.key)) &&
+            !error &&
+            loading
           }
           size="2"
           variant="soft"
@@ -139,6 +140,7 @@ export default function ViewReport() {
         >
           Next
         </Button>
+        {error && <span className="page">error</span>}
       </div>
 
       <div style={{ margin: "30px 0" }}>

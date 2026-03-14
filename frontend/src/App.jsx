@@ -45,6 +45,17 @@ const formatDate = (dateString) => {
     minute: "2-digit",
   });
 };
+function formatRunTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+
+  if (minutes > 0) {
+    return `${minutes} m ${remainingSeconds.toFixed(1)} secs`;
+  } else {
+    return `${remainingSeconds.toFixed(1)} secs`;
+  }
+}
+
 const formatCustomTimestamp = (timestamp) => {
   if (!timestamp) return "-";
 
@@ -92,6 +103,7 @@ function App() {
       checkAuth,
       formatFileSize,
       formatDate,
+      formatRunTime,
       formatCustomTimestamp,
     }),
     []
