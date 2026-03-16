@@ -12,28 +12,26 @@ export default function ViewReport() {
   const [activeStep, setActiveStep] = useState(0);
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const { BACKEND_URL } = useContext(AppContext);
-  const { reportRefreshFlag } = useContext(ReportContext);
+  const { reportRefreshFlag, error, setError } = useContext(ReportContext);
   const { reportId } = useParams();
 
   const steps = [
     { label: "Raw Data", key: "raw_analysis" },
     { label: "Preprocessing", key: "preprocessing" },
     { label: "Clean Data", key: "clean_analysis" },
-    { label: "Automl", key: "autom_ml" },
+    { label: "AutoML", key: "automl_training" },
   ];
 
   const connectorStyleConfig = {
     circleFontSize: "1.2rem",
     activeBgColor: "blue",
     completedBgColor: "blue",
-    inactiveBgColor: "#ccc",
     activeColor: "blue",
     completedColor: "blue",
-    activeTextColor: "#fff",
-    completedTextColor: "#fff",
+    activeTextColor: "white",
+    completedTextColor: "white",
     inactiveTextColor: "#333",
     labelColor: "#333",
     borderRadius: "50%",
@@ -84,13 +82,18 @@ export default function ViewReport() {
     }
   };
 
-  if (error) return <div style={{ padding: "20px" }}>Report Not Found</div>;
+  if (error)
+    return (
+      <div style={{ padding: "20px" }} className="page">
+        Report Not Found
+      </div>
+    );
 
   const currentStepKey = steps[activeStep].key;
   const stepData = report?.[currentStepKey];
 
   return (
-    <div style={{ padding: "20px" }} className="page">
+    <div style={{ padding: "15px" }} className="page">
       <Stepper
         activeStep={activeStep}
         steps={steps}
@@ -125,12 +128,19 @@ export default function ViewReport() {
             activeStep === steps.length - 1 ||
             !steps.slice(activeStep + 1).some((s) => hasStepData(s.key))
           }
+          loading={
+            !(activeStep === steps.length - 1) &&
+            !steps.slice(activeStep + 1).some((s) => hasStepData(s.key)) &&
+            !error &&
+            loading
+          }
           size="2"
           variant="soft"
           color="indigo"
         >
           Next
         </Button>
+        {error && <span className="page">error</span>}
       </div>
 
       <div style={{ margin: "30px 0" }}>
@@ -143,7 +153,7 @@ export default function ViewReport() {
                 return <Preprocessing data={stepData} />;
               case "clean_analysis":
                 return <Clean data={stepData} />;
-              case "autom_ml":
+              case "automl_training":
                 return <Automl data={stepData} />;
               default:
                 return null;

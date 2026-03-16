@@ -45,13 +45,13 @@ export default function EdaVisualization({ dataJson }) {
     }))
     .sort((a, b) => b.value - a.value);
   return (
-    <div style={{ padding: 30, display: "grid", gap: 50 }}>
+    <div>
       {/* SUMMARY */}
       <section className="stat-container">
         <h2 className="stat-title">Summary</h2>
         <div className="stat-sub-container">
           {summary.map((item) => (
-            <div key={item.title} className="stat-item">
+            <div key={item.title} className="stat-item card">
               <span className="item-title">{item.title}</span>
               <span>{String(item.value)}</span>
             </div>
@@ -65,7 +65,7 @@ export default function EdaVisualization({ dataJson }) {
         <div style={{ display: "grid", gap: "8px", marginTop: 12 }}>
           {target_analysis.map((item) =>
             item.title === "Class Distribution" ? (
-              <div key={item.title} className="stat-item">
+              <div key={item.title} className="stat-item card">
                 <span className="item-title">{item.title}</span>
 
                 <ResponsiveContainer width="100%" height={300}>
@@ -98,7 +98,7 @@ export default function EdaVisualization({ dataJson }) {
               </div>
             ) : (
               <div className="stat-sub-container">
-                <div key={item.title} className="stat-item">
+                <div key={item.title} className="stat-item card">
                   <span className="item-title">{item.title}</span>
                   <span>{String(item.value)}</span>
                 </div>
@@ -112,7 +112,7 @@ export default function EdaVisualization({ dataJson }) {
 
         <div className="stat-sub-container">
           {data_quality.map((item) => (
-            <div key={item.title} className="stat-item">
+            <div key={item.title} className="stat-item card">
               <span className="item-title">{item.title}</span>
               <span>{item.value}</span>
             </div>
@@ -120,7 +120,7 @@ export default function EdaVisualization({ dataJson }) {
         </div>
       </section>
       {/* FEATURE IMPORTANCE */}
-      <section>
+      <section className="stat-container">
         <h2>Feature Importance (Cramer's V)</h2>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={relationshipData}>
@@ -135,7 +135,7 @@ export default function EdaVisualization({ dataJson }) {
       </section>
 
       {/* COLUMNS TOP VALUES */}
-      <section>
+      <section className="stat-container">
         <h2>Columns Top Values</h2>
         {columns.map((col) => (
           <div key={col.title} style={{ marginBottom: 40 }}>
@@ -153,34 +153,12 @@ export default function EdaVisualization({ dataJson }) {
         ))}
       </section>
 
-      <section
-        style={{ padding: 20, backgroundColor: "#121212", borderRadius: 10 }}
-      >
-        <h2
-          style={{
-            color: "#ffffff",
-            borderBottom: "1px solid #444",
-            paddingBottom: 8,
-          }}
-        >
-          Warnings
-        </h2>
+      <section className="stat-container">
+        <h2>Warnings</h2>
 
         <div style={{ display: "grid", gap: "8px", marginTop: 12 }}>
           {warnings.map((w, index) => (
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                padding: "8px 12px",
-                backgroundColor: "#1e1e1e",
-                borderRadius: 6,
-                color: "#ddd",
-                fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-                fontSize: 14,
-              }}
-            >
+            <div key={index} className="card">
               <span style={{ fontWeight: 600, color: "#fff" }}>{w.type}</span>
               <span>{w.message}</span>
               <span style={{ fontStyle: "italic", color: "#aaa" }}>

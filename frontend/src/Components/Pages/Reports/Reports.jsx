@@ -3,6 +3,7 @@ import { CiStar } from "react-icons/ci";
 import { FaEye } from "react-icons/fa";
 import { MdOutlineReportProblem } from "react-icons/md";
 import { FiDownload } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { AppContext } from "../../../App";
 import { toast } from "react-toastify";
@@ -10,6 +11,7 @@ import Pagination from "../../Other/Pagination/Pagination.jsx";
 import Loader from "../../Other/Loader/Loader.jsx";
 const Reports = () => {
   const [filter, setFilter] = useState("ALL");
+  const navigate = useNavigate();
   const [showComplaintDialog, setShowComplaintDialog] = useState(false);
   const [complaintData, setComplaintData] = useState({
     name: "",
@@ -18,12 +20,13 @@ const Reports = () => {
     reportId: "",
   });
   const [pagination, setPagination] = useState({ page: 1, totalPages: 0 });
-  const { BACKEND_URL, formatFileSize, formatDate } = useContext(AppContext);
+  const { BACKEND_URL, formatFileSize, formatDate, formatRunTime } =
+    useContext(AppContext);
   const [user, setUser] = useState(null);
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const limit = 10;
+  const limit = 15;
   useEffect(() => {
     const userData = localStorage.getItem("DTD_user");
     if (userData) {
@@ -77,7 +80,6 @@ const Reports = () => {
         // Add static runtime and format dataset size
         const formattedReports = data.data.map((report) => ({
           ...report,
-          runTime: "3m 25s", // Static runtime
         }));
 
         setReports(formattedReports);
@@ -175,17 +177,19 @@ const Reports = () => {
       toast.error("Couldn't Send Complaint Please Try Again Later");
     }
   };
-  const viewReport = (report) => {
-    if (!report) {
+  const viewReport = (id) => {
+    if (!id) {
       toast.info("Your report is being generated");
+    } else {
+      navigate(`/view-report/${id}`);
     }
   };
-  const downLoadReport = (report) => {
-    if (!report) {
-      toast.info("Your report is being generated");
-    }
-    //TODO:Generate the pdf on spot
-  };
+  // const downLoadReport = (report) => {
+  //   if (!report) {
+  //     toast.info("Your report is being generated");
+  //   }
+  //   //TODO:Generate the pdf on spot
+  // };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setComplaintData((prev) => ({
@@ -239,6 +243,12 @@ const Reports = () => {
                 Dataset Name
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell minWidth="100px">
+                Start Time
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell minWidth="100px">
+                End Time
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell minWidth="100px">
                 Run Time
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell></Table.ColumnHeaderCell>
@@ -275,21 +285,25 @@ const Reports = () => {
                     {formatFileSize(report.dataset.fileSize)}
                   </Table.Cell>
                   <Table.Cell>{report.dataset.fileName}</Table.Cell>
-                  <Table.Cell>{report.runTime}</Table.Cell>
+                  <Table.Cell>{formatDate(report.start_time)}</Table.Cell>
+                  <Table.Cell>{formatDate(report.end_time)}</Table.Cell>
+                  <Table.Cell>
+                    {formatRunTime(report.runtime_seconds)}
+                  </Table.Cell>
                   <Table.Cell>
                     <div className="table-icon-container">
-                      <IconButton
+                      {/* <IconButton
                         color="green"
                         variant="surface"
                         onClick={() => downLoadReport(report.report)}
                         aria-label="Download report"
                       >
                         <FiDownload />
-                      </IconButton>
+                      </IconButton> */}
                       <IconButton
-                        color="indigo"
+                        color="green"
                         variant="surface"
-                        onClick={() => viewReport(report.report)}
+                        onClick={() => viewReport(report._id)}
                         aria-label="View report"
                       >
                         <FaEye />

@@ -25,7 +25,18 @@ const ReportSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-
+    start_time: {
+      type: Number,
+      default: 0,
+    },
+    end_time: {
+      type: Number,
+      default: 0,
+    },
+    runtime_seconds: {
+      type: Number,
+      default: 0,
+    },
     // flexible structure for future fields
     report: {
       type: Object,
