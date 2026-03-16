@@ -1,72 +1,32 @@
 import "./Visualization.css";
 import React from "react";
 import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  Legend,
+  ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, Tooltip, CartesianGrid, Legend,
 } from "recharts";
 
 const COLORS = [
-  "#4BC0C0",
-  "#FF6384",
-  "#FFCE56",
-  "#36A2EB",
-  "#9966FF",
-  "#FF9F40",
-  "#C9CBCF",
-  "#00A86B",
-  "#FFD700",
-  "#FF4500",
+  "#4BC0C0", // teal
+  "#FF6384", // pink
+  "#FFCE56", // yellow
+  "#36A2EB", // blue
+  "#9966FF", // purple
+  "#FF9F40", // orange
+  "#C9CBCF", // light gray
+  "#00A86B", // green
+  "#FFD700", // gold
+  "#FF4500", // red-orange
 ];
-
-function RenderValue({ value }) {
-  if (Array.isArray(value)) {
-    return (
-      <div style={{ paddingLeft: 8 }}>
-        {value.map((v, i) =>
-          typeof v === "object" && v !== null && "title" in v ? (
-            <div key={i}>
-              <strong>{v.title}:</strong> <RenderValue value={v.value} />
-            </div>
-          ) : (
-            <div key={i}>{String(v)}</div>
-          )
-        )}
-      </div>
-    );
-  }
-  return <span>{String(value)}</span>;
-}
 
 export default function EdaVisualization({ dataJson }) {
   const parsed = JSON.parse(dataJson);
-
-  const {
-    summary,
+  const { summary, 
     target_analysis,
     data_quality,
-    relationships,
-    columns,
-    warnings,
-  } = parsed;
-
-  const relationshipData = (() => {
-    const targetRel = relationships.find(r => r.title === "Target Relationships");
-    if (!targetRel) return [];
-    const correlations = targetRel.value.find(r => r.title === "Feature Correlations");
-    if (!correlations) return [];
-    return correlations.value
-      .map(r => ({ title: r.title, value: Math.abs(r.value) }))
-      .sort((a, b) => b.value - a.value);
-  })();
+    relationships, 
+    columns, 
+    warnings}
+    = parsed;
 
   return (
     <div>
@@ -77,7 +37,7 @@ export default function EdaVisualization({ dataJson }) {
           {summary.map((item) => (
             <div key={item.title} className="stat-item card">
               <span className="item-title">{item.title}</span>
-              <RenderValue value={item.value} />
+              <span>{String(item.value)}</span>
             </div>
           ))}
         </div>
@@ -88,7 +48,7 @@ export default function EdaVisualization({ dataJson }) {
         <h2 className="stat-title">Target Analysis</h2>
         <div style={{ display: "grid", gap: "8px", marginTop: 12 }}>
           {target_analysis.map((item) =>
-            Array.isArray(item.value) ? (
+            item.title === "Class Distribution" ? (
               <div key={item.title} className="stat-item card">
                 <span className="item-title">{item.title}</span>
                 <ResponsiveContainer width="100%" height={300}>
@@ -100,19 +60,12 @@ export default function EdaVisualization({ dataJson }) {
                       outerRadius={100}
                       label={{ fill: "#fff" }}
                     >
-                      {item.value.map((_, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
+                      {item.value.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
                     <Tooltip
-                      contentStyle={{
-                        backgroundColor: "#1e1e1e",
-                        border: "none",
-                        color: "#fff",
-                      }}
+                      contentStyle={{ backgroundColor: "#1e1e1e", border: "none", color: "#fff" }}
                       itemStyle={{ color: "#fff" }}
                     />
                     <Legend wrapperStyle={{ color: "#fff" }} />
@@ -120,8 +73,8 @@ export default function EdaVisualization({ dataJson }) {
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div key={item.title} className="stat-sub-container">
-                <div className="stat-item card">
+              <div className="stat-sub-container">
+                <div key={item.title} className="stat-item card">
                   <span className="item-title">{item.title}</span>
                   <span>{String(item.value)}</span>
                 </div>
@@ -138,7 +91,7 @@ export default function EdaVisualization({ dataJson }) {
           {data_quality.map((item) => (
             <div key={item.title} className="stat-item card">
               <span className="item-title">{item.title}</span>
-              <RenderValue value={item.value} />
+              <span>{item.value}</span>
             </div>
           ))}
         </div>
@@ -148,7 +101,7 @@ export default function EdaVisualization({ dataJson }) {
       <section className="stat-container">
         <h2>Feature Importance</h2>
         <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={relationshipData}>
+          <BarChart data={relationships}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="title" />
             <YAxis />
@@ -162,7 +115,7 @@ export default function EdaVisualization({ dataJson }) {
       {/* COLUMNS TOP VALUES */}
       <section className="stat-container">
         <h2>Columns Top Values</h2>
-        {columns.filter(col => col.top_values?.length).map((col) => (
+        {columns.filter((col) => col.top_values?.length).map((col) => (
           <div key={col.column} style={{ marginBottom: 40 }}>
             <h4>{col.column}</h4>
             <ResponsiveContainer width="100%" height={300}>
