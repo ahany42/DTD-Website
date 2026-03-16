@@ -107,6 +107,13 @@ export const getStarredReportsByUser = async (req, res) => {
 export const getReportById = async (req, res) => {
   try {
     const { id } = req.params;
+    const { stage } = req.query; // optional query param to specify stage
+    const allowedStages = [
+      "preprocessing",
+      "raw_analysis",
+      "clean_analysis",
+      "automl_training",
+    ];
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
@@ -123,6 +130,20 @@ export const getReportById = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Report not found",
+      });
+    }
+
+    if (stage) {
+      if (!allowedStages.includes(stage)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid stage value. Allowed values are: ${allowedStages.join(", ")}`,
+        });
+      }
+      // Return only the requested stage from report.report.stage
+      return res.json({
+        success: true,
+        data: report.report?.[stage] ?? null,
       });
     }
 
