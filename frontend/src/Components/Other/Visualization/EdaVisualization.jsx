@@ -12,7 +12,6 @@ const COLORS = [
   "#FFD700", // gold
   "#FF4500", // red-orange
 ];
-import React, { useMemo } from "react";
 import {
   ResponsiveContainer,
   BarChart,
@@ -26,19 +25,6 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
-
-const COLORS = [
-  "#4BC0C0",
-  "#FF6384",
-  "#FFCE56",
-  "#36A2EB",
-  "#9966FF",
-  "#FF9F40",
-  "#C9CBCF",
-  "#00A86B",
-  "#FFD700",
-  "#FF4500",
-];
 function RenderValue({ value }) {
   if (Array.isArray(value)) {
     return (
