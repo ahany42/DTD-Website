@@ -75,13 +75,19 @@ const AdminReports = () => {
           <Table.Body>
             {loading ? (
               <Table.Row>
-                <Table.Cell colSpan={8} style={{ textAlign: "center", padding: "20px" }}>
+                <Table.Cell
+                  colSpan={8}
+                  style={{ textAlign: "center", padding: "20px" }}
+                >
                   <Loader />
                 </Table.Cell>
               </Table.Row>
             ) : reports.length === 0 ? (
               <Table.Row>
-                <Table.Cell colSpan={7} style={{ textAlign: "center", padding: "20px" }}>
+                <Table.Cell
+                  colSpan={7}
+                  style={{ textAlign: "center", padding: "20px" }}
+                >
                   No reports found
                 </Table.Cell>
               </Table.Row>
@@ -92,14 +98,20 @@ const AdminReports = () => {
                   <Table.Cell>{report.userId?.name}</Table.Cell>
                   <Table.Cell>{report.userId?.email}</Table.Cell>
                   <Table.Cell>{report.dataset?.fileName}</Table.Cell>
-                  <Table.Cell>{report.dataSize}</Table.Cell>
+                  <Table.Cell>{report.dataset?.fileSize}</Table.Cell>
                   <Table.Cell>
-                    <Badge variant="soft" color={report.isComplained ? "red" : "green"}>
+                    <Badge
+                      variant="soft"
+                      color={report.isComplained ? "red" : "green"}
+                    >
                       {report.isComplained ? "Yes" : "No"}
                     </Badge>
                   </Table.Cell>
                   <Table.Cell>
-                    <Badge variant="soft" color={report.isStarred ? "yellow" : "green"}>
+                    <Badge
+                      variant="soft"
+                      color={report.isStarred ? "yellow" : "green"}
+                    >
                       {report.isStarred ? "Yes" : "No"}
                     </Badge>
                   </Table.Cell>
