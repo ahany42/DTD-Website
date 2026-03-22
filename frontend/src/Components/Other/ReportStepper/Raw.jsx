@@ -15,7 +15,6 @@ export default function RawAnalysisDashboard() {
       const data = await res.json();
 
       setDataJson(data.data.raw_analysis);
-      console.log("Fetched data:", data.data.raw_analysis.json());
     };
 
     fetchData();
