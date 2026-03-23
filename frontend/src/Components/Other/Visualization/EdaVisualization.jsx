@@ -1,5 +1,4 @@
 import "./Visualization.css";
-
 const COLORS = [
   "#4BC0C0", // teal
   "#FF6384", // pink
@@ -26,46 +25,45 @@ import {
   Legend,
 } from "recharts";
 function RenderValue({ value }) {
+  // Handle array values
   if (Array.isArray(value)) {
     return (
       <div style={{ paddingLeft: 8 }}>
         {value.map((v, i) =>
           typeof v === "object" && v !== null && "title" in v ? (
-            <div key={i} style={{ marginBottom: 4 }}>
+            <div key={`${v.title}-${i}`} style={{ marginBottom: 4 }}>
               <strong>{v.title}:</strong> <RenderValue value={v.value} />
             </div>
           ) : (
-            <div key={i}>{String(v)}</div>
+            <div key={`primitive-${i}`}>{String(v)}</div>
           )
         )}
       </div>
     );
   }
 
-  // 🔹 Split string by comma, then by colon, keeping key-value pairs together
+  // Handle strings with commas or colons
   if (
     typeof value === "string" &&
     (value.includes(",") || value.includes(":"))
   ) {
-    const parts = value.split(",").map((part) => part.trim()); // split by comma
+    const parts = value.split(",").map((part) => part.trim());
 
     return (
       <div className="multi-value-container">
         {parts.map((part, i) => {
           if (part.includes(":")) {
             const [key, val] = part.split(":").map((s) => s.trim());
-            if (val.length === 0) return "";
+            if (!val) return null; // skip empty values
             return (
-              <>
+              <div key={i}>
                 <span className="item-sub-title">{key}:</span>
-                <div key={i} className="card multi-value">
-                  {val}
-                </div>
-              </>
+                <div className="card multi-value">{val}</div>
+              </div>
             );
           }
           return (
-            <div key={i} className="card multi-value">
+            <div key={`part-${i}`} className="card multi-value">
               {part}
             </div>
           );
@@ -74,8 +72,10 @@ function RenderValue({ value }) {
     );
   }
 
+  // Fallback for primitive values
   return <span>{String(value)}</span>;
 }
+
 const prepareColumnDetails = (column) => {
   return Object.entries(column)
     .filter(([key]) => key !== "column" && key !== "top_values") // exclude top_values
