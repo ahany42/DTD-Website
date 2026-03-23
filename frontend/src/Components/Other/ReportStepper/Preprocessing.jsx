@@ -32,10 +32,6 @@ const Preprocessing = () => {
     }
   }, [BACKEND_URL, reportId]);
 
-  if (!dataJson) {
-    console.warn("Preprocessing data is missing or incomplete:", dataJson);
-    return <div className="stat-container">⏳ Loading...</div>;
-  }
   return <h3>Preprocessing Completed</h3>;
 };
 export default Preprocessing;

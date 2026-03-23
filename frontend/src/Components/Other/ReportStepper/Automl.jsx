@@ -122,11 +122,11 @@ export default function Automl() {
         if (!response.ok) {
           throw new Error("Failed to fetch AutoML data");
         }
-        
-        const result = await response.json()
+
+        const result = await response.json();
         console.log("result:", result);
         console.log("Automl data fetched:", result.data);
-        setDataJson(result.data||null);
+        setDataJson(result.data || null);
       } catch (error) {
         console.error("Error fetching AutoML data:", error);
         setDataJson(null);
@@ -137,11 +137,6 @@ export default function Automl() {
       fetchData();
     }
   }, [BACKEND_URL, reportId]);
-  
-  if (!dataJson) {
-    console.warn("AutoML data is missing or incomplete:", dataJson);
-    return <div className="stat-container">⏳ Loading...</div>;
-  }
 
   const {
     training_results: tr,
