@@ -64,6 +64,20 @@ export default function ViewReport() {
       .finally(() => setLoading(false));
   }, [reportId, BACKEND_URL, reportRefreshFlag]);
 
+  const downloadReport = async () => {
+  const res = await fetch(
+    `${BACKEND_URL}/api/reports/${reportId}/download`
+  );
+
+  const blob = await res.blob();
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "automl_report.pdf";
+  a.click();
+};
+
   const handleNext = () => {
     for (let i = activeStep + 1; i < steps.length; i++) {
       if (hasStepData(steps[i].key)) {
@@ -140,6 +154,18 @@ export default function ViewReport() {
         >
           Next
         </Button>
+
+        {steps.every((s) => hasStepData(s.key)) && (
+          <Button
+            onClick={downloadReport}
+            size="2"
+            variant="solid"
+            color="indigo"
+          >
+            Generate PDF
+          </Button>
+        )}
+
         {error && <span className="page">error</span>}
       </div>
 
