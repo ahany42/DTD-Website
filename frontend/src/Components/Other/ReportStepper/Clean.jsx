@@ -13,9 +13,9 @@ export default function CleanAnalysisDashboard() {
       );
 
       const data = await res.json();
-
+      console.log("clean data:", data);
       setDataJson(data.data.clean_analysis);
-      console.log("Fetched data:", data.data.clean_analysis.json());
+      console.log("Fetched data:", data.data.clean_analysis);
     };
 
     fetchData();

@@ -1,51 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Button, Badge } from "@radix-ui/themes";
-import { useContext } from "react";
 import { AppContext } from "../../../App";
+import { useParams } from "react-router-dom";
+
 import "../Visualization/Visualization.css";
-const automlData = {
-  run_timestamp: "20260228_155942",
-  data_path: "Output\\Preprocessing\\full_preprocessed.csv",
-  target_column: "Survived",
-  problem_type: "classification",
-  model_selection: {
-    use_automl: true,
-    automl_config: {
-      models: ["GBM", "XGB"],
-      time_limit: 300,
-      preset: "best_quality",
-    },
-    selected_models: [],
-    model_selection_reasoning: "...",
-  },
-  training_results: {
-    training_method: "Simple+Optuna",
-    best_model: "GBM",
-    best_score: 0.9020979020979021,
-    metric_name: "accuracy",
-    models_trained: 1,
-    all_models: ["GBM"],
-    all_scores: [0.9020979020979021],
-    confusion_matrix: [
-      [203, 22],
-      [17, 115],
-    ],
-    best_params_per_model: { GBM: {} },
-    optuna_refined_config: {
-      models: ["GBM"],
-      time_limit: 270,
-      preset: "medium_quality",
-    },
-  },
-  agent_messages: [
-    {
-      agent: "Training",
-      message:
-        "Training complete. This model demonstrates **excellent** performance with a best score of 0.9021.\n\nBased on the Confusion Matrix, there are **more False Negatives (22)** than False Positives (17).\n\nFor improvement, since AutoGluon only trained one model (GBM), it's recommended to allow it to train and ensemble more diverse models by increasing `time_limit` or `presets`.",
-    },
-  ],
-  workflow: { final_step: "model_trained", error: null },
-};
+// const automlData = {
+//   run_timestamp: "20260228_155942",
+//   data_path: "Output\\Preprocessing\\full_preprocessed.csv",
+//   target_column: "Survived",
+//   problem_type: "classification",
+//   model_selection: {
+//     use_automl: true,
+//     automl_config: {
+//       models: ["GBM", "XGB"],
+//       time_limit: 60,
+//       preset: "best_quality",
+//     },
+//     selected_models: [],
+//     model_selection_reasoning: "...",
+//   },
+//   training_results: {
+//     training_method: "Simple+Optuna",
+//     best_model: "GBM",
+//     best_score: 0.9020979020979021,
+//     metric_name: "accuracy",
+//     models_trained: 1,
+//     all_models: ["GBM"],
+//     all_scores: [0.9020979020979021],
+//     confusion_matrix: [
+//       [203, 22],
+//       [17, 115],
+//     ],
+//     best_params_per_model: { GBM: {} },
+//     optuna_refined_config: {
+//       models: ["GBM"],
+//       time_limit: 270,
+//       preset: "medium_quality",
+//     },
+//   },
+//   agent_messages: [
+//     {
+//       agent: "Training",
+//       message:
+//         "Training complete. This model demonstrates **excellent** performance with a best score of 0.9021.\n\nBased on the Confusion Matrix, there are **more False Negatives (22)** than False Positives (17).\n\nFor improvement, since AutoGluon only trained one model (GBM), it's recommended to allow it to train and ensemble more diverse models by increasing `time_limit` or `presets`.",
+//     },
+//   ],
+//   workflow: { final_step: "model_trained", error: null },
+// };
 
 function DownloadButton({ reportId, size = "normal" }) {
   const [status, setStatus] = useState("idle");
@@ -108,30 +109,64 @@ function renderMessage(msg) {
 }
 
 export default function Automl() {
-  const reportId = 123;
-  const d = automlData;
-  const tr = d.training_results;
-  const cm = tr.confusion_matrix;
-
-  const score = (tr.best_score * 100).toFixed(2);
   const { formatCustomTimestamp } = useContext(AppContext);
+  const [dataJson, setDataJson] = useState(null);
+  const { BACKEND_URL } = useContext(AppContext);
+  const { reportId } = useParams();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${BACKEND_URL}/api/reports/${reportId}?stage=automl_training`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch AutoML data");
+        }
+
+        const result = await response.json();
+        console.log("result:", result);
+        console.log("Automl data fetched:", result.data);
+        setDataJson(result.data || null);
+      } catch (error) {
+        console.error("Error fetching AutoML data:", error);
+        setDataJson(null);
+      }
+    };
+
+    if (BACKEND_URL && reportId) {
+      fetchData();
+    }
+  }, [BACKEND_URL, reportId]);
+
+  const {
+    training_results: tr,
+    problem_type,
+    workflow,
+    target_column,
+    model_selection,
+    agent_messages,
+    data_path,
+    run_timestamp,
+  } = dataJson;
+  const cm = tr.confusion_matrix;
+  const score = tr?.best_score ? (tr.best_score * 100).toFixed(2) : "0.00";
 
   return (
     <div className="stat-container">
       <div>
-        <h2 className="stat-title">⚙ AutoML Report</h2>
+        <h2 className="stat-title">AutoML Report</h2>
 
         <div className="stat-header-container">
           <Badge color="green" size="3" variant="surface">
-            {d.problem_type}
+            {problem_type}
           </Badge>
           <Badge color="green" size="3" variant="surface">
-            {d.workflow.final_step}
+            {workflow.final_step}
           </Badge>
 
           <DownloadButton reportId={reportId} />
           <span className="timestamp">
-            {formatCustomTimestamp(d.run_timestamp)}
+            {formatCustomTimestamp(run_timestamp)}
           </span>
         </div>
       </div>
@@ -155,7 +190,7 @@ export default function Automl() {
               {tr.training_method}
             </Badge>
             <Badge className="tag" variant="surface" size="3">
-              {d.model_selection.automl_config.preset}
+              {model_selection.automl_config.preset}
             </Badge>
           </div>
         </div>
@@ -164,7 +199,7 @@ export default function Automl() {
       <div className="grid-2">
         <div className="card">
           <div className="card-label">Target Column</div>
-          <div className="card-value">{d.target_column}</div>
+          <div className="card-value">{target_column}</div>
         </div>
 
         <div className="card">
@@ -202,7 +237,7 @@ export default function Automl() {
 
       <h2 className="stat-title">Agent Messages</h2>
 
-      {d.agent_messages.map((m, i) => (
+      {agent_messages.map((m, i) => (
         <div key={i}>
           <h2 className="stat-title">{m.agent}</h2>
 
@@ -215,7 +250,7 @@ export default function Automl() {
       ))}
 
       <div className="path-box">
-        📁 <span className="path">{d.data_path}</span>
+        📁 <span className="path">{data_path}</span>
       </div>
     </div>
   );

@@ -27,7 +27,7 @@ export const uploadDataset = async (req, res) => {
       dataset: dataset._id,
       isComplained: false,
       isStarred: false,
-      report: {}, // will be filled later
+      report: { targetColumn: req.body.targetColumn || null }, // will be filled later
     });
 
     res.status(201).json({
@@ -56,10 +56,22 @@ export const runPipelineStream = async (req, res) => {
     if (!dataset) {
       return res.status(404).json({ message: "Dataset not found" });
     }
+    const report = await Report.findById(reportId);
+    if (!report) {
+      res.write(`data: ${JSON.stringify({ error: "Report not found" })}\n\n`);
+      return res.end();
+    }
+    const targetColumn = report.report?.targetColumn;
+    if (!targetColumn) {
+      return res
+        .status(400)
+        .json({ message: "Target column not set on report" });
+    }
 
     const form = new FormData();
     form.append("file", fs.createReadStream(dataset.filePath));
-    form.append("target_column", dataset.prompt);
+    // form.append("target_column", dataset.prompt);
+    form.append("target_column", targetColumn);
     form.append("task_type", "classification");
 
     const response = await axios({

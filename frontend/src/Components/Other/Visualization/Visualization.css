@@ -39,6 +39,7 @@
 }
 .item-title {
   font-weight: 600;
+  margin-bottom: 50px;
   color: #fff;
   font-size: 16px;
 }
@@ -46,7 +47,10 @@
   font-weight: 600;
   color: #fff;
   font-size: 14px;
-  margin: 10px 0;
+  /* margin: 10px 0 !important; */
+}
+.no-color {
+  background-color: transparent !important;
 }
 .automl-header {
   display: flex;
@@ -112,18 +116,21 @@
 .multi-value {
   display: flex;
   margin: 4px 0;
-  justify-content: flex-end;
-  width: 70%;
+  justify-content: flex-start;
+  width: 100%;
   background-color: #1a4731;
   border: none;
 }
 .multi-value-container {
   margin: 4px 0;
-  width: 50%;
+  width: 50% !important;
+  min-width: 150px;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
-  align-items: self-end;
-  justify-content: flex-end;
+  overflow: hidden;
+  align-items: self-start;
+  justify-content: flex-start;
 }
 .card-label {
   font-size: 0.7rem;
