@@ -137,7 +137,7 @@ export default function Automl() {
       fetchData();
     }
   }, [BACKEND_URL, reportId]);
-
+  if (!dataJson) return null;
   const {
     training_results: tr,
     problem_type,
