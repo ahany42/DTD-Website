@@ -1,7 +1,7 @@
 import React from "react";
 import { AppContext } from "../../../App";
 import { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { data, useParams } from "react-router-dom";
 const Preprocessing = () => {
   const { formatCustomTimestamp } = useContext(AppContext);
   const [dataJson, setDataJson] = useState(null);
@@ -32,10 +32,12 @@ const Preprocessing = () => {
     }
   }, [BACKEND_URL, reportId]);
 
-  if (!dataJson) {
-    console.warn("Preprocessing data is missing or incomplete:", dataJson);
-    return <div className="stat-container">⏳ Loading...</div>;
-  }
-  return <h3>Preprocessing Completed</h3>;
+return (
+  <div>
+    <h3>Preprocessing Completed</h3>
+    <pre>{JSON.stringify(dataJson, null, 2)}</pre>
+  </div>
+);
+
 };
 export default Preprocessing;

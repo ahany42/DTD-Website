@@ -56,14 +56,16 @@ function RenderValue({ value }) {
             const [key, val] = part.split(":").map((s) => s.trim());
             if (!val) return null; // skip empty values
             return (
-              <div key={i}>
-                <span className="item-sub-title">{key}:</span>
-                <div className="card multi-value">{val}</div>
-              </div>
+              <>
+                <div key={i}>
+                  <span>{key}:</span>
+                </div>
+                <span className="card multi-value item-sub-title">{val}</span>
+              </>
             );
           }
           return (
-            <div key={`part-${i}`} className="card multi-value">
+            <div key={`part-${i}`} className="card multi-value item-sub-title">
               {part}
             </div>
           );
