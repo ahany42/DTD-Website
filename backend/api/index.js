@@ -38,7 +38,48 @@ app.use("/datasets", express.static(path.join(process.cwd(), "datasets")));
 // Health checks
 app.get("/", (req, res) => res.json({ status: "API running" }));
 app.get("/api", (req, res) => res.json({ message: "API is working!" }));
+app.get("/api-docs", (req, res) => {
+  res.setHeader("Content-Type", "text/html");
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>DTD API Docs</title>
+        <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
+      </head>
+      <body>
+        <div id="swagger-ui"></div>
 
+        <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
+        <script>
+          const ui = SwaggerUIBundle({
+            spec: {
+              openapi: "3.0.0",
+              info: {
+                title: "DTD API",
+                version: "1.0.0",
+                description: "API documentation for DTD Website"
+              },
+              paths: {
+                "/api": {
+                  get: {
+                    summary: "Check API",
+                    responses: {
+                      200: {
+                        description: "API working"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            dom_id: "#swagger-ui"
+          });
+        </script>
+      </body>
+    </html>
+  `);
+});
 // MongoDB connection (singleton for serverless)
 let cached = global.mongoose;
 if (!cached) cached = global.mongoose = { conn: null, promise: null };
