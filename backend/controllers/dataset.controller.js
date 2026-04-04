@@ -63,16 +63,16 @@ export const runPipelineStream = async (req, res) => {
     }
     const targetColumn = report.report?.targetColumn;
     if (!targetColumn) {
-      return res
-        .status(400)
-        .json({ message: "Target column not set on report" });
+      res.write(
+        `data: ${JSON.stringify({ error: "Target column is required but was empty." })}\n\n`
+      );
+      return res.end();
     }
 
     const form = new FormData();
     form.append("file", fs.createReadStream(dataset.filePath));
     // form.append("target_column", dataset.prompt);
-    form.append("target_column", targetColumn);
-    form.append("task_type", "classification");
+    form.append("target_column", String(targetColumn));
 
     const response = await axios({
       method: "post",
