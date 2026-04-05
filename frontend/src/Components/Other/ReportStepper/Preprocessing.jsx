@@ -41,20 +41,10 @@ const Preprocessing = () => {
 
   return (
     <div>
-      <h3>Preprocessing Completed</h3>
-
-      {/* DEBUG VIEW */}
       {!dataJson && <p>No preprocessing data found</p>}
 
       {dataJson && (
-        <>
-          {/* TEMP DEBUG (remove later) */}
-          <pre style={{ maxHeight: 200, overflow: "auto" }}>
-            {JSON.stringify(dataJson, null, 2)}
-          </pre>
-
-          <PreprocessingVisualization dataJson={dataJson} />
-        </>
+        <PreprocessingVisualization dataJson={dataJson} />
       )}
     </div>
   );
