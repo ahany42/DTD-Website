@@ -2,27 +2,35 @@ import React from "react";
 import { AppContext } from "../../../App";
 import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
+import PreprocessingVisualization from "../PreprocessingVisualization/PreprocessingVisualization";
+import Loader from "../Loader/Loader";
+
 const Preprocessing = () => {
   const { formatCustomTimestamp } = useContext(AppContext);
   const [dataJson, setDataJson] = useState(null);
   const { BACKEND_URL } = useContext(AppContext);
   const { reportId } = useParams();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `${BACKEND_URL}/api/reports/${reportId}?stage=preprocessing`
-        );
+        const url = `${BACKEND_URL}/api/reports/${reportId}?stage=preprocessing`;
+        console.log("Fetching from:", url);
+
+        const response = await fetch(url);
+
         if (!response.ok) {
-          throw new Error("Failed to fetch AutoML data");
+          throw new Error("Failed to fetch preprocessing data");
         }
 
         const result = await response.json();
-        console.log("result:", result);
-        console.log("Preprocessing data fetched:", result.data);
+
+        console.log("FULL RESPONSE:", result);
+        console.log("DATA ONLY:", result.data);
+
         setDataJson(result.data || null);
       } catch (error) {
-        console.error("Error fetching AutoML data:", error);
+        console.error("Error fetching preprocessing:", error);
         setDataJson(null);
       }
     };
@@ -32,6 +40,13 @@ const Preprocessing = () => {
     }
   }, [BACKEND_URL, reportId]);
 
-  return <h3>Preprocessing Completed</h3>;
+  return (
+    <div>
+      {!dataJson && <Loader />}
+
+      {dataJson && <PreprocessingVisualization dataJson={dataJson} />}
+    </div>
+  );
 };
+
 export default Preprocessing;

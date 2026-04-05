@@ -67,14 +67,6 @@ const SideBar = () => {
         />
 
         <MenuItem
-          icon={<FaHome />}
-          active={path === "/admin/home"}
-          component={<Link to="/admin/home" />}
-        >
-          Home
-        </MenuItem>
-
-        <MenuItem
           icon={<FaMessage />}
           active={path.startsWith("/admin/messages")}
           component={<Link to="/admin/messages" />}
@@ -103,14 +95,6 @@ const SideBar = () => {
           component={<Link to="/admin/reports" />}
         >
           Reports
-        </MenuItem>
-
-        <MenuItem
-          icon={<CgDetailsMore />}
-          active={path === "/admin/logs"}
-          component={<Link to="/admin/logs" />}
-        >
-          Logs
         </MenuItem>
 
         <MenuItem

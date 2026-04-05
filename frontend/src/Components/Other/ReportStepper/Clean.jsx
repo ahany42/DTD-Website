@@ -20,5 +20,11 @@ export default function CleanAnalysisDashboard() {
 
     fetchData();
   }, [BACKEND_URL, reportId]);
-  return <EdaVisualization dataJson={dataJson} />;
+
+  return (
+    <>
+      {!dataJson && <Loader />}
+      {dataJson && <EdaVisualization dataJson={dataJson} />}
+    </>
+  );
 }

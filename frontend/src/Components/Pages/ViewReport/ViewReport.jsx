@@ -7,7 +7,7 @@ import Clean from "../../Other/ReportStepper/Clean";
 import Automl from "../../Other/ReportStepper/Automl";
 import { AppContext, ReportContext } from "../../../App";
 import { useParams } from "react-router-dom";
-
+import Loader from "../../Other/Loader/Loader";
 export default function ViewReport() {
   const [activeStep, setActiveStep] = useState(0);
   const [report, setReport] = useState(null);
@@ -168,7 +168,11 @@ export default function ViewReport() {
 
         {error && <span className="page">error</span>}
       </div>
-
+      {(loading || !stepData) && (
+        <div>
+          <Loader />
+        </div>
+      )}
       <div style={{ margin: "30px 0" }}>
         {stepData &&
           (() => {

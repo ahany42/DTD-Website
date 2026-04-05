@@ -1,3 +1,5 @@
+import { Button, Select } from "@radix-ui/themes";
+import { useState, useEffect } from "react";
 import "./Visualization.css";
 const COLORS = [
   "#4BC0C0", // teal
@@ -112,8 +114,15 @@ export default function EdaVisualization({ dataJson }) {
   const data_quality = parsed.data_quality || [];
   const relationships = parsed.relationships || [];
   const columns = parsed.columns || [];
+  const [selectedColumn, setSelectedColumn] = useState(
+    columns?.[0]?.column || ""
+  );
+  useEffect(() => {
+    if (columns?.[0]?.column) {
+      setSelectedColumn(columns[0].column);
+    }
+  }, [columns]);
   const warnings = parsed.warnings || [];
-
   const relationshipData =
     relationships
       ?.find((r) => r?.title === "Target Relationships")
@@ -129,6 +138,41 @@ export default function EdaVisualization({ dataJson }) {
       {/* SUMMARY */}
       {summary.length > 0 && (
         <section className="stat-container">
+          <div style={{ display: "flex", gap: "20px" }}>
+            <Button
+              size="2"
+              variant="soft"
+              color="indigo"
+              onClick={() => window.print()}
+            >
+              Download Phase Report
+            </Button>
+            <Button
+              size="2"
+              variant="soft"
+              color="green"
+              onClick={() =>
+                document
+                  .getElementById("top-values")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
+              }
+            >
+              Top Values
+            </Button>
+            <Button
+              size="2"
+              variant="soft"
+              color="red"
+              onClick={() =>
+                document
+                  .getElementById("warnings")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
+              }
+            >
+              Warnings
+            </Button>
+          </div>
+
           <h2 className="stat-title">Summary</h2>
           <div className="stat-sub-container">
             {summary.map((item) => (
@@ -220,53 +264,89 @@ export default function EdaVisualization({ dataJson }) {
           </ResponsiveContainer>
         </section>
       )}
-
-      {/* COLUMNS TOP VALUES */}
-      {columns.length > 0 && (
-        <>
-          {columns.map((col) => (
-            <div key={col.column} className="stat-container">
-              <h3 className="stat-title">{col.column}</h3>
-              <div className="stat-sub-container">
-                {prepareColumnDetails(col).map((item, i) => (
-                  <div key={item?.title} className="stat-item card">
-                    <span className="item-title">{item?.title}</span>
-                    <RenderValue value={item?.value} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </>
-      )}
+      {console.log("EDA COLUMNS:", columns)}
       {columns.length > 0 && (
         <section className="stat-container">
-          <h2 className="stat-title">Columns Top Values</h2>
+          <h2 className="stat-title">Columns</h2>
+
+          <div
+            style={{
+              marginBottom: 16,
+              width: "100%",
+              display: "flex",
+              justifyContent: "flex-start",
+            }}
+          >
+            <Select.Root
+              value={selectedColumn}
+              onValueChange={(value) => setSelectedColumn(value)}
+              style={{
+                padding: "8px 12px",
+                borderRadius: 8,
+                border: "1px solid #ccc",
+                minWidth: 220,
+              }}
+            >
+              <Select.Trigger
+                variant="soft"
+                color="indigo"
+                style={{ flex: 1 }}
+                placeholder="Select Column"
+              />
+              <Select.Content>
+                {columns.map((col) => (
+                  <Select.Item key={col?.column} value={col?.column}>
+                    {col?.column}
+                  </Select.Item>
+                ))}
+              </Select.Content>
+            </Select.Root>
+          </div>
 
           {columns
-            .filter((col) => col?.top_values?.length)
+            .filter((col) => col?.column === selectedColumn)
             .map((col) => (
-              <div key={col?.column} style={{ marginBottom: 40 }}>
-                <h4>{col?.column}</h4>
-
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={col?.top_values || []}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="label" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="count" fill="var(--primary-color)" />
-                  </BarChart>
-                </ResponsiveContainer>
+              <div key={col.column}>
+                <h3 className="stat-title">{col.column}</h3>
+                <div className="stat-sub-container">
+                  {prepareColumnDetails(col).map((item) => (
+                    <div key={item?.title} className="stat-item card">
+                      <span className="item-title">{item?.title}</span>
+                      <RenderValue value={item?.value} />
+                    </div>
+                  ))}
+                </div>{" "}
               </div>
             ))}
         </section>
       )}
+      <section className="stat-container">
+        <h2 className="stat-title" id="top-values">
+          Top Values
+        </h2>
+        {columns.map((col) =>
+          col?.top_values?.length ? (
+            <div key={col.column} style={{ marginTop: 24 }}>
+              <h4>{col.column} Top Values</h4>
 
-      {/* WARNINGS */}
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={col.top_values}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="label" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="var(--primary-color)" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : null
+        )}
+      </section>
       {warnings.length > 0 && (
         <section className="stat-container">
-          <h2 className="stat-title">Warnings</h2>
+          <h2 className="stat-title" id="warnings">
+            Warnings
+          </h2>
 
           <div style={{ display: "grid", gap: "8px", marginTop: 12 }}>
             {warnings.map((w, index) => (

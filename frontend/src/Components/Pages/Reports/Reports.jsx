@@ -184,12 +184,7 @@ const Reports = () => {
       navigate(`/view-report/${id}`);
     }
   };
-  // const downLoadReport = (report) => {
-  //   if (!report) {
-  //     toast.info("Your report is being generated");
-  //   }
-  //   //TODO:Generate the pdf on spot
-  // };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setComplaintData((prev) => ({
@@ -292,14 +287,6 @@ const Reports = () => {
                   </Table.Cell>
                   <Table.Cell>
                     <div className="table-icon-container">
-                      {/* <IconButton
-                        color="green"
-                        variant="surface"
-                        onClick={() => downLoadReport(report.report)}
-                        aria-label="Download report"
-                      >
-                        <FiDownload />
-                      </IconButton> */}
                       <IconButton
                         color="green"
                         variant="surface"

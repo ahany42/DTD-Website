@@ -66,15 +66,23 @@
  */
 import express from "express";
 import upload from "../middleware/Upload.js";
+import multer from "multer";
 import {
   uploadDataset,
   // runPipeline,
+  suggestTarget,
   runPipelineStream,
 } from "../controllers/dataset.controller.js";
 
 const router = express.Router();
 
+// diskStorage for uploadDataset
 router.post("/upload", upload.single("file"), uploadDataset);
 // router.post("/run-pipeline", runPipeline);
+// memoryStorage for suggest-target
+const memoryStorage = multer.memoryStorage();
+const uploadMemory = multer({ storage: memoryStorage });
+router.post("/suggest-target", uploadMemory.single("file"), suggestTarget);
 router.get("/run-pipeline/:datasetId/:reportId", runPipelineStream);
+
 export default router;

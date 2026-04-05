@@ -2,6 +2,7 @@ import { AppContext } from "../../../App";
 import EdaVisualization from "../Visualization/EdaVisualization";
 import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
+import Loader from "../Loader/Loader";
 export default function RawAnalysisDashboard() {
   const [dataJson, setDataJson] = useState({});
   const { BACKEND_URL } = useContext(AppContext);
@@ -20,5 +21,10 @@ export default function RawAnalysisDashboard() {
 
     fetchData();
   }, [BACKEND_URL, reportId]);
-  return <EdaVisualization dataJson={dataJson} />;
+  return (
+    <>
+      {!dataJson && <Loader />}
+      {dataJson && <EdaVisualization dataJson={dataJson} />}
+    </>
+  );
 }

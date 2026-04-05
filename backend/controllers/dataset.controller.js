@@ -43,6 +43,54 @@ export const uploadDataset = async (req, res) => {
   }
 };
 
+export const suggestTarget = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "File is required" });
+    }
+
+    // Prepare form-data to send to FastAPI
+    const formData = new FormData();
+    formData.append("file", req.file.buffer, {
+      filename: req.file.originalname,
+      contentType: req.file.mimetype,
+    });
+
+    // const fastapiRes = await fetch(`${AI_BACKEND_URL}/suggest-target`, {
+    //   method: "POST",
+    //   body: formData,
+    //   headers: formData.getHeaders(),
+    // });
+
+    // const data = await fastapiRes.json();
+
+    // if (!fastapiRes.ok) {
+    //   return res.status(500).json({
+    //     error: data.error || "FastAPI error",
+    //   });
+    // }
+
+    // return res.status(200).json(data);
+        const response = await axios.post(
+          `${AI_BACKEND_URL}/suggest-target`,
+          formData,
+          {
+            headers: formData.getHeaders(),
+            maxContentLength: Infinity, // 🔥 prevent size issues
+            maxBodyLength: Infinity,
+          }
+        );
+
+        return res.status(200).json(response.data);
+
+  } catch (err) {
+    console.error("Suggest Target Error:", err);
+    return res.status(500).json({
+      error: "Failed to get target suggestions",
+    });
+  }
+};
+
 export const runPipelineStream = async (req, res) => {
   try {
     const datasetId = req.params.datasetId;
@@ -63,16 +111,16 @@ export const runPipelineStream = async (req, res) => {
     }
     const targetColumn = report.report?.targetColumn;
     if (!targetColumn) {
-      return res
-        .status(400)
-        .json({ message: "Target column not set on report" });
+      res.write(
+        `data: ${JSON.stringify({ error: "Target column is required but was empty." })}\n\n`
+      );
+      return res.end();
     }
 
     const form = new FormData();
     form.append("file", fs.createReadStream(dataset.filePath));
     // form.append("target_column", dataset.prompt);
-    form.append("target_column", targetColumn);
-    form.append("task_type", "classification");
+    form.append("target_column", String(targetColumn));
 
     const response = await axios({
       method: "post",
