@@ -3,6 +3,7 @@ import { createContext, useMemo, useState } from "react";
 import HomePage from "./Components/Pages/HomePage/HomePage.jsx";
 import "./App.css";
 import ChatWidget from "./Components/Other/ChatWidget/ChatWidget.jsx";
+import ScrollToTopButton from "./Components/Other/ScrollToTopButton/ScrollToTopButton.jsx";
 import NavBar from "./Components/Sections/NavBar/NavBar.jsx";
 import Footer from "./Components/Sections/Footer/Footer.jsx";
 import ReadMore from "./Components/Pages/ReadMore/ReadMore.jsx";
@@ -173,6 +174,7 @@ function App() {
 
         {/* Widgets & Footer */}
         {/* {!isAdminRoute && !isUploadDataSet && <ChatWidget />} */}
+        {!isAdminRoute && !isUploadDataSet && <ScrollToTopButton />}
         {!isAdminRoute && <Footer />}
 
         <ScrollToTop />
