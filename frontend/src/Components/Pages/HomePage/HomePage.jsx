@@ -154,7 +154,11 @@ export default function HomePage() {
               key={stat.label}
               className="stat-card"
             >
-              <span className="stat-value">{stat.value}</span>
+              <span className="stat-value">
+                {stat.label === "Run Time Minutes"
+                  ? `${Number(stat.value).toFixed(2)}`
+                  : stat.value}
+              </span>
               <span className="stat-label">{stat.label}</span>
             </motion.div>
           ))}
