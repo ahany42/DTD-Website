@@ -267,9 +267,7 @@ export default function EdaVisualization({ dataJson }) {
       {console.log("EDA COLUMNS:", columns)}
       {columns.length > 0 && (
         <section className="stat-container">
-          <h2 className="stat-title" id="top-values">
-            Columns
-          </h2>
+          <h2 className="stat-title">Columns</h2>
 
           <div
             style={{
@@ -323,6 +321,9 @@ export default function EdaVisualization({ dataJson }) {
         </section>
       )}
       <section className="stat-container">
+        <h2 className="stat-title" id="top-values">
+          Top Values
+        </h2>
         {columns.map((col) =>
           col?.top_values?.length ? (
             <div key={col.column} style={{ marginTop: 24 }}>
