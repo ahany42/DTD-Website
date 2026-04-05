@@ -3,6 +3,7 @@ import { AppContext } from "../../../App";
 import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import PreprocessingVisualization from "../PreprocessingVisualization/PreprocessingVisualization";
+import Loader from "../Loader/Loader";
 
 const Preprocessing = () => {
   const { formatCustomTimestamp } = useContext(AppContext);
@@ -41,11 +42,9 @@ const Preprocessing = () => {
 
   return (
     <div>
-      {!dataJson && <p>No preprocessing data found</p>}
+      {!dataJson && <Loader />}
 
-      {dataJson && (
-        <PreprocessingVisualization dataJson={dataJson} />
-      )}
+      {dataJson && <PreprocessingVisualization dataJson={dataJson} />}
     </div>
   );
 };
