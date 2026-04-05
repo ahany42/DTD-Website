@@ -130,14 +130,40 @@ export default function EdaVisualization({ dataJson }) {
       {/* SUMMARY */}
       {summary.length > 0 && (
         <section className="stat-container">
-          <Button
-            size="2"
-            variant="soft"
-            color="indigo"
-            onClick={() => window.print()}
-          >
-            Download Phase Report
-          </Button>
+          <div style={{ display: "flex", gap: "20px" }}>
+            <Button
+              size="2"
+              variant="soft"
+              color="indigo"
+              onClick={() => window.print()}
+            >
+              Download Phase Report
+            </Button>
+            <Button
+              size="2"
+              variant="soft"
+              color="green"
+              onClick={() =>
+                document
+                  .getElementById("top-values")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
+              }
+            >
+              Top Values
+            </Button>
+            <Button
+              size="2"
+              variant="soft"
+              color="red"
+              onClick={() =>
+                document
+                  .getElementById("warnings")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
+              }
+            >
+              Warnings
+            </Button>
+          </div>
 
           <h2 className="stat-title">Summary</h2>
           <div className="stat-sub-container">
@@ -230,7 +256,7 @@ export default function EdaVisualization({ dataJson }) {
           </ResponsiveContainer>
         </section>
       )}
-
+      {console.log("EDA COLUMNS:", columns)}
       {/* COLUMNS TOP VALUES */}
       {columns.length > 0 && (
         <>
@@ -251,7 +277,9 @@ export default function EdaVisualization({ dataJson }) {
       )}
       {columns.length > 0 && (
         <section className="stat-container">
-          <h2 className="stat-title">Columns Top Values</h2>
+          <h2 className="stat-title" id="top-values">
+            Columns Top Values
+          </h2>
 
           {columns
             .filter((col) => col?.top_values?.length)
@@ -276,7 +304,9 @@ export default function EdaVisualization({ dataJson }) {
       {/* WARNINGS */}
       {warnings.length > 0 && (
         <section className="stat-container">
-          <h2 className="stat-title">Warnings</h2>
+          <h2 className="stat-title" id="warnings">
+            Warnings
+          </h2>
 
           <div style={{ display: "grid", gap: "8px", marginTop: 12 }}>
             {warnings.map((w, index) => (
