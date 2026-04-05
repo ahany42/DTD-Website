@@ -172,7 +172,7 @@ function App() {
         </Routes>
 
         {/* Widgets & Footer */}
-        {!isAdminRoute && !isUploadDataSet && <ChatWidget />}
+        {/* {!isAdminRoute && !isUploadDataSet && <ChatWidget />} */}
         {!isAdminRoute && <Footer />}
 
         <ScrollToTop />
