@@ -1,3 +1,4 @@
+import { Button } from "@radix-ui/themes";
 import "./Preprocessing.css";
 export default function PreprocessingVisualization({ dataJson }) {
   const getExplanation = (key, value) => {
@@ -38,6 +39,14 @@ export default function PreprocessingVisualization({ dataJson }) {
 
   return (
     <div className="stat-container">
+      <Button
+        size="2"
+        variant="soft"
+        color="indigo"
+        onClick={() => window.print()}
+      >
+        Download Phase Report
+      </Button>
       <h2 className="stat-title">Preprocessing Actions</h2>
       {taskType && (
         <div className="card">

@@ -146,6 +146,14 @@ export default function Automl() {
 
   return (
     <div className="stat-container">
+      <Button
+        size="2"
+        variant="soft"
+        color="indigo"
+        onClick={() => window.print()}
+      >
+        Download Phase Report
+      </Button>
       <div>
         <h2 className="stat-title">AutoML Report</h2>
 

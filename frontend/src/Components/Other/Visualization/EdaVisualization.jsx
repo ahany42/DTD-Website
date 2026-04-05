@@ -1,3 +1,4 @@
+import { Button } from "@radix-ui/themes";
 import "./Visualization.css";
 const COLORS = [
   "#4BC0C0", // teal
@@ -129,6 +130,15 @@ export default function EdaVisualization({ dataJson }) {
       {/* SUMMARY */}
       {summary.length > 0 && (
         <section className="stat-container">
+          <Button
+            size="2"
+            variant="soft"
+            color="indigo"
+            onClick={() => window.print()}
+          >
+            Download Phase Report
+          </Button>
+
           <h2 className="stat-title">Summary</h2>
           <div className="stat-sub-container">
             {summary.map((item) => (
