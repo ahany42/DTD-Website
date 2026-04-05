@@ -400,3 +400,120 @@
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+/* =========================
+   AI Suggestions (Unified Style)
+========================= */
+
+.ai-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.ai-suggestions h3 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 4px;
+}
+
+/* Card = same as dropzone style */
+.suggestion-card {
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+/* Hover = same blue tone */
+.suggestion-card:hover {
+  border-color: #388bfd;
+  background: #161f2e;
+  transform: translateY(-1px);
+}
+
+/* Selected = same as target success */
+.suggestion-selected {
+  border-color: #2ea043 !important;
+  background: #0f1f17 !important;
+}
+
+/* Header */
+.suggestion-header {
+  color: #79c0ff; /* same as .col-pill */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+/* Column name */
+.suggestion-header strong {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  color: #e6edf3;
+  font-weight: 500;
+}
+
+/* Task (classification/regression) */
+.suggestion-task {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  color: #58a6ff;
+  margin-bottom: 6px;
+}
+
+/* Evidence list */
+.suggestion-evidence {
+  margin: 0;
+  padding-left: 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  color: #8b949e;
+  line-height: 1.4;
+}
+
+/* Priority badge (aligned with your palette) */
+.priority-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* High → green (like success target) */
+.priority-badge.high {
+  background: #0f1f17;
+  color: #3fb950;
+  border: 1px solid #2ea043;
+}
+
+/* Medium → blue (primary tone) */
+.priority-badge.medium {
+  background: #1c3461;
+  color: #58a6ff;
+  border: 1px solid #388bfd;
+}
+
+/* Low → muted gray (not aggressive red) */
+.priority-badge.low {
+  background: #161b22;
+  color: #8b949e;
+  border: 1px solid #30363d;
+}
+
+/* Loading */
+.ai-loading {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  color: #484f58;
+  margin-bottom: 6px;
+}

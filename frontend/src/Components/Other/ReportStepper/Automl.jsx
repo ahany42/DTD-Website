@@ -4,50 +4,6 @@ import { AppContext } from "../../../App";
 import { useParams } from "react-router-dom";
 
 import "../Visualization/Visualization.css";
-// const automlData = {
-//   run_timestamp: "20260228_155942",
-//   data_path: "Output\\Preprocessing\\full_preprocessed.csv",
-//   target_column: "Survived",
-//   problem_type: "classification",
-//   model_selection: {
-//     use_automl: true,
-//     automl_config: {
-//       models: ["GBM", "XGB"],
-//       time_limit: 60,
-//       preset: "best_quality",
-//     },
-//     selected_models: [],
-//     model_selection_reasoning: "...",
-//   },
-//   training_results: {
-//     training_method: "Simple+Optuna",
-//     best_model: "GBM",
-//     best_score: 0.9020979020979021,
-//     metric_name: "accuracy",
-//     models_trained: 1,
-//     all_models: ["GBM"],
-//     all_scores: [0.9020979020979021],
-//     confusion_matrix: [
-//       [203, 22],
-//       [17, 115],
-//     ],
-//     best_params_per_model: { GBM: {} },
-//     optuna_refined_config: {
-//       models: ["GBM"],
-//       time_limit: 270,
-//       preset: "medium_quality",
-//     },
-//   },
-//   agent_messages: [
-//     {
-//       agent: "Training",
-//       message:
-//         "Training complete. This model demonstrates **excellent** performance with a best score of 0.9021.\n\nBased on the Confusion Matrix, there are **more False Negatives (22)** than False Positives (17).\n\nFor improvement, since AutoGluon only trained one model (GBM), it's recommended to allow it to train and ensemble more diverse models by increasing `time_limit` or `presets`.",
-//     },
-//   ],
-//   workflow: { final_step: "model_trained", error: null },
-// };
-
 function DownloadButton({ reportId, size = "normal" }) {
   const [status, setStatus] = useState("idle");
 
@@ -126,10 +82,10 @@ export default function Automl() {
         const result = await response.json();
         console.log("result:", result);
         console.log("Automl data fetched:", result.data);
-        setDataJson(result.data || null);
+        setDataJson(result.data || {});
       } catch (error) {
         console.error("Error fetching AutoML data:", error);
-        setDataJson(null);
+        setDataJson({});
       }
     };
 
@@ -138,16 +94,35 @@ export default function Automl() {
     }
   }, [BACKEND_URL, reportId]);
   if (!dataJson) return null;
-  const {
-    training_results: tr,
-    problem_type,
-    workflow,
-    target_column,
-    model_selection,
-    agent_messages,
-    data_path,
-    run_timestamp,
-  } = dataJson;
+  const tr = {
+    best_score: 0,
+    metric_name: "score",
+    best_model: "N/A",
+    training_method: "N/A",
+    models_trained: 0,
+    all_models: [],
+    confusion_matrix: [
+      [0, 0],
+      [0, 0],
+    ],
+    ...(dataJson?.training_results ?? {}),
+  };
+
+  const problem_type = dataJson?.problem_type ?? "N/A";
+  const workflow = { final_step: "unknown", ...(dataJson?.workflow ?? {}) };
+  const target_column = dataJson?.target_column ?? "N/A";
+  const model_selection = {
+    automl_config: { preset: "N/A" },
+    ...(dataJson?.model_selection ?? {}),
+  };
+  model_selection.automl_config = {
+    preset: "N/A",
+    ...(model_selection.automl_config ?? {}),
+  };
+
+  const agent_messages = dataJson?.agent_messages ?? [];
+  const data_path = dataJson?.data_path ?? "N/A";
+  const run_timestamp = dataJson?.run_timestamp ?? "";
   const cm = tr.confusion_matrix;
   const score = tr?.best_score ? (tr.best_score * 100).toFixed(2) : "0.00";
 

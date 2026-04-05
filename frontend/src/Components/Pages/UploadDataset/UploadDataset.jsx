@@ -208,6 +208,8 @@ const UploadDataset = () => {
   const [isDragOverTarget, setIsDragOverTarget] = useState(false);
   const [draggingCol, setDraggingCol] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const { BACKEND_URL } = useContext(AppContext);
   const { triggerReportRefresh } = useContext(ReportContext);
@@ -248,12 +250,43 @@ const UploadDataset = () => {
     }
   };
 
-  const handleFileSelect = (selected) => {
+  const handleFileSelect = async (selected) => {
     if (!selected) return;
     setFile(selected);
     setColumns([]);
     setTargetColumn("");
+    setSuggestions([]);
+    setIsAnalyzing(true);
     extractColumns(selected);
+    // CALL AI
+    const formData = new FormData();
+    formData.append("file", selected);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/dataset/suggest-target`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error("AI analysis failed");
+        setIsAnalyzing(false);
+        return;
+      }
+
+      console.log("AI suggestions:", data);
+
+      setSuggestions(data.suggestions || []);
+
+      //  Auto-select best suggestion
+      // if (data.suggestions?.length > 0) {
+      //   setTargetColumn(data.suggestions[0].column);
+      // }
+    } catch (err) {
+      toast.error("Error analyzing dataset");
+    }
+    setIsAnalyzing(false);
   };
 
   const handleFileDrop = (e) => {
@@ -442,7 +475,40 @@ const UploadDataset = () => {
                 </div>
               ))}
             </div>
+            {isAnalyzing && (
+              <div className="ai-loading">🤖 Analyzing dataset...</div>
+            )}
 
+            {suggestions.length > 0 && (
+              <div className="ai-suggestions">
+                <h3>AI Target Suggestions</h3>
+
+                {suggestions.map((s, index) => (
+                  <div
+                    key={s.column}
+                    className={`suggestion-card ${
+                      targetColumn === s.column ? "suggestion-selected" : ""
+                    }`}
+                    onClick={() => setTargetColumn(s.column)}
+                  >
+                    <div className="suggestion-header">
+                      <strong>{s.column}</strong>
+                      <span className={`priority-badge ${s.priority}`}>
+                        {s.priority}
+                      </span>
+                    </div>
+
+                    <div className="suggestion-task">{s.task}</div>
+
+                    <ul className="suggestion-evidence">
+                      {s.evidence.map((e, i) => (
+                        <li key={i}>{e}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
             <div
               className={`target-dropzone ${isDragOverTarget ? "target-active" : ""} ${targetColumn ? "target-filled" : ""}`}
               onDragOver={(e) => {
