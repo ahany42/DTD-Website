@@ -41,7 +41,7 @@
 }
 
 .preprocessing-content strong {
-  color: #58a6ff !important;
+  color: var(--light-blue-text) !important;
   font-weight: 700;
 }
 
@@ -58,17 +58,17 @@
 }
 
 .preprocessing-details div strong {
-  color: #58a6ff !important;
+  color: var(--light-blue-text) !important;
   font-weight: 700;
 }
 
 .preprocessing-item .preprocessing-content strong {
-  color: #58a6ff !important;
+  color: var(--light-blue-text) !important;
   font-weight: 700;
 }
 
 .preprocessing-item .preprocessing-details strong {
-  color: #58a6ff !important;
+  color: var(--light-blue-text) !important;
   font-weight: 700;
 }
 
@@ -79,16 +79,6 @@
   flex-wrap: wrap;
 }
 
-.metadata-card {
-  background: #161b22;
-  border: 1px solid #21262d;
-  border-radius: 8px;
-  padding: 12px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
 .metadata-label {
   font-size: 12px;
   color: #8b949e;
@@ -97,6 +87,7 @@
 }
 
 .metadata-value {
+  display: block;
   font-weight: 700;
   color: #ffffff;
   font-size: 14px;

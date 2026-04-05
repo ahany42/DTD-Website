@@ -45,22 +45,40 @@ function DownloadButton({ reportId, size = "normal" }) {
 }
 
 function renderMessage(msg) {
-  return msg.split(/(\*\*.*?\*\*|`.*?`)/).map((part, i) => {
-    if (part.startsWith("**"))
-      return (
-        <span key={i} className="light-blue-text">
-          {part.slice(2, -2)}
-        </span>
-      );
+  return msg.split(/(\*\*.*?\*\*|`.*?`|\d+\.\s)/g).map((part, i) => {
+    if (!part) return null;
 
-    if (part.startsWith("`"))
+    if (/^\d+\.\s$/.test(part)) {
+      return (
+        <>
+          <br />
+          <span key={i} className="light-blue-text">
+            {part}
+          </span>
+        </>
+      );
+    }
+
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <>
+          <span key={i} className="light-blue-text">
+            {part.slice(2, -2)}
+          </span>
+          <br />
+        </>
+      );
+    }
+
+    if (part.startsWith("`") && part.endsWith("`")) {
       return (
         <code key={i} className="light-blue-text">
           {part.slice(1, -1)}
         </code>
       );
+    }
 
-    return part;
+    return <span key={i}>{part}</span>;
   });
 }
 
@@ -214,11 +232,16 @@ export default function Automl() {
 
       {agent_messages.map((m, i) => (
         <div key={i}>
-          <h2 className="stat-title">{m.agent}</h2>
+          <h2 className="stat-title">
+            {m.agent.charAt(0).toUpperCase() + m.agent.slice(1)}
+          </h2>
 
           <div className="message-box">
             {m.message.split("\n\n").map((p, i) => (
-              <p key={i}>{renderMessage(p)}</p>
+              <>
+                <p key={i}>{renderMessage(p)}</p>
+                <br />
+              </>
             ))}
           </div>
         </div>

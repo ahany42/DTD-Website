@@ -57,7 +57,7 @@ function formatRunTime(seconds) {
 }
 
 const formatCustomTimestamp = (timestamp) => {
-  if (!timestamp) return "-";
+  if (!timestamp) return "";
 
   const [datePart, timePart] = timestamp.split("_");
 
