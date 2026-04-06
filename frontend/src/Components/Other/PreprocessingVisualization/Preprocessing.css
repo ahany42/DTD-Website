@@ -1,20 +1,8 @@
-.preprocessing-grid {
-  margin-top: 16px;
-}
-
-.preprocessing-grid .card {
-  min-height: 90px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
 .preprocessing-item {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 8px;
 }
 
 .preprocessing-item .item-title {
@@ -30,6 +18,8 @@
 
 .preprocessing-content {
   width: 100%;
+  display: flex;
+  flex-direction: column;
   text-align: left;
   color: #ffffff;
   font-weight: 400;
@@ -45,23 +35,6 @@
   font-weight: 700;
 }
 
-.preprocessing-details {
-  margin-top: 6px;
-  text-align: left;
-  color: #ffffff;
-  font-weight: 400;
-}
-
-.preprocessing-details div {
-  color: #ffffff !important;
-  font-weight: 400;
-}
-
-.preprocessing-details div strong {
-  color: var(--light-blue-text) !important;
-  font-weight: 700;
-}
-
 .preprocessing-item .preprocessing-content strong {
   color: var(--light-blue-text) !important;
   font-weight: 700;
@@ -71,21 +44,6 @@
   color: var(--light-blue-text) !important;
   font-weight: 700;
 }
-
-.preprocessing-metadata {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.metadata-label {
-  font-size: 12px;
-  color: #8b949e;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
 .metadata-value {
   display: block;
   font-weight: 700;

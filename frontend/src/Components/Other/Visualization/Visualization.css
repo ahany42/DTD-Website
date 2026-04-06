@@ -21,7 +21,7 @@
 .stat-container {
   padding: 20px;
   background-color: #121212;
-  max-width: 1400px;
+  max-width: 1000px;
   margin: auto;
 }
 .download-btn {
@@ -47,52 +47,6 @@
   font-weight: 600;
   color: #fff;
   font-size: 14px;
-  /* margin: 10px 0 !important; */
-}
-.no-color {
-  background-color: transparent !important;
-}
-.automl-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #21262d;
-}
-
-.automl-title {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 12px;
-  background-color: #1e1e1e;
-  border-radius: 6px;
-  color: #ddd;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 14px;
-}
-
-.badge {
-  border-radius: 20px;
-  padding: 3px 10px;
-  font-size: 0.72rem;
-  width: 150px;
-  /* margin: 10px 0; */
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.badge-green {
-  background: #1a4731;
-  color: #3fb950;
-  border: 1px solid #2ea043;
-}
-
-.badge-blue {
-  background: #1c3461;
-  color: #58a6ff;
-  border: 1px solid #388bfd;
 }
 
 .grid-2 {
@@ -153,17 +107,6 @@
   font-size: 2rem;
   font-weight: 700;
   color: #3fb950;
-}
-
-.section-title {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 12px;
-  margin: 20px 0;
-  border-radius: 6px;
-  color: #ddd;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 14px;
 }
 
 .divider {
