@@ -359,21 +359,74 @@ const generateSection = (title, data) => {
 
 const renderSection = (title, items) => {
   if (!items || items.length === 0) {
-    return `<h3>${title}</h3><p>No data available</p>`;
+    return `<h2>${title}</h2><p>No data available</p>`;
   }
 
   return `
     <h3>${title}</h3>
     <table>
       ${items
-        .map(
-          (item) => `
+        .map((item) => {
+          // Check if value is an array of {title, value} objects
+          if (Array.isArray(item.value) && item.value.every(v => v.title !== undefined && v.value !== undefined)) {
+            return `
+              <tr>
+                <td><b>${item.title}</b></td>
+                <td>
+                  <table>
+                    ${item.value.map(v => `<tr><td>${v.title}</td><td>${v.value}</td></tr>`).join("")}
+                  </table>
+                </td>
+              </tr>
+            `;
+          } else {
+            return `
+              <tr>
+                <td><b>${item.title}</b></td>
+                <td>${formatValue(item.value)}</td>
+              </tr>
+            `;
+          }
+        })
+        .join("")}
+    </table>
+  `;
+};
+
+const renderPreprocessingSection = (preprocessing) => {
+  if (!preprocessing || !preprocessing.column_actions || preprocessing.column_actions.length === 0) {
+    return `<h2>Preprocessing</h2><p>No data available</p>`;
+  }
+
+  return `
+    <h2>Preprocessing</h2>
+    <table>
+      <tr>
+        <th>Column</th>
+        <th>Action</th>
+        <th>Reason</th>
+        <th>Details</th>
+      </tr>
+      ${preprocessing.column_actions
+        .map((col) => `
         <tr>
-          <td><b>${item.title}</b></td>
-          <td>${formatValue(item.value)}</td>
+          <td>${col.column}</td>
+          <td>${col.action}</td>
+          <td>${col.reason}</td>
+          <td>
+            ${col.details ? `
+              <table style="border:none; width:100%;">
+                ${Object.entries(col.details)
+                  .map(
+                    ([k, v]) =>
+                      `<tr><td style="border:none;"><b>${k}</b></td><td style="border:none;">${formatValue(v)}</td></tr>`
+                  )
+                  .join("")}
+              </table>
+            ` : "N/A"}
+          </td>
         </tr>
-      `
-        )
+      `)
         .join("")}
     </table>
   `;
@@ -390,6 +443,18 @@ export const downloadFullReport = async (req, res) => {
     }
 
     const results = reportDoc.report || {};
+
+    const raw = results.raw_analysis?.raw_analysis || results.raw_analysis || {};
+
+    const clean = results.clean_analysis?.clean_analysis || results.clean_analysis || {};
+
+    const preprocessingHtml = renderPreprocessingSection(results.preprocessing);
+
+    const trainingResults = results.automl_training?.training_results || {};
+    const models = trainingResults.all_models || [];
+    const scores = trainingResults.all_scores || [];
+    const bestModel = trainingResults.best_model || "N/A";
+    const bestScore = trainingResults.best_score || "N/A";
     // console.log("FULL REPORT DATA:", JSON.stringify(results.raw_analysis, null, 2));
     const html = `
 <html>
@@ -473,32 +538,47 @@ export const downloadFullReport = async (req, res) => {
 <h1>AutoML Report</h1>
 
 <h2>Raw Analysis</h2>
-${renderSection("Meta", results.raw_analysis.raw_analysis?.meta ?? [])}
-${renderSection("Summary", results.raw_analysis.raw_analysis?.summary ?? [])}
-${renderSection("Data Quality", results.raw_analysis.raw_analysis?.data_quality ?? [])}
-${renderSection("Target Analysis", results.raw_analysis.raw_analysis?.target_analysis ?? [])}
+${renderSection("Meta", raw.meta ?? [])}
+${renderSection("Summary", raw.summary ?? [])}
+${renderSection("Data Quality", raw.data_quality ?? [])}
+${renderSection("Target Analysis", raw.target_analysis ?? [])}
 
-${generateSection("Preprocessing", results.preprocessing)}
-${generateSection("Clean Data", results.clean_analysis)}
+${preprocessingHtml}
+
+<h2>Clean Analysis</h2>
+
+${renderSection("Meta", clean.meta ?? [])}
+${renderSection("Summary", clean.summary ?? [])}
+${renderSection("Data Quality", clean.data_quality ?? [])}
+${renderSection("Target Analysis", clean.target_analysis ?? [])}
 
 <h2>AutoML Results</h2>
 
-<p><b>Best Model:</b> ${results.automl_training.best_model}</p>
-<p><b>Accuracy:</b> ${results.automl_training.best_score}</p>
+<p><b>Best Model:</b> ${bestModel}</p>
+<p><b>Accuracy:</b> ${bestScore}</p>
+
 
 <h3>Models Comparison</h3>
 <table>
 <tr><th>Model</th><th>Score</th></tr>
-${results.automl_training.all_metrics.all_models.map((m, i) => `
+${models.map((m, i) => `
   <tr>
-    <td>${m}</td>
-    <td>${results.automl_training.all_metrics.all_scores[i]}</td>
+  <td>${m}</td>
+  <td>${scores[i] ?? "N/A"}</td>
   </tr>
-`).join("")}
-</table>
-</body>
-</html>
-`;
+  `).join("")}
+  </table>
+  </body>
+  </html>
+  `;
+
+  // <h2>Raw JSON</h2>
+  // <pre style="background:#f0f0f0; padding:10px; border-radius:5px; overflow:auto; font-size:12px;">
+  // ${JSON.stringify(reportDoc.report, null, 2)}
+  // </pre>
+  // console.log("RAW:", raw);
+  // console.log("MODELS:", models);
+  //   console.log("SCORES:", scores);
 
     const browser = await puppeteer.launch({
       headless: "new",
@@ -506,9 +586,9 @@ ${results.automl_training.all_metrics.all_models.map((m, i) => `
     });
 
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "networkidle0" });
-
+    await page.setContent(html, { waitUntil: "domcontentloaded" });
     const pdf = await page.pdf({ format: "A4" });
+    console.log("PDF size:", pdf.length);
 
     await browser.close();
 

@@ -69,8 +69,18 @@ export default function ViewReport() {
     `${BACKEND_URL}/api/reports/${reportId}/download`
   );
 
-  const blob = await res.blob();
+if (!res.ok) {
+  const err = await res.text();
+  console.error("Download failed:", err);
+  return;
+}
 
+const blob = await res.blob();
+
+if (blob.type !== "application/pdf") {
+  console.error("Not a PDF:", blob);
+  return;
+}
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
