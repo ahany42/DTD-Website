@@ -13,20 +13,11 @@ const ReadMore = () => {
       <div className="readme-div">
         <h1 variants={itemVariants}>Data to Deployment (DTD)</h1>
         <p variants={itemVariants}>
-          Data to Deployment is an Automated Data Analysis and Machine Learning
-          Platform designed Pipeline with Generative AI Agents proposes the
-          development of an intelligent platform that integrates Generative AI,
-          Large Language Models (LLMs), and multi-agent frameworks such as
-          LangGraph to automate the complete data science workflow. Generative
-          AI and LLMs are advanced systems capable of understanding and
-          generating human-like language, making them powerful tools for
-          reasoning, automation, and decision support. Retrieval-Augmented
-          Generation (RAG) is incorporated to enhance accuracy, retrieving the
-          most relevant information and then generating reliable outputs.The
-          system is designed to process raw data, generate insights both before
-          and after preprocessing, and construct an end-to-end AutoML pipeline
-          that selects suitable models through systematic analysis and
-          evaluation
+          Turn your data into insights in minutes. Our intelligent platform
+          handles everything—from understanding your request and preparing your
+          data to selecting the right model and delivering clear, actionable
+          results. Simply upload your dataset, describe what you need, and let
+          the system do the rest with speed, accuracy, and ease.
         </p>
       </div>
       <div className="readme-div">
