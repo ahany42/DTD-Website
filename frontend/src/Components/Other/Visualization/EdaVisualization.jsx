@@ -320,28 +320,30 @@ export default function EdaVisualization({ dataJson }) {
             ))}
         </section>
       )}
-      <section className="stat-container">
-        <h2 className="stat-title" id="top-values">
-          Top Values
-        </h2>
-        {columns.map((col) =>
-          col?.top_values?.length ? (
-            <div key={col.column} style={{ marginTop: 24 }}>
-              <h4>{col.column} Top Values</h4>
+      {columns.length > 0 && (
+        <section className="stat-container">
+          <h2 className="stat-title" id="top-values">
+            Top Values
+          </h2>
+          {columns.map((col) =>
+            col?.top_values?.length ? (
+              <div key={col.column} style={{ marginTop: 24 }}>
+                <h4>{col.column} Top Values</h4>
 
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={col.top_values}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="label" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="var(--primary-color)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          ) : null
-        )}
-      </section>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={col.top_values}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="label" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="var(--primary-color)" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : null
+          )}
+        </section>
+      )}
       {warnings.length > 0 && (
         <section className="stat-container">
           <h2 className="stat-title" id="warnings">

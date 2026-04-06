@@ -47,41 +47,53 @@ export default function PreprocessingVisualization({ dataJson }) {
       >
         Download Phase Report
       </Button>
-      <h2 className="stat-title">Preprocessing Actions</h2>
       {taskType && (
-        <div className="card">
-          <span className="item-title">Task Type</span>
-          <span className="metadata-value light-blue-text">
-            {taskType.charAt(0).toUpperCase() + taskType.slice(1).toLowerCase()}
-          </span>
+        <div className="stat-sub-container">
+          <span className="stat-title">Preprocessing Actions</span>
+          <div className="card">
+            <span className="item-title">Task Type</span>
+            <span className="metadata-value light-blue-text">
+              {taskType.charAt(0).toUpperCase() +
+                taskType.slice(1).toLowerCase()}
+            </span>
+          </div>
         </div>
       )}
 
       <div className="stat-sub-container">
         {data?.length > 0 ? (
           data?.map((col, index) => (
-            <div key={index} className="stat-item card preprocessing-item">
-              <span className="item-title">{col?.column}</span>
-
-              <div className="preprocessing-content">
-                <div>
-                  <strong>Action:</strong> {col?.action}
+            <>
+              <span className="stat-title">{col?.column}</span>
+              <div key={index} className="stat-item card preprocessing-item">
+                <div className="preprocessing-content">
+                  <span>
+                    <span className="light-blue-text">Action:</span>{" "}
+                    {col?.action}
+                  </span>
+                  <span>
+                    <span className="light-blue-text">Reason:</span>{" "}
+                    {col?.reason}
+                  </span>
+                  {col?.details && (
+                    <>
+                      {Object.entries(col?.details ?? {}).map(
+                        ([key, value]) => (
+                          <div key={key}>
+                            <span className="light-blue-text">
+                              {key.charAt(0).toUpperCase() +
+                                key.slice(1).toLowerCase()}
+                              :
+                            </span>{" "}
+                            {getExplanation(key, value)}
+                          </div>
+                        )
+                      )}
+                    </>
+                  )}
                 </div>
-                <div>
-                  <strong>Reason:</strong> {col?.reason}
-                </div>
-
-                {col?.details && (
-                  <div className="preprocessing-details">
-                    {Object.entries(col?.details ?? {}).map(([key, value]) => (
-                      <div key={key}>
-                        <strong>{key}:</strong> {getExplanation(key, value)}
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
-            </div>
+            </>
           ))
         ) : (
           <div className="stat-item card">
