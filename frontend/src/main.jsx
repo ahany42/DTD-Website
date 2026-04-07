@@ -7,8 +7,8 @@ import App from "./App.jsx";
 import "./index.css";
 import "@radix-ui/themes/styles.css";
 
-const ScrollToTop = lazy(() =>
-  import("./Components/Other/ScrollToTop/ScrollToTop.jsx")
+const ScrollToTop = lazy(
+  () => import("./Components/Other/ScrollToTop/ScrollToTop.jsx")
 );
 const ToastContainer = lazy(() =>
   import("react-toastify").then((m) => ({ default: m.ToastContainer }))
@@ -19,7 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Router>
-      <Theme className="App" appearance="dark">
+      <Theme className="App" defaultColorScheme="light">
         <App />
 
         {/* Non-blocking UI helpers */}

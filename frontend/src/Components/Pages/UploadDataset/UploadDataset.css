@@ -30,7 +30,7 @@
 .section-label {
   font-size: 0.72rem;
   font-weight: 600;
-  color: #8b949e;
+  color: var(--grey-color) !important;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   display: flex;
@@ -48,7 +48,7 @@
 }
 .optional-tag {
   font-size: 0.65rem;
-  color: #484f58;
+  color: var(--grey-color) !important;
   font-weight: 400;
   text-transform: lowercase;
   letter-spacing: 0;
@@ -57,34 +57,34 @@
 
 .section-hint {
   font-size: 0.74rem;
-  color: #484f58;
+  color: var(--grey-color) !important;
   margin: -4px 0 0;
 }
 
 /* File dropzone */
 .file-dropzone {
-  border: 2px dashed #21262d;
+  border: 2px dashed var(--font-color) !important;
   border-radius: 10px;
   padding: 28px;
   cursor: pointer;
   transition: all 0.2s;
-  background: #161b22;
+  background: var(--dark-bg-color);
 }
 
 .file-dropzone:hover:not(.dropzone-filled) {
   border-color: var(--light-blue) !important;
-  background: #161f2e;
+  background: var(--dark-bg-color) !important;
 }
 
 .dropzone-active {
   border-color: var(--light-blue) !important;
-  background: #161f2e !important;
+  background: var(--primary-color) !important;
 }
 
 .dropzone-filled {
   cursor: default;
   border-style: solid;
-  border-color: #21262d;
+  border-color: var(--grey-color) !important;
 }
 
 .dropzone-empty {
@@ -95,7 +95,7 @@
 }
 
 .upload-icon {
-  color: #484f58;
+  color: var(--light-blue) !important;
   transition: color 0.2s;
 }
 
@@ -106,7 +106,7 @@
 
 .dropzone-text {
   font-size: 0.85rem;
-  color: #8b949e;
+  color: var(--primary-color) !important;
 }
 
 .dropzone-text u {
@@ -116,7 +116,7 @@
 
 .dropzone-hint {
   font-size: 0.72rem;
-  color: #484f58;
+  color: var(--primary-color) !important;
   letter-spacing: 0.05em;
 }
 
@@ -141,19 +141,19 @@
 
 .file-name {
   font-size: 0.85rem;
-  color: #e6edf3;
+  color: var(--primary-color) !important;
   font-weight: 500;
 }
 
 .file-size {
   font-size: 0.72rem;
-  color: #8b949e;
+  color: var(--primary-color) !important;
 }
 
 .remove-file {
   background: none;
   border: none;
-  color: #484f58;
+  color: var(--danger-color) !important;
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -164,11 +164,6 @@
     background 0.15s;
 }
 
-.remove-file:hover {
-  color: #f85149;
-  background: #3d1a1a;
-}
-
 /* Column pills */
 .columns-grid {
   display: flex;
@@ -177,9 +172,9 @@
 }
 
 .col-pill {
-  background: #161b22;
-  color: var(--light-blue) !important;
-  border: 1px solid #21262d;
+  background: var(--light-blue) !important;
+  color: var(--font-color) !important;
+  border: 1px solid var(--light-color) !important;
   border-radius: 6px;
   padding: 5px 12px;
   font-size: 0.78rem;
@@ -191,14 +186,19 @@
 
 .col-pill:hover {
   border-color: var(--light-blue) !important;
-  background: #1c3461;
-  transform: translateY(-1px);
+  background: var(--light-blue) !important;
+  /* transform: translateY(-1px); */
 }
 
 .col-pill--selected {
-  background: #1a4731 !important;
-  color: #3fb950 !important;
-  border-color: #2ea043 !important;
+  background: var(--green-color) !important;
+  color: var(--dark-green) !important;
+  border-color: var(--light-blue) !important;
+}
+.col-pill--selected {
+  background: var(--green-color) !important;
+  color: var(--light-color) !important;
+  border-color: var(--light-blue) !important;
 }
 
 .col-pill--dragging {
@@ -208,14 +208,14 @@
 
 /* Target drop zone */
 .target-dropzone {
-  border: 2px dashed #21262d;
+  border: 2px dashed var(--grey-color) !important;
   border-radius: 8px;
   padding: 14px 18px;
   min-height: 52px;
   display: flex;
   align-items: center;
   transition: all 0.2s;
-  background: #0d1117;
+  background: var(--dark-bg-color);
 }
 
 .target-active {
@@ -225,20 +225,20 @@
 
 .target-filled {
   border-style: solid;
-  border-color: #2ea043;
-  background: #0f1f17;
+  border-color: var(--green-color) !important;
+  background: var(--dark-green) !important;
 }
 
 .target-placeholder {
   font-size: 0.78rem;
-  color: #484f58;
+  color: var(--grey-color) !important;
 }
 
 .target-value {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #3fb950;
+  color: var(--green-color) !important;
   font-size: 0.85rem;
   font-weight: 600;
   width: 100%;
@@ -248,7 +248,7 @@
   margin-left: auto;
   background: none;
   border: none;
-  color: #484f58;
+  color: var(--grey-color) !important;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -256,7 +256,7 @@
 }
 
 .clear-target:hover {
-  color: #f85149;
+  color: var(--danger-color) !important;
 }
 
 /* Prompt textarea */
@@ -267,7 +267,7 @@
   border-radius: 8px;
   padding: 14px 16px;
   font-size: 0.85rem;
-  color: #e6edf3;
+  color: var(--primary-color) !important;
   resize: vertical;
   min-height: 90px;
   outline: none;
@@ -276,7 +276,7 @@
 }
 
 .prompt-textarea::placeholder {
-  color: #484f58;
+  color: var(--primary-color) !important;
 }
 .prompt-textarea:focus {
   border-color: var(--light-blue) !important;
@@ -288,8 +288,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: #1c3461;
-  color: var(--light-blue) !important;
+  background: var(--primary-color) !important;
+  color: var(--light-color) !important;
   border: 1px solid var(--light-blue) !important;
   border-radius: 8px;
   padding: 14px 28px;
@@ -302,9 +302,8 @@
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: #254a7a;
+  background: var(--hover-color) !important;
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(56, 139, 253, 0.2);
 }
 
 .submit-btn:disabled {
@@ -345,7 +344,7 @@
 .ai-suggestions h3 {
   font-size: 0.72rem;
   font-weight: 600;
-  color: #8b949e;
+  color: var(--grey-color) !important;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 0 0 4px;
@@ -353,8 +352,8 @@
 
 /* Card = same as dropzone style */
 .suggestion-card {
-  background: #161b22;
-  border: 1px solid #21262d;
+  background: var(--dark-bg-color) !important;
+  border: 1px solid var(--grey-color) !important;
   border-radius: 10px;
   padding: 12px 14px;
   cursor: pointer;
@@ -363,15 +362,20 @@
 
 /* Hover = same blue tone */
 .suggestion-card:hover {
-  border-color: var(--light-blue) !important;
-  background: #161f2e;
+  scale: calc(1.01);
   transform: translateY(-1px);
 }
 
 /* Selected = same as target success */
 .suggestion-selected {
-  border-color: #2ea043 !important;
-  background: #0f1f17 !important;
+  border-color: var(--green-color) !important;
+  background-color: var(--dark-green) !important;
+}
+.suggestion-selected > .suggestion-evidence {
+  color: var(--light-color) !important;
+}
+.suggestion-selected > hr {
+  color: var(--light-color) !important;
 }
 
 /* Header */
@@ -386,7 +390,7 @@
 /* Column name */
 .suggestion-header strong {
   font-size: 0.85rem;
-  color: #e6edf3;
+  color: var(--light-blue) !important;
   font-weight: 500;
 }
 
@@ -395,6 +399,7 @@
   font-size: 0.72rem;
   color: var(--light-blue) !important;
   margin-bottom: 6px;
+  font-weight: 600;
 }
 
 /* Evidence list */
@@ -402,7 +407,7 @@
   margin: 0;
   padding-left: 16px;
   font-size: 0.7rem;
-  color: #8b949e;
+  color: var(--primary-color) !important;
   line-height: 1.4;
 }
 
@@ -417,28 +422,28 @@
 
 /* High → green (like success target) */
 .priority-badge.high {
-  background: #0f1f17;
-  color: #3fb950;
-  border: 1px solid #2ea043;
+  background: var(--dark-green) !important;
+  color: var(--green-color) !important;
+  border: 1px solid var(--green-color) !important;
 }
 
 /* Medium → blue (primary tone) */
 .priority-badge.medium {
-  background: #1c3461;
+  background: var(--primary-color) !important;
   color: var(--light-blue) !important;
   border: 1px solid var(--light-blue) !important;
 }
 
 /* Low → muted gray (not aggressive red) */
 .priority-badge.low {
-  background: #161b22;
-  color: #8b949e;
-  border: 1px solid #30363d;
+  background: var(--dark-green) !important;
+  color: var(--grey-color) !important;
+  border: 1px solid var(--grey-color) !important;
 }
 
 /* Loading */
 .ai-loading {
   font-size: 0.72rem;
-  color: #484f58;
+  color: var(--grey-color) !important;
   margin-bottom: 6px;
 }

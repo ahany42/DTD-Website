@@ -33,7 +33,7 @@ export default function ViewReport() {
     activeTextColor: "white",
     completedTextColor: "white",
     inactiveTextColor: "#333",
-    labelColor: "#333",
+    labelColor: "blue",
     borderRadius: "50%",
     style: "solid",
   };
@@ -63,30 +63,6 @@ export default function ViewReport() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [reportId, BACKEND_URL, reportRefreshFlag]);
-
-  const downloadReport = async () => {
-  const res = await fetch(
-    `${BACKEND_URL}/api/reports/${reportId}/download`
-  );
-
-if (!res.ok) {
-  const err = await res.text();
-  console.error("Download failed:", err);
-  return;
-}
-
-const blob = await res.blob();
-
-if (blob.type !== "application/pdf") {
-  console.error("Not a PDF:", blob);
-  return;
-}
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "automl_report.pdf";
-  a.click();
-};
 
   const handleNext = () => {
     for (let i = activeStep + 1; i < steps.length; i++) {
@@ -164,17 +140,6 @@ if (blob.type !== "application/pdf") {
         >
           Next
         </Button>
-
-        {steps.every((s) => hasStepData(s.key)) && (
-          <Button
-            onClick={downloadReport}
-            size="2"
-            variant="solid"
-            color="indigo"
-          >
-            Generate PDF
-          </Button>
-        )}
 
         {error && <span className="page">error</span>}
       </div>

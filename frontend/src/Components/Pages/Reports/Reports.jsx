@@ -20,8 +20,13 @@ const Reports = () => {
     reportId: "",
   });
   const [pagination, setPagination] = useState({ page: 1, totalPages: 0 });
-  const { BACKEND_URL, formatFileSize, formatDate, formatRunTime } =
-    useContext(AppContext);
+  const {
+    BACKEND_URL,
+    formatFileSize,
+    formatDate,
+    formatRunTime,
+    downloadReport,
+  } = useContext(AppContext);
   const [user, setUser] = useState(null);
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -294,6 +299,14 @@ const Reports = () => {
                         aria-label="View report"
                       >
                         <FaEye />
+                      </IconButton>
+                      <IconButton
+                        color="green"
+                        variant="surface"
+                        onClick={() => downloadReport(report._id)}
+                        aria-label="Download report"
+                      >
+                        <FiDownload />
                       </IconButton>
                       <IconButton
                         color="yellow"

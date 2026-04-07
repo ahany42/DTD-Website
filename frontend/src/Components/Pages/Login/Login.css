@@ -3,7 +3,7 @@
 .forgot-text {
   margin-top: 25px !important;
   text-align: center;
-  color: white !important;
+  color: var(--light-color) !important;
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;

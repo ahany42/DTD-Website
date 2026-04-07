@@ -1,7 +1,6 @@
 import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { createContext, useMemo, useState } from "react";
 import HomePage from "./Components/Pages/HomePage/HomePage.jsx";
-import "./App.css";
 import ChatWidget from "./Components/Other/ChatWidget/ChatWidget.jsx";
 import ScrollToTopButton from "./Components/Other/ScrollToTopButton/ScrollToTopButton.jsx";
 import NavBar from "./Components/Sections/NavBar/NavBar.jsx";
@@ -85,6 +84,27 @@ const ProtectedRoute = ({ children }) => {
   if (!checkAuth()) return <Navigate to="/login" replace />;
   return children;
 };
+const downloadReport = async (reportId) => {
+  const res = await fetch(`${BACKEND_URL}/api/reports/${reportId}/download`);
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error("Download failed:", err);
+    return;
+  }
+
+  const blob = await res.blob();
+
+  if (blob.type !== "application/pdf") {
+    console.error("Not a PDF:", blob);
+    return;
+  }
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "automl_report.pdf";
+  a.click();
+};
 const AdminRoute = ({ children }) => {
   const user = JSON.parse(localStorage.getItem("DTD_user"));
   if (!checkAuth()) return <Navigate to="/login" replace />;
@@ -105,6 +125,7 @@ function App() {
       formatFileSize,
       formatDate,
       formatRunTime,
+      downloadReport,
       formatCustomTimestamp,
     }),
     []

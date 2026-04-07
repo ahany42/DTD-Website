@@ -85,7 +85,7 @@ function renderMessage(msg) {
 export default function Automl() {
   const { formatCustomTimestamp } = useContext(AppContext);
   const [dataJson, setDataJson] = useState(null);
-  const { BACKEND_URL } = useContext(AppContext);
+  const { BACKEND_URL, downloadReport } = useContext(AppContext);
   const { reportId } = useParams();
   useEffect(() => {
     const fetchData = async () => {
@@ -150,9 +150,9 @@ export default function Automl() {
         size="2"
         variant="soft"
         color="indigo"
-        onClick={() => window.print()}
+        onClick={() => downloadReport(reportId)}
       >
-        Download Phase Report
+        Download Full Report
       </Button>
       <div>
         <h2 className="stat-title">AutoML Report</h2>

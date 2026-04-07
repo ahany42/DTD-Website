@@ -142,14 +142,6 @@ export default function EdaVisualization({ dataJson }) {
             <Button
               size="2"
               variant="soft"
-              color="indigo"
-              onClick={() => window.print()}
-            >
-              Download Phase Report
-            </Button>
-            <Button
-              size="2"
-              variant="soft"
               color="green"
               onClick={() =>
                 document

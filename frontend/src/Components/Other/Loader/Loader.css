@@ -7,7 +7,7 @@
 }
 
 .loader {
-  border: 8px solid #a5a5a5;
+  border: 8px solid var(--grey-color);
   border-top: 8px solid var(--primary-color);
   border-radius: 50%;
   width: 60px;
@@ -23,10 +23,4 @@
   100% {
     transform: rotate(360deg);
   }
-}
-
-p {
-  font-family: "Poppins", sans-serif;
-  font-size: 18px;
-  color: #333;
 }

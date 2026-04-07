@@ -39,20 +39,12 @@ export default function PreprocessingVisualization({ dataJson }) {
 
   return (
     <div className="stat-container">
-      <Button
-        size="2"
-        variant="soft"
-        color="indigo"
-        onClick={() => window.print()}
-      >
-        Download Phase Report
-      </Button>
       {taskType && (
         <div className="stat-sub-container">
           <span className="stat-title">Preprocessing Actions</span>
           <div className="card">
             <span className="item-title">Task Type</span>
-            <span className="metadata-value light-blue-text">
+            <span className="metadata-value ">
               {taskType.charAt(0).toUpperCase() +
                 taskType.slice(1).toLowerCase()}
             </span>
@@ -68,19 +60,17 @@ export default function PreprocessingVisualization({ dataJson }) {
               <div key={index} className="stat-item card preprocessing-item">
                 <div className="preprocessing-content">
                   <span>
-                    <span className="light-blue-text">Action:</span>{" "}
-                    {col?.action}
+                    <span className="primary-color">Action:</span> {col?.action}
                   </span>
                   <span>
-                    <span className="light-blue-text">Reason:</span>{" "}
-                    {col?.reason}
+                    <span className="primary-color">Reason:</span> {col?.reason}
                   </span>
                   {col?.details && (
                     <>
                       {Object.entries(col?.details ?? {}).map(
                         ([key, value]) => (
                           <div key={key}>
-                            <span className="light-blue-text">
+                            <span className="primary-color">
                               {key.charAt(0).toUpperCase() +
                                 key.slice(1).toLowerCase()}
                               :
