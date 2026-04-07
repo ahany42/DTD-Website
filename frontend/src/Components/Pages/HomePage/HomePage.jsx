@@ -174,19 +174,10 @@ export default function HomePage() {
         >
           <motion.h1 variants={itemVariants}>AutoML</motion.h1>
           <motion.p variants={itemVariants}>
-            Turn your data into insights in minutes with a seamless, intelligent
-            experience designed for speed and simplicity. Our platform handles
-            the entire workflow—from understanding your request and preparing
-            your data to selecting the right model and delivering clear,
-            actionable results—so you can focus on making decisions, not
-            managing tools. Simply upload your dataset, describe what you need,
-            and let the system do the rest. Whether you're exploring patterns,
-            building predictions, or generating reports, everything is
-            streamlined into one powerful interface, with results ready in about
-            two minutes depending on the size and complexity of your dataset.
-            Create an account or log in to unlock the full experience, save your
-            work, refine your prompts, and continuously improve your results
-            with ease.
+            Turn your data into insights in minutes with a fast, intelligent
+            platform. Everything is handled for you—from data to results—so you
+            can focus on decisions. Upload your dataset, describe your goal, and
+            get results in about two minutes.
           </motion.p>
           <motion.div className="quick-links" variants={containerVariants}>
             <motion.a
