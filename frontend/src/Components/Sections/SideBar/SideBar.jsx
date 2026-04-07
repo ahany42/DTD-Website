@@ -25,7 +25,7 @@ const SideBar = () => {
   const menuItemStyles = {
     button: ({ active }) => ({
       backgroundColor: active ? "var(--primary-color)" : "transparent",
-      color: "white",
+      color: !active ? "var(--primary-color)" : "var(--text-color)",
       fontSize: "16px",
       padding: "10px",
       "&:hover": { backgroundColor: "var(--primary-color)" },
