@@ -301,7 +301,7 @@ const Reports = () => {
                         <FaEye />
                       </IconButton>
                       <IconButton
-                        color="green"
+                        color="indigo"
                         variant="surface"
                         onClick={() => downloadReport(report._id)}
                         aria-label="Download report"
