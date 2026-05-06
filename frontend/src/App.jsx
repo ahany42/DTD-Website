@@ -7,6 +7,7 @@ import NavBar from "./Components/Sections/NavBar/NavBar.jsx";
 import Footer from "./Components/Sections/Footer/Footer.jsx";
 import ReadMore from "./Components/Pages/ReadMore/ReadMore.jsx";
 import UploadDataset from "./Components/Pages/UploadDataset/UploadDataset.jsx";
+import ReportGetStarted from "./Components/Pages/ReportGetStarted/ReportGetStarted.jsx";
 import Login from "./Components/Pages/Login/Login.jsx";
 import Reports from "./Components/Pages/Reports/Reports.jsx";
 import { ToastContainer } from "react-toastify";
@@ -168,6 +169,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <UploadDataset />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/get-started"
+            element={
+              <ProtectedRoute>
+                <ReportGetStarted />
               </ProtectedRoute>
             }
           />

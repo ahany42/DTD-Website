@@ -19,7 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Router>
-      <Theme className="App" defaultColorScheme="light">
+      <Theme className="App">
         <App />
 
         {/* Non-blocking UI helpers */}

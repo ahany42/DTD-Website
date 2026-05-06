@@ -187,10 +187,16 @@
 .col-pill:hover {
   border-color: var(--light-blue) !important;
   background: var(--light-blue) !important;
+  color: var(--dark-green) !important;
   /* transform: translateY(-1px); */
 }
 
 .col-pill--selected {
+  background: var(--dark-green-color) !important;
+  color: var(--light-color) !important;
+  border-color: var(--light-blue) !important;
+}
+.col-pill--selected:hover {
   background: var(--green-color) !important;
   color: var(--dark-green) !important;
   border-color: var(--light-blue) !important;
@@ -262,8 +268,6 @@
 /* Prompt textarea */
 .prompt-textarea {
   width: 100%;
-  background: #161b22;
-  border: 1px solid #21262d;
   border-radius: 8px;
   padding: 14px 16px;
   font-size: 0.85rem;

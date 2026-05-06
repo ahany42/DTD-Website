@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   FiUploadCloud,
   FiX,
@@ -7,6 +7,8 @@ import {
   FiFileText,
   FiArrowRight,
 } from "react-icons/fi";
+import { useLocation } from "react-router-dom";
+
 import { AppContext, ReportContext } from "../../../App";
 import "./UploadDataset.css";
 import { toast } from "react-toastify";
@@ -15,7 +17,11 @@ import * as XLSX from "xlsx";
 
 const UploadDataset = () => {
   const [file, setFile] = useState(null);
-  const [prompt, setPrompt] = useState("");
+  const mode = new URLSearchParams(useLocation().search).get("mode") || "quick";
+  console.log(mode);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const prompt = location.state?.prompt?.trim() || "";
   const [columns, setColumns] = useState([]);
   const [targetColumn, setTargetColumn] = useState("");
   const [isDragOverFile, setIsDragOverFile] = useState(false);
@@ -29,7 +35,6 @@ const UploadDataset = () => {
   const { triggerReportRefresh } = useContext(ReportContext);
   const fileInputRef = useRef(null);
   const user = JSON.parse(localStorage.getItem("DTD_user"));
-  const navigate = useNavigate();
 
   const extractColumns = (selectedFile) => {
     const ext = selectedFile.name.split(".").pop().toLowerCase();
@@ -63,7 +68,12 @@ const UploadDataset = () => {
       reader.readAsText(selectedFile);
     }
   };
-
+  useEffect(() => {
+    if (mode === "custom" && prompt === "") {
+      toast.warn("Custom mode requires a prompt");
+      navigate("/get-started");
+    }
+  }, [mode, prompt, navigate]);
   const handleFileSelect = async (selected) => {
     if (!selected) return;
     setFile(selected);
@@ -123,6 +133,7 @@ const UploadDataset = () => {
     setIsLoading(true);
     const formData = new FormData();
     formData.append("prompt", prompt.replace(/[\[\]'"]/g, "").trim());
+    formData.append("mode", mode);
     formData.append("file", file);
     formData.append("fileSize", file.size);
     formData.append("fileName", file.name);
