@@ -20,7 +20,7 @@ const ReportGetStarted = () => {
       {
         key: "custom",
         title: "Custom",
-        description: "Add a prompt. Get a tailored report.",
+        description: "Add a prompt and Get a tailored report.",
         icon: <FiEdit3 />,
       },
     ],

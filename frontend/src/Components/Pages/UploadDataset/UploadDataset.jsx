@@ -102,11 +102,6 @@ const UploadDataset = () => {
       console.log("AI suggestions:", data);
 
       setSuggestions(data.suggestions || []);
-
-      //  Auto-select best suggestion
-      // if (data.suggestions?.length > 0) {
-      //   setTargetColumn(data.suggestions[0].column);
-      // }
     } catch (err) {
       toast.error("Error analyzing dataset");
     }
@@ -176,7 +171,7 @@ const UploadDataset = () => {
         triggerReportRefresh();
         console.log("Pipeline update:", streamData);
         if (streamData.error) {
-          toast.error(streamData.error);
+          toast.error(streamData.error || data.error || "Pipeline error");
           eventSource.close();
           return;
         }
@@ -363,24 +358,6 @@ const UploadDataset = () => {
             </div>
           </div>
         )}
-
-        {/* Step 3 — Prompt
-        <div className="form-section">
-          <label className="section-label">
-            <span className="step-num">{columns.length > 0 ? "03" : "02"}</span>{" "}
-            Prompt
-            <span className="optional-tag">optional</span>
-          </label>
-          <textarea
-            className="prompt-textarea"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Describe your goal, any special instructions..."
-            rows={3}
-          />
-        </div> */}
-
-        {/* Submit */}
         <button
           className={`submit-btn ${isLoading ? "submit-loading" : ""}`}
           onClick={handleSubmit}

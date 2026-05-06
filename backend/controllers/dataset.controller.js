@@ -19,6 +19,7 @@ export const uploadDataset = async (req, res) => {
       fileSize: req.file.size, // always trust backend size
       filePath: req.file.path,
       prompt: req.body.prompt || "",
+      mode: req.body.mode || "",
     });
 
     // Create a report linked to the dataset
@@ -55,34 +56,17 @@ export const suggestTarget = async (req, res) => {
       filename: req.file.originalname,
       contentType: req.file.mimetype,
     });
+    const response = await axios.post(
+      `${AI_BACKEND_URL}/suggest-target`,
+      formData,
+      {
+        headers: formData.getHeaders(),
+        maxContentLength: Infinity, // 🔥 prevent size issues
+        maxBodyLength: Infinity,
+      }
+    );
 
-    // const fastapiRes = await fetch(`${AI_BACKEND_URL}/suggest-target`, {
-    //   method: "POST",
-    //   body: formData,
-    //   headers: formData.getHeaders(),
-    // });
-
-    // const data = await fastapiRes.json();
-
-    // if (!fastapiRes.ok) {
-    //   return res.status(500).json({
-    //     error: data.error || "FastAPI error",
-    //   });
-    // }
-
-    // return res.status(200).json(data);
-        const response = await axios.post(
-          `${AI_BACKEND_URL}/suggest-target`,
-          formData,
-          {
-            headers: formData.getHeaders(),
-            maxContentLength: Infinity, // 🔥 prevent size issues
-            maxBodyLength: Infinity,
-          }
-        );
-
-        return res.status(200).json(response.data);
-
+    return res.status(200).json(response.data);
   } catch (err) {
     console.error("Suggest Target Error:", err);
     return res.status(500).json({
@@ -119,12 +103,16 @@ export const runPipelineStream = async (req, res) => {
 
     const form = new FormData();
     form.append("file", fs.createReadStream(dataset.filePath));
-    // form.append("target_column", dataset.prompt);
+    form.append("prompt", dataset.prompt);
+    form.append("mode", dataset.mode);
     form.append("target_column", String(targetColumn));
 
     const response = await axios({
       method: "post",
-      url: `${AI_BACKEND_URL}/run-pipeline/${datasetId}/${reportId}`,
+      url:
+        dataset.mode === "custom"
+          ? `${AI_BACKEND_URL}/run-custom-pipeline/${datasetId}/${reportId}`
+          : `${AI_BACKEND_URL}/run-pipeline/${datasetId}/${reportId}`,
       data: form,
       headers: form.getHeaders(),
       responseType: "stream",
