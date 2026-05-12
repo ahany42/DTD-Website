@@ -52,7 +52,7 @@
     left: 0;
     right: 0;
     z-index: 3000;
-    background-color: var(--dark-bg-color) !important;
+    background-color: var(--bg-color) !important;
     width: 100%;
   }
 
@@ -81,7 +81,7 @@
     left: 0;
     right: 0;
     height: calc(100% - 60px); /* fill remaining viewport */
-    background: var(--dark-bg-color) !important;
+    background: var(--bg-color) !important;
     display: flex;
     flex-direction: column;
     padding: 20px;

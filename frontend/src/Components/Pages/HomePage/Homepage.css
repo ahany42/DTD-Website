@@ -2,7 +2,7 @@
   display: flex;
   align-items: first baseline;
   margin: 0 10px;
-  background: var(--dark-bg-color);
+  background: var(--bg-color);
   color: var(--light-color);
   margin-top: 80px;
 }

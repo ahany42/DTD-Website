@@ -3,7 +3,7 @@
   position: fixed;
   bottom: 2%;
   right: 2%;
-  background: var(--dark-bg-color) !important;
+  background: var(--bg-color) !important;
   color: var(--light-color) !important;
   width: 60px;
   height: 60px;
@@ -36,7 +36,7 @@
   max-height: 800px;
   background: var(--light-color) !important;
   border-radius: 12px;
-  box-shadow: 0 4px 20px var(--dark-bg-color);
+  box-shadow: 0 4px 20px var(--bg-color);
   display: flex;
   flex-direction: column;
   overflow: hidden;

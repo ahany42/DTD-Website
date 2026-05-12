@@ -44,7 +44,7 @@ const SideBar = () => {
       collapsed={isCollapsed}
       collapsedWidth="60px"
       width="200px"
-      backgroundColor="var(--dark-bg-color)"
+      backgroundColor="var(--bg-color)"
     >
       <img
         src={NavLogo}

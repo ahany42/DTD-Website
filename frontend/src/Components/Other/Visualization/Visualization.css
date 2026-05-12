@@ -32,13 +32,13 @@
   border-radius: 6px;
   color: var(--font-color) !important;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 14px;
+  font-size: 20px;
 }
 .item-title {
   font-weight: 600;
   margin-bottom: 50px;
   color: var(--font-color) !important;
-  font-size: 16px;
+  font-size: 20px;
 }
 .item-sub-title {
   font-weight: 600;
