@@ -18,7 +18,7 @@ import ForgotPassword from "./Components/Pages/ForgotPassword/ForgotPassword.jsx
 import ResetPassword from "./Components/Pages/ResetPassword/ResetPassword.jsx";
 import AdminLayout from "./Layouts/AdminLayout.jsx";
 import ViewReport from "./Components/Pages/ViewReport/ViewReport.jsx";
-
+import DynamicEda from "./Components/Pages/DynamicEda/DynamicEda.jsx";
 // Contexts
 export const AppContext = createContext();
 export const ReportContext = createContext();
@@ -169,6 +169,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <UploadDataset />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/custom-eda"
+            element={
+              <ProtectedRoute>
+                <DynamicEda />
               </ProtectedRoute>
             }
           />
