@@ -31,7 +31,7 @@ const Login = () => {
       localStorage.setItem("DTD_user", JSON.stringify(data.user));
       toast.success(`Welcome back ${data.user.name}`);
       if (data.user.role === "ADMIN") {
-        navigate("/admin");
+        navigate("/admin/messages");
       } else navigate("/");
     } catch (err) {
       console.error(err);

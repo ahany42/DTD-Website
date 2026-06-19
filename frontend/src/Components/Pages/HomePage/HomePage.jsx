@@ -154,7 +154,11 @@ export default function HomePage() {
               key={stat.label}
               className="stat-card"
             >
-              <span className="stat-value">{stat.value}</span>
+              <span className="stat-value">
+                {stat.label === "Run Time Minutes"
+                  ? `${Number(stat.value).toFixed(2)}`
+                  : stat.value}
+              </span>
               <span className="stat-label">{stat.label}</span>
             </motion.div>
           ))}
@@ -170,16 +174,10 @@ export default function HomePage() {
         >
           <motion.h1 variants={itemVariants}>AutoML</motion.h1>
           <motion.p variants={itemVariants}>
-            Automated Data Analysis and Machine Learning Pipeline with
-            Generative AI Agents proposes the development of an intelligent
-            platform that integrates Generative AI, Large Language Models
-            (LLMs), and multi-agent frameworks such as LangGraph to automate the
-            complete data science workflow. Generative AI and LLMs are advanced
-            systems capable of understanding and generating human-like language,
-            making them powerful tools for reasoning, automation, and decision
-            support. Retrieval-Augmented Generation (RAG) is incorporated to
-            enhance accuracy, retrieving the most relevant information and then
-            generating reliable outputs
+            Turn your data into insights in minutes with a fast, intelligent
+            platform. Everything is handled for you—from data to results—so you
+            can focus on decisions. Upload your dataset, describe your goal, and
+            get results in about two minutes.
           </motion.p>
           <motion.div className="quick-links" variants={containerVariants}>
             <motion.a

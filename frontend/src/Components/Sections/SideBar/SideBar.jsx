@@ -25,7 +25,7 @@ const SideBar = () => {
   const menuItemStyles = {
     button: ({ active }) => ({
       backgroundColor: active ? "var(--primary-color)" : "transparent",
-      color: "white",
+      color: !active ? "var(--primary-color)" : "var(--text-color)",
       fontSize: "16px",
       padding: "10px",
       "&:hover": { backgroundColor: "var(--primary-color)" },
@@ -44,7 +44,7 @@ const SideBar = () => {
       collapsed={isCollapsed}
       collapsedWidth="60px"
       width="200px"
-      backgroundColor="var(--dark-bg-color)"
+      backgroundColor="var(--bg-color)"
     >
       <img
         src={NavLogo}
@@ -65,14 +65,6 @@ const SideBar = () => {
           as="button"
           aria-label="Menu"
         />
-
-        <MenuItem
-          icon={<FaHome />}
-          active={path === "/admin/home"}
-          component={<Link to="/admin/home" />}
-        >
-          Home
-        </MenuItem>
 
         <MenuItem
           icon={<FaMessage />}
@@ -103,14 +95,6 @@ const SideBar = () => {
           component={<Link to="/admin/reports" />}
         >
           Reports
-        </MenuItem>
-
-        <MenuItem
-          icon={<CgDetailsMore />}
-          active={path === "/admin/logs"}
-          component={<Link to="/admin/logs" />}
-        >
-          Logs
         </MenuItem>
 
         <MenuItem

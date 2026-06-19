@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import Report from "../models/Report.js";
 import User from "../models/User.js";
 
+import puppeteer from "puppeteer";
+
 /**
  * Create Report
  * report object is empty for now
@@ -293,5 +295,316 @@ export const deleteReport = async (req, res) => {
       success: false,
       message: "Failed to delete report",
     });
+  }
+};
+
+
+// ------------------------------------------ GENERATE REPORT section -----------------------
+
+const formatValue = (value) => {
+  if (value === null || value === undefined) return "N/A";
+
+  if (typeof value === "object") {
+    return `<pre>${JSON.stringify(value, null, 2)}</pre>`;
+  }
+
+  return value;
+};
+
+const generateTable = (data) => {
+  // If it's an array
+  if (Array.isArray(data)) {
+    if (data.length === 0) return "<p>No data</p>";
+
+    const headers = Object.keys(data[0]);
+
+    return `
+      <table>
+        <tr>
+          ${headers.map(h => `<th>${h}</th>`).join("")}
+        </tr>
+        ${data.map(row => `
+          <tr>
+            ${headers.map(h => `<td>${formatValue(row[h])}</td>`).join("")}
+          </tr>
+        `).join("")}
+      </table>
+    `;
+  }
+
+  // If it's an object
+  return `
+    <table>
+      <tr><th>Key</th><th>Value</th></tr>
+      ${Object.entries(data).map(([key, value]) => `
+        <tr>
+          <td>${key}</td>
+          <td>${formatValue(value)}</td>
+        </tr>
+      `).join("")}
+    </table>
+  `;
+};
+
+const generateSection = (title, data) => {
+  if (!data || Object.keys(data).length === 0) {
+    return `<h2>${title}</h2><p>No data available</p>`;
+  }
+
+  return `
+    <h2>${title}</h2>
+    ${generateTable(data)}
+  `;
+};
+
+const renderSection = (title, items) => {
+  if (!items || items.length === 0) {
+    return `<h2>${title}</h2><p>No data available</p>`;
+  }
+
+  return `
+    <h3>${title}</h3>
+    <table>
+      ${items
+        .map((item) => {
+          // Check if value is an array of {title, value} objects
+          if (Array.isArray(item.value) && item.value.every(v => v.title !== undefined && v.value !== undefined)) {
+            return `
+              <tr>
+                <td><b>${item.title}</b></td>
+                <td>
+                  <table>
+                    ${item.value.map(v => `<tr><td>${v.title}</td><td>${v.value}</td></tr>`).join("")}
+                  </table>
+                </td>
+              </tr>
+            `;
+          } else {
+            return `
+              <tr>
+                <td><b>${item.title}</b></td>
+                <td>${formatValue(item.value)}</td>
+              </tr>
+            `;
+          }
+        })
+        .join("")}
+    </table>
+  `;
+};
+
+const renderPreprocessingSection = (preprocessing) => {
+  if (!preprocessing || !preprocessing.column_actions || preprocessing.column_actions.length === 0) {
+    return `<h2>Preprocessing</h2><p>No data available</p>`;
+  }
+
+  return `
+    <h2>Preprocessing</h2>
+    <table>
+      <tr>
+        <th>Column</th>
+        <th>Action</th>
+        <th>Reason</th>
+        <th>Details</th>
+      </tr>
+      ${preprocessing.column_actions
+        .map((col) => `
+        <tr>
+          <td>${col.column}</td>
+          <td>${col.action}</td>
+          <td>${col.reason}</td>
+          <td>
+            ${col.details ? `
+              <table style="border:none; width:100%;">
+                ${Object.entries(col.details)
+                  .map(
+                    ([k, v]) =>
+                      `<tr><td style="border:none;"><b>${k}</b></td><td style="border:none;">${formatValue(v)}</td></tr>`
+                  )
+                  .join("")}
+              </table>
+            ` : "N/A"}
+          </td>
+        </tr>
+      `)
+        .join("")}
+    </table>
+  `;
+};
+
+export const downloadFullReport = async (req, res) => {
+  try {
+    const { reportId } = req.params;
+
+    const reportDoc = await Report.findById(reportId);
+
+    if (!reportDoc) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    const results = reportDoc.report || {};
+
+    const raw = results.raw_analysis?.raw_analysis || results.raw_analysis || {};
+
+    const clean = results.clean_analysis?.clean_analysis || results.clean_analysis || {};
+
+    const preprocessingHtml = renderPreprocessingSection(results.preprocessing);
+
+    const trainingResults = results.automl_training?.training_results || {};
+    const models = trainingResults.all_models || [];
+    const scores = trainingResults.all_scores || [];
+    const bestModel = trainingResults.best_model || "N/A";
+    const bestScore = trainingResults.best_score || "N/A";
+    // console.log("FULL REPORT DATA:", JSON.stringify(results.raw_analysis, null, 2));
+    const html = `
+<html>
+<head>
+  <style>
+    // body {
+    //   font-family: Arial;
+    //   padding: 40px;
+    //   color: #333;
+    // }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      border-bottom: 2px solid #eee;
+      padding-bottom: 5px;
+      margin-top: 40px;
+    }
+
+    // table {
+    //   width: 100%;
+    //   border-collapse: collapse;
+    //   margin-top: 10px;
+    // }
+
+    // td, th {
+    //   border: 1px solid #ddd;
+    //   padding: 8px;
+    // }
+
+    th {
+      background: #007bff;
+      color: white;
+    }
+
+    h2 {
+      border-bottom: 2px solid #007bff;
+      padding-bottom: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    // th {
+    //   background-color: #f5f5f5;
+    // }
+
+    .card {
+  background: #f8fbff;
+  padding: 15px;
+  border-radius: 10px;
+  border-left: 5px solid #4a90e2;
+  margin-bottom: 15px;
+  font-size: 14px;
+    }
+
+    h3 {
+      margin-top: 20px;
+      color: #444;
+    }
+
+    body {
+      font-family: Arial;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<h1>AutoML Report</h1>
+
+<h2>Raw Analysis</h2>
+${renderSection("Meta", raw.meta ?? [])}
+${renderSection("Summary", raw.summary ?? [])}
+${renderSection("Data Quality", raw.data_quality ?? [])}
+${renderSection("Target Analysis", raw.target_analysis ?? [])}
+
+${preprocessingHtml}
+
+<h2>Clean Analysis</h2>
+
+${renderSection("Meta", clean.meta ?? [])}
+${renderSection("Summary", clean.summary ?? [])}
+${renderSection("Data Quality", clean.data_quality ?? [])}
+${renderSection("Target Analysis", clean.target_analysis ?? [])}
+
+<h2>AutoML Results</h2>
+
+<p><b>Best Model:</b> ${bestModel}</p>
+<p><b>Accuracy:</b> ${bestScore}</p>
+
+
+<h3>Models Comparison</h3>
+<table>
+<tr><th>Model</th><th>Score</th></tr>
+${models.map((m, i) => `
+  <tr>
+  <td>${m}</td>
+  <td>${scores[i] ?? "N/A"}</td>
+  </tr>
+  `).join("")}
+  </table>
+  </body>
+  </html>
+  `;
+
+  // <h2>Raw JSON</h2>
+  // <pre style="background:#f0f0f0; padding:10px; border-radius:5px; overflow:auto; font-size:12px;">
+  // ${JSON.stringify(reportDoc.report, null, 2)}
+  // </pre>
+  // console.log("RAW:", raw);
+  // console.log("MODELS:", models);
+  //   console.log("SCORES:", scores);
+
+    const browser = await puppeteer.launch({
+      headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "domcontentloaded" });
+    const pdf = await page.pdf({ format: "A4" });
+    console.log("PDF size:", pdf.length);
+
+    await browser.close();
+
+    if (!pdf || pdf.length === 0) {
+      throw new Error("PDF generation failed");
+    }
+
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename=report_${reportId}.pdf`,
+      "Content-Length": pdf.length,
+    });
+
+    res.end(pdf);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to generate report" });
   }
 };

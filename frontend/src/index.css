@@ -1,20 +1,26 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 :root {
-  --primary-color: #002147;
-  --light-blue: #58a6ff;
-  --hover-color: #032e5f;
+  --primary-color: #1e293b; /* Slate Indigo */
+  --light-blue: #38bdf8; /* Sky Cyan */
+  --hover-color: #334155;
   --primary-rgb: 255, 178, 2;
   --navbar-height: 5em;
   --partners-bar-height: 50px;
+  --light-color: white;
+  --grey-color: #8b949e;
+  --dark-green: #0f1f17;
   --page-margin-top: 20px;
-  --dark-bg-color: black;
+  --bg-color: #f8fafc;
+  --danger-color: #f85149;
+  --font-color: black;
+  --green-color: #2ea043 !important;
   --blueish-color: rgba(0, 99, 166, 0.05);
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
 
-  color-scheme: dark dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: var(--dark-bg-color) !important;
+  color-scheme: light light;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: var(--bg-color) !important;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -28,7 +34,7 @@
   font-family: "Poppins", sans-serif;
 }
 p {
-  color: white !important;
+  color: var(--font-color) !important;
 }
 .light-blue-text {
   color: var(--light-blue) !important;
@@ -40,13 +46,13 @@ p {
 .primary-border {
   border: 1px solid var(--primary-color) !important;
 }
-.primary-txt {
+.primary-color {
   color: var(--primary-color);
 }
 .page-paragraph {
   text-align: left !important;
   font-weight: 400 !important;
-  color: rgb(255, 255, 255) !important;
+  color: var(--light-color) !important;
   margin-bottom: 1em !important;
   font-size: 20px !important;
 }
@@ -54,8 +60,8 @@ p {
   min-height: 100dvh;
   width: 100% !important;
   display: flex;
-  background-color: var(--dark-bg-color) !important;
-  color: white;
+  background-color: var(--bg-color) !important;
+  color: var(--light-color) !important;
   flex-direction: column;
 }
 .submit-btn {
@@ -63,21 +69,19 @@ p {
   padding: 12px;
   margin-top: 15px;
   border: none;
-  color: white;
+  color: var(--light-color) !important;
 }
 h2 {
   min-height: 2rem;
 }
 strong {
-  color: black !important;
+  color: var(--font-color) !important;
 }
 button {
   cursor: pointer;
   outline: none !important;
   border-radius: 10px;
   background: var(--primary-color);
-  color: black;
-  cursor: pointer;
   font-weight: 600;
   transition: 0.25s;
   font-size: 22px;
@@ -95,29 +99,32 @@ select {
 textarea,
 .dropdown-btn,
 .service-dropdown {
-  width: 600px !important;
   border-radius: 5px;
 }
 select {
-  border: 1px solid rgba(168, 165, 165, 1) !important;
+  border: 1px solid var(--primary-color) !important;
 }
 input:-webkit-autofill,
 textarea:-webkit-autofill,
 select:-webkit-autofill {
-  background-color: var(--dark-bg-color) !important;
-  -webkit-box-shadow: 0 0 0 1000px rgb(0, 0, 0) inset !important;
-  -webkit-text-fill-color: white !important;
-  color: white !important;
+  background-color: var(--bg-color) !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--primary-color) inset !important;
+  -webkit-text-fill-color: var(--light-color) !important;
+  color: var(--light-color) !important;
 }
 textarea {
   height: 100px;
+  border: 1px solid var(--primary-color) !important;
 }
-
+/* stepper label */
+#RFS-Label {
+  color: var(--primary-color) !important;
+}
 label {
   display: flex;
   flex-direction: column;
   margin-bottom: 18px;
-  color: #ddd;
+  color: var(--font-color) !important;
 }
 .input-label-container,
 .toggle-label-container {
@@ -160,15 +167,14 @@ input,
   margin-top: 6px;
   padding: 12px;
   border-radius: 10px;
-  border: 1px solid #333;
-  background: var(--dark-bg-color);
-  color: #fff;
-  border: 1px solid white;
+  background: var(--bg-color);
+  color: var(--font-color) !important;
+  border: 1px solid var(--primary-color) !important;
   transition: 0.2s;
 }
 
 input::placeholder {
-  color: #fff !important;
+  color: var(--font-color) !important;
   opacity: 1;
 }
 hr {
@@ -176,16 +182,17 @@ hr {
   margin-top: 50px;
   margin-bottom: 50px;
   height: 1px;
-  background-color: #ccc;
+  background-color: var(--primary-color);
   border: none;
 }
 h1 {
   font-size: 40px;
+  color: var(--primary-color) !important;
 }
 input:focus {
-  border-color: var(--secondary-color);
+  border: 0px !important;
   outline: none;
-  background-color: var(--dark-bg-color);
+  background-color: var(--bg-color);
 }
 @media (max-width: 992px) {
   ::-webkit-scrollbar {
@@ -235,7 +242,7 @@ input:focus {
   margin-top: 1em;
   margin-left: 50px;
   padding-bottom: 0.5em;
-  color: var(--secondary-color);
+  color: var(--primary-color) !important;
 }
 .link {
   font-size: 18px;
@@ -283,7 +290,7 @@ textarea::placeholder,
 select {
   font-size: 14px !important;
   padding-left: 10px !important;
-  color: rgb(173, 168, 168) !important;
+  color: var(--font-color) !important;
 }
 .placeholder {
   padding-left: 15px !important;
@@ -295,7 +302,7 @@ textarea {
   padding: 10px 0 0 10px;
 }
 select {
-  border: 1px solid #ccc;
+  border: 1px solid var(--primary-color);
   box-sizing: border-box !important;
 }
 @media (max-width: 992px) {
@@ -318,13 +325,13 @@ select {
 }
 
 strong {
-  color: #07294b;
+  color: var(--primary-color);
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    background-color: var(--dark-bg-color);
-    color: white;
+    background-color: var(--bg-color);
+    color: var(--light-color);
   }
 }
 
@@ -341,14 +348,14 @@ strong {
 .form-card {
   position: relative;
   z-index: 1;
-  background: rgba(27, 27, 27, 0.85);
+  background: var(--grey-color) !important;
   padding: 3em 2.5em;
   border-radius: 20px;
   width: 100%;
   max-width: 420px; /* Consistent maximum width for desktop forms */
   backdrop-filter: blur(18px);
-  border: 1.5px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.65);
+  border: 1.5px solid var(--grey-color) !important;
+  box-shadow: 0 0 25px var(--font-color);
   animation: fadeIn 0.7s ease-out;
   box-sizing: border-box;
 }
@@ -361,7 +368,7 @@ strong {
 }
 .form-title {
   text-align: center;
-  color: #ffffff;
+  color: var(--primary-color) !important;
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 2em;

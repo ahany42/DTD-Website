@@ -8,6 +8,7 @@ import {
   toggleStarReport,
   deleteReport,
   getStarredReportsByUser,
+  downloadFullReport
 } from "../controllers/report.controller.js";
 
 const router = express.Router();
@@ -151,4 +152,25 @@ router.delete("/:id", deleteReport);
  *         description: List of reports
  */
 router.get("/starred/:userId", getStarredReportsByUser);
+
+
+/**
+ * @swagger
+ * /reports/{reportId}/download:
+ *   get:
+ *     summary: Download full AutoML report as PDF
+ *     tags: [Reports]
+ *     parameters:
+ *       - in: path
+ *         name: reportId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Report ID
+ *     responses:
+ *       200:
+ *         description: PDF file download
+ */
+router.get("/:reportId/download", downloadFullReport);
+
 export default router;

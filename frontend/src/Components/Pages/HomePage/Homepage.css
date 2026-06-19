@@ -2,8 +2,8 @@
   display: flex;
   align-items: first baseline;
   margin: 0 10px;
-  background: var(--dark-bg-color);
-  color: #fff;
+  background: var(--bg-color);
+  color: var(--light-color);
   margin-top: 80px;
 }
 
@@ -36,7 +36,7 @@
   border-radius: 12px;
   text-align: center;
   background: var(--primary-color);
-  color: #fff;
+  color: var(--light-color);
   text-decoration: none;
   font-weight: 500;
   transition: background 0.2s ease;
@@ -60,8 +60,8 @@
   min-width: 160px;
   padding: 20px 24px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--light-color);
+  border: 1px solid var(--primary-color);
   backdrop-filter: blur(6px);
 }
 
@@ -69,12 +69,12 @@
   display: block;
   font-size: 32px;
   font-weight: 700;
-  color: white;
+  color: var(--primary-color);
 }
 
 .stat-label {
   margin-top: 6px;
   display: block;
   font-size: 14px;
-  color: #cbd5e1;
+  color: var(--primary-color);
 }

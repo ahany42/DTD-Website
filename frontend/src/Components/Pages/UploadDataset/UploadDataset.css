@@ -1,65 +1,453 @@
-.chat-input-wrapper {
+.upload-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 20px;
+  background: var(--background-color);
+}
+
+.upload-container {
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Header */
+.upload-header {
+  padding-bottom: 8px;
+}
+
+/* Sections */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--grey-color) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-num {
+  color: var(--light-blue) !important;
+  font-size: 0.7rem;
+}
+.target-suggestion-line {
+  margin: 10px 0;
+  width: 100%;
+}
+.optional-tag {
+  font-size: 0.65rem;
+  color: var(--grey-color) !important;
+  font-weight: 400;
+  text-transform: lowercase;
+  letter-spacing: 0;
+  margin-left: 4px;
+}
+
+.section-hint {
+  font-size: 0.74rem;
+  color: var(--grey-color) !important;
+  margin: -4px 0 0;
+}
+
+/* File dropzone */
+.file-dropzone {
+  border: 2px dashed var(--font-color) !important;
+  border-radius: 10px;
+  padding: 28px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg-color);
+}
+
+.file-dropzone:hover:not(.dropzone-filled) {
+  border-color: var(--light-blue) !important;
+  background: var(--bg-color) !important;
+}
+
+.dropzone-active {
+  border-color: var(--light-blue) !important;
+  background: var(--primary-color) !important;
+}
+
+.dropzone-filled {
+  cursor: default;
+  border-style: solid;
+  border-color: var(--grey-color) !important;
+}
+
+.dropzone-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.upload-icon {
+  color: var(--light-blue) !important;
+  transition: color 0.2s;
+}
+
+.file-dropzone:hover .upload-icon,
+.dropzone-active .upload-icon {
+  color: var(--light-blue) !important;
+}
+
+.dropzone-text {
+  font-size: 0.85rem;
+  color: var(--primary-color) !important;
+}
+
+.dropzone-text u {
+  color: var(--light-blue) !important;
+  cursor: pointer;
+}
+
+.dropzone-hint {
+  font-size: 0.72rem;
+  color: var(--primary-color) !important;
+  letter-spacing: 0.05em;
+}
+
+/* File info row */
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.file-icon {
+  color: var(--light-blue) !important;
+  flex-shrink: 0;
+}
+
+.file-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.file-name {
+  font-size: 0.85rem;
+  color: var(--primary-color) !important;
+  font-weight: 500;
+}
+
+.file-size {
+  font-size: 0.72rem;
+  color: var(--primary-color) !important;
+}
+
+.remove-file {
+  background: none;
+  border: none;
+  color: var(--danger-color) !important;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+
+/* Column pills */
+.columns-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.col-pill {
+  background: var(--light-blue) !important;
+  color: var(--font-color) !important;
+  border: 1px solid var(--light-color) !important;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: grab;
+  user-select: none;
+  transition: all 0.15s;
+}
+
+.col-pill:hover {
+  border-color: var(--light-blue) !important;
+  background: var(--light-blue) !important;
+  color: var(--dark-green) !important;
+  /* transform: translateY(-1px); */
+}
+
+.col-pill--selected {
+  background: var(--dark-green-color) !important;
+  color: var(--light-color) !important;
+  border-color: var(--light-blue) !important;
+}
+.col-pill--selected:hover {
+  background: var(--green-color) !important;
+  color: var(--dark-green) !important;
+  border-color: var(--light-blue) !important;
+}
+.col-pill--selected {
+  background: var(--green-color) !important;
+  color: var(--light-color) !important;
+  border-color: var(--light-blue) !important;
+}
+
+.col-pill--dragging {
+  opacity: 0.3;
+  cursor: grabbing;
+}
+
+/* Target drop zone */
+.target-dropzone {
+  border: 2px dashed var(--grey-color) !important;
+  border-radius: 8px;
+  padding: 14px 18px;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
+  background: var(--bg-color);
+}
+
+.target-active {
+  border-color: var(--light-blue) !important;
+  background: #161f2e;
+}
+
+.target-filled {
+  border-style: solid;
+  border-color: var(--green-color) !important;
+  background: var(--dark-green) !important;
+}
+
+.target-placeholder {
+  font-size: 0.78rem;
+  color: var(--grey-color) !important;
+}
+
+.target-value {
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid #ddd;
-  border-radius: 999px;
-  padding: 8px 12px;
-  background: black;
-  width: 90%;
-  margin: auto auto 0 auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: var(--green-color) !important;
+  font-size: 0.85rem;
+  font-weight: 600;
+  width: 100%;
 }
 
-.chat-textarea {
-  flex: 1;
+.clear-target {
+  margin-left: auto;
+  background: none;
   border: none;
+  color: var(--grey-color) !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.clear-target:hover {
+  color: var(--danger-color) !important;
+}
+
+/* Prompt textarea */
+.prompt-textarea {
+  width: 100%;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 0.85rem;
+  color: var(--primary-color) !important;
+  resize: vertical;
+  min-height: 90px;
   outline: none;
-  resize: none;
-  font-size: 14px;
-  height: 40px;
-  max-height: 180px;
-  overflow-y: auto;
-  line-height: 1.4;
-  background: transparent;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
-.circle-btn {
-  width: 38px !important;
-  height: 38px !important;
-  border-radius: 50% !important;
-  border: none;
-  background: #f1f1f1;
+.prompt-textarea::placeholder {
+  color: var(--primary-color) !important;
+}
+.prompt-textarea:focus {
+  border-color: var(--light-blue) !important;
+}
+
+/* Submit button */
+.submit-btn {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
+  background: var(--primary-color) !important;
+  color: var(--light-color) !important;
+  border: 1px solid var(--light-blue) !important;
+  border-radius: 8px;
+  padding: 14px 28px;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-.allowed-files-text {
-  text-align: center;
-}
-.discard-btn {
-  width: 18px !important;
-  height: 18px !important;
-  border-radius: 50% !important;
-}
-.circle-btn:hover {
-  background: #e5e5e5;
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+  width: 100%;
 }
 
-.circle-btn.send {
-  background: var(--primary-color);
-  color: white;
+.submit-btn:hover:not(:disabled) {
+  background: var(--hover-color) !important;
+  transform: translateY(-1px);
 }
 
-.circle-btn.send:hover {
-  background: var(--hover-color);
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.file-preview {
-  font-size: 13px;
-  color: #ffffff;
+.submit-loading {
+  pointer-events: none;
+}
+
+/* Spinner */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #21262d;
+  border-top-color: var(--light-blue) !important;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* =========================
+   AI Suggestions (Unified Style)
+========================= */
+
+.ai-suggestions {
   display: flex;
-  gap: 15px;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.ai-suggestions h3 {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--grey-color) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 4px;
+}
+
+/* Card = same as dropzone style */
+.suggestion-card {
+  background: var(--bg-color) !important;
+  border: 1px solid var(--grey-color) !important;
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+/* Hover = same blue tone */
+.suggestion-card:hover {
+  scale: calc(1.01);
+  transform: translateY(-1px);
+}
+
+/* Selected = same as target success */
+.suggestion-selected {
+  border-color: var(--green-color) !important;
+  background-color: var(--dark-green) !important;
+}
+.suggestion-selected > .suggestion-evidence {
+  color: var(--light-color) !important;
+}
+.suggestion-selected > hr {
+  color: var(--light-color) !important;
+}
+
+/* Header */
+.suggestion-header {
+  color: var(--light-blue) !important; /* same as .col-pill */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+/* Column name */
+.suggestion-header strong {
+  font-size: 0.85rem;
+  color: var(--light-blue) !important;
+  font-weight: 500;
+}
+
+/* Task (classification/regression) */
+.suggestion-task {
+  font-size: 0.72rem;
+  color: var(--light-blue) !important;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+/* Evidence list */
+.suggestion-evidence {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 0.7rem;
+  color: var(--primary-color) !important;
+  line-height: 1.4;
+}
+
+/* Priority badge (aligned with your palette) */
+.priority-badge {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* High → green (like success target) */
+.priority-badge.high {
+  background: var(--dark-green) !important;
+  color: var(--green-color) !important;
+  border: 1px solid var(--green-color) !important;
+}
+
+/* Medium → blue (primary tone) */
+.priority-badge.medium {
+  background: var(--primary-color) !important;
+  color: var(--light-blue) !important;
+  border: 1px solid var(--light-blue) !important;
+}
+
+/* Low → muted gray (not aggressive red) */
+.priority-badge.low {
+  background: var(--dark-green) !important;
+  color: var(--grey-color) !important;
+  border: 1px solid var(--grey-color) !important;
+}
+
+/* Loading */
+.ai-loading {
+  font-size: 0.72rem;
+  color: var(--grey-color) !important;
+  margin-bottom: 6px;
 }

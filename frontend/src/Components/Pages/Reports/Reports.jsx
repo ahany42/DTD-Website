@@ -20,8 +20,13 @@ const Reports = () => {
     reportId: "",
   });
   const [pagination, setPagination] = useState({ page: 1, totalPages: 0 });
-  const { BACKEND_URL, formatFileSize, formatDate, formatRunTime } =
-    useContext(AppContext);
+  const {
+    BACKEND_URL,
+    formatFileSize,
+    formatDate,
+    formatRunTime,
+    downloadReport,
+  } = useContext(AppContext);
   const [user, setUser] = useState(null);
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -184,12 +189,7 @@ const Reports = () => {
       navigate(`/view-report/${id}`);
     }
   };
-  // const downLoadReport = (report) => {
-  //   if (!report) {
-  //     toast.info("Your report is being generated");
-  //   }
-  //   //TODO:Generate the pdf on spot
-  // };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setComplaintData((prev) => ({
@@ -205,7 +205,7 @@ const Reports = () => {
   };
   return (
     <div className="page">
-      <h1 className="title">Reports</h1>
+      <h1 className="title">Your Reports</h1>
       <div
         style={{ display: "flex", gap: 10, marginBottom: 20, marginLeft: 60 }}
       >
@@ -292,14 +292,6 @@ const Reports = () => {
                   </Table.Cell>
                   <Table.Cell>
                     <div className="table-icon-container">
-                      {/* <IconButton
-                        color="green"
-                        variant="surface"
-                        onClick={() => downLoadReport(report.report)}
-                        aria-label="Download report"
-                      >
-                        <FiDownload />
-                      </IconButton> */}
                       <IconButton
                         color="green"
                         variant="surface"
@@ -307,6 +299,14 @@ const Reports = () => {
                         aria-label="View report"
                       >
                         <FaEye />
+                      </IconButton>
+                      <IconButton
+                        color="indigo"
+                        variant="surface"
+                        onClick={() => downloadReport(report._id)}
+                        aria-label="Download report"
+                      >
+                        <FiDownload />
                       </IconButton>
                       <IconButton
                         color="yellow"

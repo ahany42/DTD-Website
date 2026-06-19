@@ -1,12 +1,13 @@
 import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { createContext, useMemo, useState } from "react";
 import HomePage from "./Components/Pages/HomePage/HomePage.jsx";
-import "./App.css";
 import ChatWidget from "./Components/Other/ChatWidget/ChatWidget.jsx";
+import ScrollToTopButton from "./Components/Other/ScrollToTopButton/ScrollToTopButton.jsx";
 import NavBar from "./Components/Sections/NavBar/NavBar.jsx";
 import Footer from "./Components/Sections/Footer/Footer.jsx";
 import ReadMore from "./Components/Pages/ReadMore/ReadMore.jsx";
 import UploadDataset from "./Components/Pages/UploadDataset/UploadDataset.jsx";
+import ReportGetStarted from "./Components/Pages/ReportGetStarted/ReportGetStarted.jsx";
 import Login from "./Components/Pages/Login/Login.jsx";
 import Reports from "./Components/Pages/Reports/Reports.jsx";
 import { ToastContainer } from "react-toastify";
@@ -17,7 +18,7 @@ import ForgotPassword from "./Components/Pages/ForgotPassword/ForgotPassword.jsx
 import ResetPassword from "./Components/Pages/ResetPassword/ResetPassword.jsx";
 import AdminLayout from "./Layouts/AdminLayout.jsx";
 import ViewReport from "./Components/Pages/ViewReport/ViewReport.jsx";
-
+import DynamicEda from "./Components/Pages/DynamicEda/DynamicEda.jsx";
 // Contexts
 export const AppContext = createContext();
 export const ReportContext = createContext();
@@ -57,7 +58,7 @@ function formatRunTime(seconds) {
 }
 
 const formatCustomTimestamp = (timestamp) => {
-  if (!timestamp) return "-";
+  if (!timestamp) return "";
 
   const [datePart, timePart] = timestamp.split("_");
 
@@ -84,6 +85,27 @@ const ProtectedRoute = ({ children }) => {
   if (!checkAuth()) return <Navigate to="/login" replace />;
   return children;
 };
+const downloadReport = async (reportId) => {
+  const res = await fetch(`${BACKEND_URL}/api/reports/${reportId}/download`);
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error("Download failed:", err);
+    return;
+  }
+
+  const blob = await res.blob();
+
+  if (blob.type !== "application/pdf") {
+    console.error("Not a PDF:", blob);
+    return;
+  }
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "automl_report.pdf";
+  a.click();
+};
 const AdminRoute = ({ children }) => {
   const user = JSON.parse(localStorage.getItem("DTD_user"));
   if (!checkAuth()) return <Navigate to="/login" replace />;
@@ -104,6 +126,7 @@ function App() {
       formatFileSize,
       formatDate,
       formatRunTime,
+      downloadReport,
       formatCustomTimestamp,
     }),
     []
@@ -150,6 +173,22 @@ function App() {
             }
           />
           <Route
+            path="/custom-eda"
+            element={
+              <ProtectedRoute>
+                <DynamicEda />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/get-started"
+            element={
+              <ProtectedRoute>
+                <ReportGetStarted />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/reports"
             element={
               <ProtectedRoute>
@@ -172,7 +211,8 @@ function App() {
         </Routes>
 
         {/* Widgets & Footer */}
-        {!isAdminRoute && !isUploadDataSet && <ChatWidget />}
+        {/* {!isAdminRoute && !isUploadDataSet && <ChatWidget />} */}
+        {!isAdminRoute && !isUploadDataSet && <ScrollToTopButton />}
         {!isAdminRoute && <Footer />}
 
         <ScrollToTop />

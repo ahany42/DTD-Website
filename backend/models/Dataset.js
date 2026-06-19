@@ -18,6 +18,10 @@ const datasetSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    mode: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true }
 );
