@@ -361,7 +361,7 @@ const UploadDataset = () => {
         <button
           className={`submit-btn ${isLoading ? "submit-loading" : ""}`}
           onClick={handleSubmit}
-          disabled={isLoading}
+          disabled={isLoading || !targetColumn}
         >
           {isLoading ? (
             <span className="spinner" />
