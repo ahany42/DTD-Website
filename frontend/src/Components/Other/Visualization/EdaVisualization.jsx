@@ -107,7 +107,9 @@ const splitValue = (value) => {
   );
 };
 export default function EdaVisualization({ dataJson }) {
-  const parsed = dataJson || {};
+const [activeSection, setActiveSection] = useState("");
+
+const parsed = dataJson || {};
 
   const summary = parsed.summary || [];
   const target_analysis = parsed.target_analysis || [];
@@ -117,6 +119,7 @@ export default function EdaVisualization({ dataJson }) {
   const [selectedColumn, setSelectedColumn] = useState(
     columns?.[0]?.column || ""
   );
+
   useEffect(() => {
     if (columns?.[0]?.column) {
       setSelectedColumn(columns[0].column);
@@ -133,21 +136,68 @@ export default function EdaVisualization({ dataJson }) {
       }))
       ?.sort((a, b) => b.value - a.value) || [];
 
-  return (
+const sections = [
+  summary.length > 0 && {
+    id: "summary",
+    label: "Summary",
+  },
+  target_analysis.length > 0 && {
+    id: "target",
+    label: "Target Analysis",
+  },
+  data_quality.length > 0 && {
+    id: "quality",
+    label: "Data Quality",
+  },
+  relationshipData.length > 0 && {
+    id: "importance",
+    label: "Feature Importance",
+  },
+  columns.length > 0 && {
+    id: "columns",
+    label: "Columns",
+  },
+  columns.some((c) => c?.top_values?.length) && {
+    id: "topvalues",
+    label: "Top Values",
+  },
+  warnings.length > 0 && {
+    id: "warnings",
+    label: "Warnings",
+  },
+].filter(Boolean);
+
+useEffect(() => {
+  if (!activeSection && sections.length > 0) {
+    setActiveSection(sections[0].id);
+  }
+}, [sections, activeSection]);
+
+return (
     <div>
+      <div className="results-navbar">
+        {sections.map((section) => (
+          <button
+            key={section.id}
+            className={`nav-btn ${
+              activeSection === section.id ? "active" : ""
+            }`}
+            onClick={() => setActiveSection(section.id)}
+          >
+            {section.label}
+          </button>
+        ))}
+      </div>
+
       {/* SUMMARY */}
-      {summary.length > 0 && (
+      {activeSection === "summary" && summary.length > 0 && (
         <section className="stat-container">
           <div style={{ display: "flex", gap: "20px" }}>
             <Button
               size="2"
               variant="soft"
               color="green"
-              onClick={() =>
-                document
-                  .getElementById("top-values")
-                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
-              }
+              onClick={() => setActiveSection("topvalues")}
             >
               Top Values
             </Button>
@@ -155,11 +205,7 @@ export default function EdaVisualization({ dataJson }) {
               size="2"
               variant="soft"
               color="red"
-              onClick={() =>
-                document
-                  .getElementById("warnings")
-                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
-              }
+              onClick={() => setActiveSection("warnings")}
             >
               Warnings
             </Button>
@@ -178,7 +224,7 @@ export default function EdaVisualization({ dataJson }) {
       )}
 
       {/* TARGET ANALYSIS */}
-      {target_analysis.length > 0 && (
+      {activeSection === "target" && target_analysis.length > 0 && (
         <section className="stat-container">
           <h2 className="stat-title">Target Analysis</h2>
 
@@ -224,7 +270,7 @@ export default function EdaVisualization({ dataJson }) {
       )}
 
       {/* DATA QUALITY */}
-      {data_quality.length > 0 && (
+      {activeSection === "quality" && data_quality.length > 0 && (
         <section className="stat-container">
           <h2 className="stat-title">Data Quality</h2>
 
@@ -240,7 +286,7 @@ export default function EdaVisualization({ dataJson }) {
       )}
 
       {/* FEATURE IMPORTANCE */}
-      {relationshipData.length > 0 && (
+      {activeSection === "importance" && relationshipData.length > 0 && (
         <section className="stat-container">
           <h2 className="stat-title">Feature Importance</h2>
 
@@ -257,7 +303,7 @@ export default function EdaVisualization({ dataJson }) {
         </section>
       )}
       {console.log("EDA COLUMNS:", columns)}
-      {columns.length > 0 && (
+      {activeSection === "columns" && columns.length > 0 && (
         <section className="stat-container">
           <h2 className="stat-title">Columns</h2>
 
@@ -312,7 +358,7 @@ export default function EdaVisualization({ dataJson }) {
             ))}
         </section>
       )}
-      {columns.length > 0 && (
+      {activeSection === "topvalues" && columns.length > 0 && (
         <section className="stat-container">
           <h2 className="stat-title" id="top-values">
             Top Values
@@ -336,7 +382,7 @@ export default function EdaVisualization({ dataJson }) {
           )}
         </section>
       )}
-      {warnings.length > 0 && (
+      {activeSection === "warnings" && warnings.length > 0 && (
         <section className="stat-container">
           <h2 className="stat-title" id="warnings">
             Warnings

@@ -50,3 +50,40 @@
   color: var(--primary-color) !important;
   font-size: 14px;
 }
+
+.column-selector-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--font-color);
+  margin-bottom: 4px;
+}
+
+.column-selector {
+  min-width: 300px;
+}
+
+.rt-SelectTrigger {
+  background-color: var(--grey-color) !important;
+  border: 2px solid var(--primary-color) !important;
+  color: var(--font-color) !important;
+  border-radius: 10px !important;
+  min-height: 42px;
+}
+
+.rt-SelectTrigger:hover {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px rgba(100, 100, 255, 0.15);
+}
+
+.preprocessing-divider {
+  width: 100%;
+  height: 1px;
+  background-color: #444;
+  margin: 24px 0;
+}
+.columns-section-title {
+  color: var(--primary-color);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
