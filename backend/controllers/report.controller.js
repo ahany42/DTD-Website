@@ -9,6 +9,34 @@ import puppeteer from "puppeteer";
  * Create Report
  * report object is empty for now
  */
+export const getKnowledgeGraph = async (req, res) => {
+  try {
+    const { reportId } = req.params;
+
+    const report = await Report.findById(reportId).select(
+      "knowledge_graph dynamic_status target_column task_type"
+    );
+
+    if (!report) {
+      return res.status(404).json({
+        error: "Report not found",
+      });
+    }
+
+    return res.status(200).json({
+      knowledgeGraph: report.knowledge_graph || [],
+      dynamicStatus: report.dynamic_status,
+      targetColumn: report.target_column,
+      taskType: report.task_type,
+    });
+  } catch (error) {
+    console.error("Get Knowledge Graph Error:", error);
+
+    return res.status(500).json({
+      error: "Internal Server Error",
+    });
+  }
+};
 export const createReport = async (req, res) => {
   try {
     const { userId, report = {} } = req.body;
@@ -298,7 +326,6 @@ export const deleteReport = async (req, res) => {
   }
 };
 
-
 // ------------------------------------------ GENERATE REPORT section -----------------------
 
 const formatValue = (value) => {
@@ -321,13 +348,17 @@ const generateTable = (data) => {
     return `
       <table>
         <tr>
-          ${headers.map(h => `<th>${h}</th>`).join("")}
+          ${headers.map((h) => `<th>${h}</th>`).join("")}
         </tr>
-        ${data.map(row => `
+        ${data
+          .map(
+            (row) => `
           <tr>
-            ${headers.map(h => `<td>${formatValue(row[h])}</td>`).join("")}
+            ${headers.map((h) => `<td>${formatValue(row[h])}</td>`).join("")}
           </tr>
-        `).join("")}
+        `
+          )
+          .join("")}
       </table>
     `;
   }
@@ -336,12 +367,16 @@ const generateTable = (data) => {
   return `
     <table>
       <tr><th>Key</th><th>Value</th></tr>
-      ${Object.entries(data).map(([key, value]) => `
+      ${Object.entries(data)
+        .map(
+          ([key, value]) => `
         <tr>
           <td>${key}</td>
           <td>${formatValue(value)}</td>
         </tr>
-      `).join("")}
+      `
+        )
+        .join("")}
     </table>
   `;
 };
@@ -368,13 +403,18 @@ const renderSection = (title, items) => {
       ${items
         .map((item) => {
           // Check if value is an array of {title, value} objects
-          if (Array.isArray(item.value) && item.value.every(v => v.title !== undefined && v.value !== undefined)) {
+          if (
+            Array.isArray(item.value) &&
+            item.value.every(
+              (v) => v.title !== undefined && v.value !== undefined
+            )
+          ) {
             return `
               <tr>
                 <td><b>${item.title}</b></td>
                 <td>
                   <table>
-                    ${item.value.map(v => `<tr><td>${v.title}</td><td>${v.value}</td></tr>`).join("")}
+                    ${item.value.map((v) => `<tr><td>${v.title}</td><td>${v.value}</td></tr>`).join("")}
                   </table>
                 </td>
               </tr>
@@ -394,7 +434,11 @@ const renderSection = (title, items) => {
 };
 
 const renderPreprocessingSection = (preprocessing) => {
-  if (!preprocessing || !preprocessing.column_actions || preprocessing.column_actions.length === 0) {
+  if (
+    !preprocessing ||
+    !preprocessing.column_actions ||
+    preprocessing.column_actions.length === 0
+  ) {
     return `<h2>Preprocessing</h2><p>No data available</p>`;
   }
 
@@ -408,13 +452,16 @@ const renderPreprocessingSection = (preprocessing) => {
         <th>Details</th>
       </tr>
       ${preprocessing.column_actions
-        .map((col) => `
+        .map(
+          (col) => `
         <tr>
           <td>${col.column}</td>
           <td>${col.action}</td>
           <td>${col.reason}</td>
           <td>
-            ${col.details ? `
+            ${
+              col.details
+                ? `
               <table style="border:none; width:100%;">
                 ${Object.entries(col.details)
                   .map(
@@ -423,10 +470,13 @@ const renderPreprocessingSection = (preprocessing) => {
                   )
                   .join("")}
               </table>
-            ` : "N/A"}
+            `
+                : "N/A"
+            }
           </td>
         </tr>
-      `)
+      `
+        )
         .join("")}
     </table>
   `;
@@ -444,9 +494,11 @@ export const downloadFullReport = async (req, res) => {
 
     const results = reportDoc.report || {};
 
-    const raw = results.raw_analysis?.raw_analysis || results.raw_analysis || {};
+    const raw =
+      results.raw_analysis?.raw_analysis || results.raw_analysis || {};
 
-    const clean = results.clean_analysis?.clean_analysis || results.clean_analysis || {};
+    const clean =
+      results.clean_analysis?.clean_analysis || results.clean_analysis || {};
 
     const preprocessingHtml = renderPreprocessingSection(results.preprocessing);
 
@@ -561,24 +613,28 @@ ${renderSection("Target Analysis", clean.target_analysis ?? [])}
 <h3>Models Comparison</h3>
 <table>
 <tr><th>Model</th><th>Score</th></tr>
-${models.map((m, i) => `
+${models
+  .map(
+    (m, i) => `
   <tr>
   <td>${m}</td>
   <td>${scores[i] ?? "N/A"}</td>
   </tr>
-  `).join("")}
+  `
+  )
+  .join("")}
   </table>
   </body>
   </html>
   `;
 
-  // <h2>Raw JSON</h2>
-  // <pre style="background:#f0f0f0; padding:10px; border-radius:5px; overflow:auto; font-size:12px;">
-  // ${JSON.stringify(reportDoc.report, null, 2)}
-  // </pre>
-  // console.log("RAW:", raw);
-  // console.log("MODELS:", models);
-  //   console.log("SCORES:", scores);
+    // <h2>Raw JSON</h2>
+    // <pre style="background:#f0f0f0; padding:10px; border-radius:5px; overflow:auto; font-size:12px;">
+    // ${JSON.stringify(reportDoc.report, null, 2)}
+    // </pre>
+    // console.log("RAW:", raw);
+    // console.log("MODELS:", models);
+    //   console.log("SCORES:", scores);
 
     const browser = await puppeteer.launch({
       headless: "new",

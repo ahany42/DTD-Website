@@ -5,10 +5,11 @@ import {
   getReportById,
   getReportsByUser,
   getAllReports,
+  getKnowledgeGraph,
   toggleStarReport,
   deleteReport,
   getStarredReportsByUser,
-  downloadFullReport
+  downloadFullReport,
 } from "../controllers/report.controller.js";
 
 const router = express.Router();
@@ -44,6 +45,7 @@ const router = express.Router();
  *       201:
  *         description: Report created
  */
+router.get("/:reportId/knowledge-graph", getKnowledgeGraph);
 router.post("/", createReport);
 
 /**
@@ -152,7 +154,6 @@ router.delete("/:id", deleteReport);
  *         description: List of reports
  */
 router.get("/starred/:userId", getStarredReportsByUser);
-
 
 /**
  * @swagger
