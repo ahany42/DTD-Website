@@ -13,11 +13,13 @@ const KnowledgeGraphPage = () => {
 
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
+  const [selectedNode, setSelectedNode] = useState(null);
 
   useEffect(() => {
     const fetchGraph = async () => {
       try {
         console.log("reportId:", reportId);
+
         const response = await fetch(
           `http://localhost:4000/api/reports/${reportId}/knowledge-graph`
         );
@@ -37,6 +39,7 @@ const KnowledgeGraphPage = () => {
               .replace("run_", "")
               .replaceAll("_", " ")
               .replace(/\b\w/g, (c) => c.toUpperCase()),
+            isSelected: false,
           },
           type: "circle",
         }));
@@ -46,10 +49,7 @@ const KnowledgeGraphPage = () => {
           source: stages[index],
           target: stage,
         }));
-        console.log("Nodes:", graphNodes);
-        console.log(graphNodes[0]);
-        console.log(graphNodes[0].data);
-        console.log(graphNodes[0].data.label);
+
         setNodes(graphNodes);
         setEdges(graphEdges);
       } catch (error) {
@@ -60,12 +60,84 @@ const KnowledgeGraphPage = () => {
     fetchGraph();
   }, [reportId]);
 
+  const onNodeClick = (_, node) => {
+    setSelectedNode(node);
+
+    setNodes((nds) =>
+      nds.map((n) => ({
+        ...n,
+        data: {
+          ...n.data,
+          isSelected: n.id === node.id,
+        },
+      }))
+    );
+  };
+
+  const onPaneClick = () => {
+    setSelectedNode(null);
+
+    setNodes((nds) =>
+      nds.map((n) => ({
+        ...n,
+        data: {
+          ...n.data,
+          isSelected: false,
+        },
+      }))
+    );
+  };
+
   return (
-    <div style={{ width: "100%", height: "100vh" }}>
-      <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView>
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        position: "relative",
+      }}
+    >
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        fitView
+        onNodeClick={onNodeClick}
+        onPaneClick={onPaneClick}
+      >
         <Background />
         <Controls />
       </ReactFlow>
+
+      {selectedNode && (
+        <div
+          style={{
+            position: "absolute",
+            top: "20px",
+            right: "20px",
+            width: "300px",
+            padding: "16px",
+            background: "white",
+            border: "1px solid #ddd",
+            borderRadius: "12px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            zIndex: 1000,
+          }}
+        >
+          <h3>{selectedNode.data.label}</h3>
+
+          <p>
+            <strong>Node ID:</strong> {selectedNode.id}
+          </p>
+
+          <p>This is the selected pipeline stage.</p>
+
+          <p>
+            Later, this panel can display agent outputs, EDA results,
+            preprocessing decisions, metrics, warnings, checkpoints, and
+            other information received from the GP knowledge graph.
+          </p>
+        </div>
+      )}
     </div>
   );
 };
