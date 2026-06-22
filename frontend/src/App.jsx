@@ -19,6 +19,7 @@ import ResetPassword from "./Components/Pages/ResetPassword/ResetPassword.jsx";
 import AdminLayout from "./Layouts/AdminLayout.jsx";
 import ViewReport from "./Components/Pages/ViewReport/ViewReport.jsx";
 import DynamicEda from "./Components/Pages/DynamicEda/DynamicEda.jsx";
+import KnowledgeGraphPage from "./Components/Pages/Graphs/KnowledgeGraphPage.jsx";
 // Contexts
 export const AppContext = createContext();
 export const ReportContext = createContext();
@@ -203,6 +204,15 @@ function App() {
                 <ViewReport />
               </ProtectedRoute>
             }
+          />
+          <Route
+            path="/reports/:reportId/knowledge-graph"
+            element={
+              <ProtectedRoute>
+                <KnowledgeGraphPage />
+              </ProtectedRoute>
+            }
+
           />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
