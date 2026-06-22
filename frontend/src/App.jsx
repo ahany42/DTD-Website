@@ -20,6 +20,7 @@ import AdminLayout from "./Layouts/AdminLayout.jsx";
 import ViewReport from "./Components/Pages/ViewReport/ViewReport.jsx";
 import DynamicEda from "./Components/Pages/DynamicEda/DynamicEda.jsx";
 import KnowledgeGraphPage from "./Components/Pages/Graphs/KnowledgeGraphPage.jsx";
+import AgentGraphPage from "./Components/Pages/Graphs/AgentGraphPage.jsx";
 // Contexts
 export const AppContext = createContext();
 export const ReportContext = createContext();
@@ -212,7 +213,14 @@ function App() {
                 <KnowledgeGraphPage />
               </ProtectedRoute>
             }
-
+          />
+          <Route
+            path="/reports/:reportId/knowledge-graph/:agentName"
+            element={
+              <ProtectedRoute>
+                <AgentGraphPage />
+              </ProtectedRoute>
+            }
           />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
