@@ -14,12 +14,15 @@ import Feature from "../../Pages/KnowledgeGraph/FeatureEngineeringGraph";
 import Selection from "../../Pages/KnowledgeGraph/ModelSelectionGraph";
 import Training from "../../Pages/KnowledgeGraph/ModelTrainGraph";
 import Evaluation from "../../Pages/KnowledgeGraph/EvaluationGraphPage";
-import { Button } from "@radix-ui/themes";
 
+import { Button, Callout } from "@radix-ui/themes";
+
+/* ---------------- NODE TYPES ---------------- */
 const nodeTypes = {
   circle: CircleNode,
 };
 
+/* ---------------- COMPONENT MAP ---------------- */
 const componentMap = {
   eda: { component: EDAGraphPage, text: "EDA" },
   preprocess: { component: Preprocessing, text: "Preprocessing" },
@@ -38,7 +41,6 @@ const componentMap = {
   scaling: { component: null, text: "Scaling" },
 
   creation: { component: null, text: "Creation" },
-
   task: { component: null, text: "Task" },
   models: { component: null, text: "Models" },
 
@@ -51,6 +53,7 @@ const componentMap = {
   report: { component: null, text: "Report" },
 };
 
+/* ---------------- INNER COMPONENT ---------------- */
 function GraphViewInner({
   nodes = [],
   edges = [],
@@ -60,15 +63,14 @@ function GraphViewInner({
   const [activeNodeId, setActiveNodeId] = useState(null);
 
   const onNodeClick = useCallback((_, node) => {
-    if (componentMap[node.id] !== undefined) {
-      setActiveNodeId(node.id);
+    const key = node?.id?.toLowerCase();
+
+    if (componentMap[key]) {
+      setActiveNodeId(key);
     }
   }, []);
 
-  const ActiveComponent =
-    activeNodeId && componentMap[activeNodeId].component
-      ? componentMap[activeNodeId].component
-      : null;
+  const ActiveComponent = componentMap?.[activeNodeId]?.component ?? null;
 
   return (
     <div
@@ -81,12 +83,14 @@ function GraphViewInner({
         overflow: "hidden",
       }}
     >
+      {/* LOADING */}
       {loading && (
         <div style={overlayStyle}>
           <span style={{ color: "#94a3b8" }}>Loading graph...</span>
         </div>
       )}
 
+      {/* ERROR */}
       {!loading && error && (
         <div style={overlayStyle}>
           <span style={{ color: "#ef4444" }}>
@@ -94,45 +98,54 @@ function GraphViewInner({
           </span>
         </div>
       )}
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        onNodeClick={onNodeClick}
-        fitView
-        fitViewOptions={{ padding: 0.4 }}
-        minZoom={0.1}
-        maxZoom={2}
-      >
-        <Background color="#cbd5e1" gap={20} />
 
-        <Controls
-          position="bottom-right"
-          showZoom
-          showFitView
-          showInteractive
-          style={{
-            background: "#fff",
-            border: "1px solid #d1d5db",
-            borderRadius: "8px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          }}
-        />
-      </ReactFlow>
-      <h1 className="sub-header">Pipeline</h1>
-      {ActiveComponent && (
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            zIndex: 20,
-            background: "rgba(250, 252, 255, 0.96)",
-            overflow: "auto",
-          }}
+      {/* ---------------- GRAPH MODE ---------------- */}
+      {!ActiveComponent && (
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          onNodeClick={onNodeClick}
+          fitView
+          fitViewOptions={{ padding: 0.4 }}
+          minZoom={0.5}
+          maxZoom={4}
         >
+          <Background color="#cbd5e1" gap={20} />
+
+          <Controls
+            position="top-right"
+            showZoom
+            showFitView
+            showInteractive
+            style={{
+              position: "absolute",
+              zIndex: 1000,
+              background: "#fff",
+              border: "1px solid #d1d5db",
+              borderRadius: "8px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+            }}
+          />
+        </ReactFlow>
+      )}
+
+      {/* ---------------- DETAIL MODE ---------------- */}
+      {ActiveComponent && (
+        <div>
           <Button onClick={() => setActiveNodeId(null)} size="2" variant="soft">
             Back to Full Pipeline
           </Button>
+
+          <h4
+            style={{
+              textAlign: "center",
+              color: "var(--primary-color)",
+              margin: "0",
+            }}
+          >
+            {componentMap[activeNodeId]?.text}
+          </h4>
           <div
             style={{
               display: "flex",
@@ -142,12 +155,12 @@ function GraphViewInner({
               padding: "20px",
             }}
           >
-            <h1 className="sub-header">{componentMap[activeNodeId].text}</h1>
             <ActiveComponent />
           </div>
         </div>
       )}
 
+      {/* ---------------- STYLES ---------------- */}
       <style>{`
         .react-flow__controls {
           z-index: 9999 !important;
@@ -161,7 +174,6 @@ function GraphViewInner({
 
         .react-flow__controls-button svg {
           fill: #000000 !important;
-          color: #000000 !important;
           stroke: #000000 !important;
         }
 
@@ -173,6 +185,7 @@ function GraphViewInner({
   );
 }
 
+/* ---------------- OVERLAY STYLE ---------------- */
 const overlayStyle = {
   position: "absolute",
   inset: 0,
@@ -185,6 +198,7 @@ const overlayStyle = {
   fontSize: "14px",
 };
 
+/* ---------------- EXPORT WRAPPER ---------------- */
 export default function GraphView(props) {
   return (
     <ReactFlowProvider>
