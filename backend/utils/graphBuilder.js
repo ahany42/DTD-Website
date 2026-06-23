@@ -8,6 +8,14 @@ export const buildGraph = (items = []) => {
 
   const spacing = 250;
 
+  const formatLabel = (value) =>
+    String(value)
+      .replace(/_/g, " ")
+      .split(" ")
+      .filter(Boolean)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+
   items.forEach((item, index) => {
     const nodeId = item;
 
@@ -19,7 +27,7 @@ export const buildGraph = (items = []) => {
         y: 100,
       },
       data: {
-        label: item, // 👈 show label exactly as received
+        label: formatLabel(item),
       },
       type: "circle",
     });
