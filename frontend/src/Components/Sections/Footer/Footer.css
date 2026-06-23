@@ -1,52 +1,79 @@
 .Footer {
-  text-align: center;
+  --footer-bg: color-mix(in srgb, var(--surface-elevated) 82%, var(--primary-color));
+  --footer-text: var(--font-color);
+  --footer-muted: var(--grey-color);
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
-  background-color: var(--primary-color);
-  margin-top: 100px;
-  color: black;
+  gap: 4px;
+  width: calc(100% - 40px);
+  max-width: 1240px;
+  min-height: 170px;
+  margin: 72px auto 20px;
+  padding: 30px 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(var(--primary-rgb), 0.16), transparent 18rem),
+    radial-gradient(circle at bottom left, rgba(var(--primary-rgb), 0.08), transparent 16rem),
+    var(--footer-bg);
+  color: var(--footer-text);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
 }
-.SocialLinks {
-  margin-bottom: 1em;
-  margin-top: 1em;
+
+html[data-theme="dark"] .Footer {
+  --footer-bg: #0d1b18;
+  --footer-text: #edf7f4;
+  --footer-muted: #9fb3ad;
+  border-color: #294640;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
 }
-.SocialLinks > a {
-  color: white;
-  text-decoration: none;
-  margin: 0.4em;
-  font-size: 1.4em;
-}
-.SocialLinks > i {
-  margin: 0.5em;
-}
-.CopyRightsText {
-  font-size: 0.8em;
-  font-weight: 400;
-  margin-bottom: 1em;
-  margin-top: 10px;
-  color: white;
-}
+
 .FooterLogo {
-  width: 5em;
-  margin: auto;
+  width: 58px;
   height: auto;
+  margin: 0 auto 6px;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.18));
 }
-.social-icons {
+
+.CopyRightsText {
+  margin: 4px 0;
+  color: var(--footer-muted);
+  font-size: 0.76rem;
+  font-weight: 500;
+}
+
+.CopyRightsText[style*="cursor"] {
+  color: var(--footer-text);
+  transition: color 160ms ease;
+}
+
+.CopyRightsText[style*="cursor"]:hover {
   color: var(--primary-color);
 }
+
+.SocialLinks {
+  margin: 1rem 0;
+}
+
+.SocialLinks > a {
+  margin: 0.4em;
+  color: var(--footer-text);
+  font-size: 1.4em;
+  text-decoration: none;
+}
+
 @media (max-width: 650px) {
+  .Footer {
+    width: calc(100% - 24px);
+    min-height: 160px;
+    margin-top: 46px;
+    border-radius: 20px;
+  }
+
   .FooterLogo {
-    width: 4em;
-  }
-  .Footer {
-    height: 180px;
-    margin-top: 50px;
-  }
-  .FooterSection {
-    font-size: 0.9em;
-  }
-  .Footer {
-    font-size: 0.9em;
+    width: 50px;
   }
 }

@@ -26,14 +26,14 @@ export default function ViewReport() {
 
   const connectorStyleConfig = {
     circleFontSize: "1.2rem",
-    activeBgColor: "blue",
-    completedBgColor: "blue",
-    activeColor: "blue",
-    completedColor: "blue",
+    activeBgColor: "#0f766e",
+    completedBgColor: "#0f766e",
+    activeColor: "#0f766e",
+    completedColor: "#0f766e",
     activeTextColor: "white",
     completedTextColor: "white",
-    inactiveTextColor: "#333",
-    labelColor: "blue",
+    inactiveTextColor: "#64748b",
+    labelColor: "#64748b",
     borderRadius: "50%",
     style: "solid",
   };
@@ -83,17 +83,13 @@ export default function ViewReport() {
   };
 
   if (error)
-    return (
-      <div style={{ padding: "20px" }} className="page">
-        Report Not Found
-      </div>
-    );
+    return <div className="page report-status-page">Report Not Found</div>;
 
   const currentStepKey = steps[activeStep].key;
   const stepData = report?.[currentStepKey];
 
   return (
-    <div style={{ padding: "15px" }} className="page">
+    <div className="page view-report-page">
       <Stepper
         activeStep={activeStep}
         steps={steps}
@@ -102,14 +98,7 @@ export default function ViewReport() {
         connectorStateColors={true}
       />
 
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          justifyContent: "center",
-          marginTop: "20px",
-        }}
-      >
+      <div className="report-step-actions">
         <Button
           onClick={handlePrev}
           disabled={
@@ -118,7 +107,7 @@ export default function ViewReport() {
           }
           size="2"
           variant="soft"
-          color="indigo"
+          color="gray"
         >
           Previous
         </Button>
@@ -136,7 +125,7 @@ export default function ViewReport() {
           }
           size="2"
           variant="soft"
-          color="indigo"
+          color="gray"
         >
           Next
         </Button>
@@ -148,7 +137,7 @@ export default function ViewReport() {
           <Loader />
         </div>
       )}
-      <div style={{ margin: "30px 0" }}>
+      <div className="report-step-content">
         {stepData &&
           (() => {
             switch (currentStepKey) {

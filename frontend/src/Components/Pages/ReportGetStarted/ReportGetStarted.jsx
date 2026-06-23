@@ -47,7 +47,7 @@ const ReportGetStarted = () => {
 
   return (
     <div className="upload-page">
-      <div className="upload-container" style={{ maxWidth: 920 }}>
+      <div className="upload-container get-started-container">
         <div className="upload-header">
           <h1>Get Started</h1>
           <p>Choose a workflow for your report.</p>
@@ -56,12 +56,7 @@ const ReportGetStarted = () => {
         <div
           role="radiogroup"
           aria-label="Report start options"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-            gap: 16,
-            marginBottom: 24,
-          }}
+          className="workflow-options"
         >
           {options.map((option) => {
             const selected = mode === option.key;
@@ -72,34 +67,14 @@ const ReportGetStarted = () => {
                 role="radio"
                 aria-checked={selected}
                 onClick={() => setMode(option.key)}
-                style={{
-                  width: "100%",
-                  minHeight: 168,
-                  background: selected
-                    ? "var(--green-color)"
-                    : "var(--light-color)",
-                  padding: 20,
-                  borderRadius: 18,
-                  textAlign: "left",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                }}
+                className={`workflow-option ${selected ? "workflow-option--selected" : ""}`}
               >
                 <div>
-                  <div style={{ fontSize: 22, marginBottom: 10 }}>
-                    {option.icon}
-                  </div>
-                  <h3 style={{ margin: 0 }}>{option.title}</h3>
-                  <p style={{ margin: "10px 0 0" }}>{option.description}</p>
+                  <div className="workflow-option-icon">{option.icon}</div>
+                  <h3>{option.title}</h3>
+                  <p>{option.description}</p>
                 </div>
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 8,
-                  }}
-                >
+                <span className="workflow-option-action">
                   {!selected && (
                     <>
                       <span>Select</span>
@@ -114,9 +89,17 @@ const ReportGetStarted = () => {
 
         {isCustom && (
           <div className="form-section">
+            <div className="knowledge-graph-preview" aria-hidden="true">
+              <span className="kg-node kg-node-main">Prompt</span>
+              <span className="kg-edge kg-edge-one" />
+              <span className="kg-edge kg-edge-two" />
+              <span className="kg-node kg-node-a">Goals</span>
+              <span className="kg-node kg-node-b">Dataset</span>
+              <span className="kg-node kg-node-c">Report</span>
+            </div>
             <label
               htmlFor="report-prompt"
-              style={{ display: "block", marginBottom: 8 }}
+              className="prompt-label"
             >
               Prompt *
             </label>

@@ -30,14 +30,17 @@ function RenderValue({ value }) {
   // Handle array values
   if (Array.isArray(value)) {
     return (
-      <div style={{ paddingLeft: 8 }}>
+      <div className="value-stack">
         {value.map((v, i) =>
           typeof v === "object" && v !== null && "title" in v ? (
-            <div key={`${v.title}-${i}`} style={{ marginBottom: 4 }}>
-              <strong>{v.title}:</strong> <RenderValue value={v.value} />
+            <div key={`${v.title}-${i}`} className="value-group">
+              <span className="value-group-title">{v.title}</span>
+              <RenderValue value={v.value} />
             </div>
           ) : (
-            <div key={`primitive-${i}`}>{String(v)}</div>
+            <span key={`primitive-${i}`} className="value-chip">
+              {String(v)}
+            </span>
           )
         )}
       </div>
@@ -49,29 +52,44 @@ function RenderValue({ value }) {
     typeof value === "string" &&
     (value.includes(",") || value.includes(":"))
   ) {
-    const parts = value.split(",").map((part) => part.trim());
+    const parts = value.split(",").map((part) => part.trim()).filter(Boolean);
+    const groups = [];
+    let activeGroup = null;
+
+    parts.forEach((part) => {
+      if (part.includes(":")) {
+        const [key, ...rest] = part.split(":");
+        const label = key.trim();
+        const chipValue = rest.join(":").trim();
+        activeGroup = { label, values: [] };
+        if (chipValue) activeGroup.values.push(chipValue);
+        groups.push(activeGroup);
+        return;
+      }
+
+      if (activeGroup) {
+        activeGroup.values.push(part);
+      } else {
+        groups.push({ label: "", values: [part] });
+      }
+    });
 
     return (
-      <div className="multi-value-container">
-        {parts.map((part, i) => {
-          if (part.includes(":")) {
-            const [key, val] = part.split(":").map((s) => s.trim());
-            if (!val) return null; // skip empty values
-            return (
-              <>
-                <div key={i}>
-                  <span>{key}:</span>
-                </div>
-                <span className="card multi-value item-sub-title">{val}</span>
-              </>
-            );
-          }
-          return (
-            <div key={`part-${i}`} className="card multi-value item-sub-title">
-              {part}
+      <div className="value-groups">
+        {groups.map((group, i) => (
+          <div key={`${group.label}-${i}`} className="value-group">
+            {group.label && (
+              <span className="value-group-title">{group.label}</span>
+            )}
+            <div className="value-chip-list">
+              {group.values.map((item) => (
+                <span key={`${group.label}-${item}`} className="value-chip">
+                  {item}
+                </span>
+              ))}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     );
   }
@@ -192,7 +210,7 @@ return (
       {/* SUMMARY */}
       {activeSection === "summary" && summary.length > 0 && (
         <section className="stat-container">
-          <div style={{ display: "flex", gap: "20px" }}>
+          <div className="report-quick-actions">
             <Button
               size="2"
               variant="soft"
@@ -276,7 +294,7 @@ return (
 
           <div className="stat-sub-container">
             {data_quality.map((item) => (
-              <div key={item?.title} className="stat-item card">
+              <div key={item?.title} className="stat-item card data-quality-card">
                 <span className="item-title">{item?.title}</span>
                 <RenderValue value={item?.value} />
               </div>
@@ -327,7 +345,7 @@ return (
             >
               <Select.Trigger
                 variant="soft"
-                color="indigo"
+                color="gray"
                 style={{ flex: 1 }}
                 placeholder="Select Column"
               />
@@ -391,14 +409,14 @@ return (
           <div style={{ display: "grid", gap: "8px", marginTop: 12 }}>
             {warnings.map((w, index) => (
               <div key={index} className="card warning-card">
-                <span style={{ fontWeight: 600, color: "#fff" }}>
+                <span className="warning-type">
                   {w?.type}
                   <br />
                 </span>
 
                 <span>{w?.message + " "}</span>
 
-                <span style={{ fontStyle: "italic", color: "#aaa" }}>
+                <span className="warning-columns">
                   Columns: {(w?.columns || []).join(" , ")}
                 </span>
               </div>

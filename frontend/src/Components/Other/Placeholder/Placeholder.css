@@ -1,35 +1,47 @@
 .PlaceholderDiv {
+  align-items: center;
+  justify-content: center;
+  min-height: 72vh;
   margin: auto;
+  padding: 48px 20px !important;
   text-align: center;
-  min-height: 85vh;
 }
+
 .PlaceholderImage {
-  width: 50%;
+  width: min(50%, 420px);
 }
+
+.PlaceholderImageSmall {
+  width: min(28%, 240px);
+  margin: 0 auto 20px;
+}
+
 .TextContainer {
-  margin: 0.5em;
+  max-width: 520px;
+  margin: 0.5em auto 1.3em;
 }
+
+.TextContainer h3 {
+  color: var(--heading-color) !important;
+  font-size: clamp(1.3rem, 4vw, 1.9rem);
+}
+
 .placeholder-btn {
   width: 250px;
-  height: 60px;
+  height: 52px;
+  border-radius: 12px !important;
 }
+
 .nomargin {
   margin: 0 !important;
-  padding: 0 !important;
 }
-.PlaceholderImageSmall {
-  width: 25%;
-  margin: 0 auto;
-}
+
 @media (max-width: 650px) {
   .PlaceholderDiv {
-    min-height: 72vh;
+    min-height: 66vh;
   }
-  .PlaceholderImage {
-    width: 300px !important;
-    overflow: hidden !important;
-  }
+
   .PlaceholderImageSmall {
-    width: 200px !important;
+    width: 180px !important;
   }
 }

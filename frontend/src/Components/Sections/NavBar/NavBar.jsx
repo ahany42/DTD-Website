@@ -1,5 +1,5 @@
 import { TabNav, Button } from "@radix-ui/themes";
-import { IoHome } from "react-icons/io5";
+import { IoHome, IoMoonOutline, IoSunnyOutline } from "react-icons/io5";
 import { MdFileUpload } from "react-icons/md";
 import { IoIosStats } from "react-icons/io";
 import { HiOutlineDocumentReport } from "react-icons/hi";
@@ -15,6 +15,11 @@ const NavBar = () => {
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("DTD_theme") || "light"
+  );
+
+  const isDarkTheme = theme === "dark";
 
   // Check localStorage directly
 
@@ -30,6 +35,16 @@ const NavBar = () => {
     navigate("/login");
     setMenuOpen(false);
   }
+
+  function toggleTheme() {
+    setTheme((current) => (current === "dark" ? "light" : "dark"));
+  }
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem("DTD_theme", theme);
+  }, [theme]);
+
   useEffect(() => {
     // Check auth on mount
     const token = localStorage.getItem("DTD_token");
@@ -54,7 +69,7 @@ const NavBar = () => {
   return (
     <>
       <div className="desktop-nav">
-        <TabNav.Root size="2" color="var(--primary-color)" className="navbar">
+        <TabNav.Root size="2" color="teal" className="navbar">
           <div className="navbar-container">
             <div className="navbar-links">
               <TabNav.Link
@@ -82,13 +97,28 @@ const NavBar = () => {
               </TabNav.Link>
             </div>
 
+            <button
+              type="button"
+              className="theme-toggle-btn"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${isDarkTheme ? "light" : "dark"} theme`}
+            >
+              {isDarkTheme ? <IoSunnyOutline /> : <IoMoonOutline />}
+              <span>{isDarkTheme ? "Light" : "Dark"}</span>
+            </button>
+
             {isAuthenticated ? (
-              <Button color="red" variant="surface" onClick={logout}>
+              <Button
+                color="gray"
+                variant="surface"
+                className="logout-btn"
+                onClick={logout}
+              >
                 Logout
               </Button>
             ) : (
               <Button
-                color="indigo"
+                color="gray"
                 className="mobile-nav-btn"
                 variant="surface"
                 onClick={login}
@@ -143,12 +173,26 @@ const NavBar = () => {
                 <HiOutlineDocumentReport />
                 <button>Reports</button>
               </div>
+              <div className="mobile-nav-icon-text" onClick={toggleTheme}>
+                {isDarkTheme ? <IoSunnyOutline /> : <IoMoonOutline />}
+                <button>{isDarkTheme ? "Light Theme" : "Dark Theme"}</button>
+              </div>
               {isAuthenticated ? (
-                <Button color="red" variant="surface" onClick={logout}>
+                <Button
+                  color="gray"
+                  variant="surface"
+                  className="logout-btn"
+                  onClick={logout}
+                >
                   Logout
                 </Button>
               ) : (
-                <Button color="indigo" variant="surface" onClick={login}>
+                <Button
+                  color="gray"
+                  variant="surface"
+                  className="mobile-nav-btn"
+                  onClick={login}
+                >
                   Get Started
                 </Button>
               )}
