@@ -8,12 +8,6 @@ import {
 import "@xyflow/react/dist/style.css";
 
 import CircleNode from "../../Other/KnowGraph/CircleNode";
-import EDAGraphPage from "../../Pages/KnowledgeGraph/EDAGraphPage";
-import Preprocessing from "../../Pages/KnowledgeGraph/PreprocessingGraph";
-import Feature from "../../Pages/KnowledgeGraph/FeatureEngineeringGraph";
-import Selection from "../../Pages/KnowledgeGraph/ModelSelectionGraph";
-import Training from "../../Pages/KnowledgeGraph/ModelTrainGraph";
-import Evaluation from "../../Pages/KnowledgeGraph/EvaluationGraphPage";
 
 import { Button, Callout } from "@radix-ui/themes";
 
@@ -24,33 +18,33 @@ const nodeTypes = {
 
 /* ---------------- COMPONENT MAP ---------------- */
 const componentMap = {
-  eda: { component: EDAGraphPage, text: "EDA" },
-  preprocess: { component: Preprocessing, text: "Preprocessing" },
-  feature: { component: Feature, text: "Feature Engineering" },
-  selection: { component: Selection, text: "Model Selection" },
-  training: { component: Training, text: "Model Training" },
-  evaluation: { component: Evaluation, text: "Model Evaluation" },
+  eda: { text: "EDA" },
+  preprocess: { text: "Preprocessing" },
+  feature: { text: "Feature Engineering" },
+  selection: { text: "Model Selection" },
+  training: { text: "Model Training" },
+  evaluation: { text: "Model Evaluation" },
 
-  summary: { component: null, text: "Summary" },
-  profiles: { component: null, text: "Profiles" },
-  quality: { component: null, text: "Quality" },
-  target: { component: null, text: "Target" },
+  summary: { text: "Summary" },
+  profiles: { text: "Profiles" },
+  quality: { text: "Quality" },
+  target: { text: "Target" },
 
-  missing: { component: null, text: "Missing Values" },
-  encoding: { component: null, text: "Encoding" },
-  scaling: { component: null, text: "Scaling" },
+  missing: { text: "Missing Values" },
+  encoding: { text: "Encoding" },
+  scaling: { text: "Scaling" },
 
-  creation: { component: null, text: "Creation" },
-  task: { component: null, text: "Task" },
-  models: { component: null, text: "Models" },
+  creation: { text: "Creation" },
+  task: { text: "Task" },
+  models: { text: "Models" },
 
-  load: { component: null, text: "Load" },
-  train: { component: null, text: "Train" },
-  leaderboard: { component: null, text: "Leaderboard" },
+  load: { text: "Load" },
+  train: { text: "Train" },
+  leaderboard: { text: "Leaderboard" },
 
-  metrics: { component: null, text: "Metrics" },
-  shap: { component: null, text: "SHAP" },
-  report: { component: null, text: "Report" },
+  metrics: { text: "Metrics" },
+  shap: { text: "SHAP" },
+  report: { text: "Report" },
 };
 
 /* ---------------- INNER COMPONENT ---------------- */
@@ -70,7 +64,7 @@ function GraphViewInner({
     }
   }, []);
 
-  const ActiveComponent = componentMap?.[activeNodeId]?.component ?? null;
+  const activeNode = componentMap?.[activeNodeId] ?? null;
 
   return (
     <div
@@ -100,7 +94,7 @@ function GraphViewInner({
       )}
 
       {/* ---------------- GRAPH MODE ---------------- */}
-      {!ActiveComponent && (
+      {!activeNodeId && (
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -131,7 +125,7 @@ function GraphViewInner({
       )}
 
       {/* ---------------- DETAIL MODE ---------------- */}
-      {ActiveComponent && (
+      {activeNodeId && (
         <div>
           <Button onClick={() => setActiveNodeId(null)} size="2" variant="soft">
             Back to Full Pipeline
@@ -144,7 +138,7 @@ function GraphViewInner({
               margin: "0",
             }}
           >
-            {componentMap[activeNodeId]?.text}
+            {activeNode?.text}
           </h4>
           <div
             style={{
@@ -155,7 +149,7 @@ function GraphViewInner({
               padding: "20px",
             }}
           >
-            <ActiveComponent />
+            <Callout>Detail view is available for {activeNode?.text}.</Callout>
           </div>
         </div>
       )}

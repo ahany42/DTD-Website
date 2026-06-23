@@ -14,6 +14,7 @@ export default function ViewReport() {
   const [activeStep, setActiveStep] = useState(0);
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [localError, setLocalError] = useState("");
   const [searchParams] = useSearchParams();
 
   const mode = searchParams.get("mode");
@@ -59,20 +60,22 @@ export default function ViewReport() {
 
   useEffect(() => {
     setLoading(true);
+    setLocalError("");
     fetch(`${BACKEND_URL}/api/reports/${reportId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Report not found");
         return res.json();
       })
       .then((data) => {
-        if (!data.data) setError("Report is empty or missing stages");
-        else {
-          setReport(data.data.report);
-        }
+        if (!data.data) throw new Error("Report is empty or missing stages");
+        setReport(data.data.report);
       })
-      .catch((err) => setError(err.message))
+      .catch((err) => {
+        setLocalError(err.message);
+        setError(err.message);
+      })
       .finally(() => setLoading(false));
-  }, [reportId, BACKEND_URL, reportRefreshFlag]);
+  }, [reportId, BACKEND_URL, reportRefreshFlag, setError]);
 
   const handleNext = () => {
     for (let i = activeStep + 1; i < steps.length; i++) {
@@ -92,7 +95,7 @@ export default function ViewReport() {
     }
   };
 
-  if (error)
+  if (error || localError)
     return <div className="page report-status-page">Report Not Found</div>;
 
   const currentStepKey = steps[activeStep].key;
@@ -100,8 +103,6 @@ export default function ViewReport() {
 
   return (
     <div className="page view-report-page">
-      {error && <span className="page">error</span>}
-
       <div style={{ margin: "10px 0" }}>
         {mode === "custom" ? (
           <div>
@@ -116,71 +117,70 @@ export default function ViewReport() {
                 <Loader />
               </div>
             ) : (
-              stepData && (
-                <>
-                  <Stepper
-                    activeStep={activeStep}
-                    steps={steps}
-                    styleConfig={connectorStyleConfig}
-                    connectorStyleConfig={connectorStyleConfig}
-                    connectorStateColors={true}
-                  />
+              <>
+                <Stepper
+                  activeStep={activeStep}
+                  steps={steps}
+                  styleConfig={connectorStyleConfig}
+                  connectorStyleConfig={connectorStyleConfig}
+                  connectorStateColors={true}
+                />
 
-      <div className="report-step-actions">
-        <Button
-          onClick={handlePrev}
-          disabled={
-            activeStep === 0 ||
-            !steps.slice(0, activeStep).some((s) => hasStepData(s.key))
-          }
-          size="2"
-          variant="soft"
-          color="gray"
-        >
-          Previous
-        </Button>
-        <Button
-          onClick={handleNext}
-          disabled={
-            activeStep === steps.length - 1 ||
-            !steps.slice(activeStep + 1).some((s) => hasStepData(s.key))
-          }
-          loading={
-            !(activeStep === steps.length - 1) &&
-            !steps.slice(activeStep + 1).some((s) => hasStepData(s.key)) &&
-            !error &&
-            loading
-          }
-          size="2"
-          variant="soft"
-          color="gray"
-        >
-          Next
-        </Button>
+                <div className="report-step-actions">
+                  <Button
+                    onClick={handlePrev}
+                    disabled={
+                      activeStep === 0 ||
+                      !steps
+                        .slice(0, activeStep)
+                        .some((s) => hasStepData(s.key))
+                    }
+                    size="2"
+                    variant="soft"
+                    color="gray"
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    onClick={handleNext}
+                    disabled={
+                      activeStep === steps.length - 1 ||
+                      !steps
+                        .slice(activeStep + 1)
+                        .some((s) => hasStepData(s.key))
+                    }
+                    size="2"
+                    variant="soft"
+                    color="gray"
+                  >
+                    Next
+                  </Button>
+                </div>
 
-        {error && <span className="page">error</span>}
-      </div>
-      {(loading || !stepData) && (
-        <div>
-          <Loader />
-        </div>
-      )}
-      <div className="report-step-content">
-        {stepData &&
-          (() => {
-            switch (currentStepKey) {
-              case "raw_analysis":
-                return <Raw data={stepData} />;
-              case "preprocessing":
-                return <Preprocessing data={stepData} />;
-              case "clean_analysis":
-                return <Clean data={stepData} />;
-              case "automl_training":
-                return <Automl data={stepData} />;
-              default:
-                return null;
-            }
-          })()}
+                <div className="report-step-content">
+                  {stepData ? (
+                    (() => {
+                      switch (currentStepKey) {
+                        case "raw_analysis":
+                          return <Raw data={stepData} />;
+                        case "preprocessing":
+                          return <Preprocessing data={stepData} />;
+                        case "clean_analysis":
+                          return <Clean data={stepData} />;
+                        case "automl_training":
+                          return <Automl data={stepData} />;
+                        default:
+                          return null;
+                      }
+                    })()
+                  ) : (
+                    <Loader />
+                  )}
+                </div>
+              </>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

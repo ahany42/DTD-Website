@@ -4,7 +4,7 @@ export default function CircleNode({ data, selected }) {
   const status = data?.status || "default"; // "default" | "active" | "complete" | "error"
 
   const statusColors = {
-    default: { bg: "#1f2937", border: "#38bdf8" },
+    default: { bg: "#0f766e", border: "#38bdf8" },
     active: { bg: "#1e3a8a", border: "#60a5fa" },
     complete: { bg: "#14532d", border: "#4ade80" },
     error: { bg: "#7f1d1d", border: "#f87171" },
