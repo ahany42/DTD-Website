@@ -1,100 +1,174 @@
-import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { ReactFlow, Background, Controls, ReactFlowProvider } from "@xyflow/react";
+import { useCallback, useState } from "react";
+import {
+  ReactFlow,
+  Background,
+  Controls,
+  ReactFlowProvider,
+} from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 import CircleNode from "../../Other/KnowGraph/CircleNode";
+import EDAGraphPage from "../../Pages/KnowledgeGraph/EDAGraphPage";
+import Preprocessing from "../../Pages/KnowledgeGraph/PreprocessingGraph";
+import Feature from "../../Pages/KnowledgeGraph/FeatureEngineeringGraph";
+import Selection from "../../Pages/KnowledgeGraph/ModelSelectionGraph";
+import Training from "../../Pages/KnowledgeGraph/ModelTrainGraph";
+import Evaluation from "../../Pages/KnowledgeGraph/EvaluationGraphPage";
+import { Button } from "@radix-ui/themes";
 
 const nodeTypes = {
   circle: CircleNode,
 };
 
-// Covers node ids across every graphType branch in graphBuilder.js
-// (default, eda, preprocessing, feature_engineering, model_selection,
-// training, evaluation). Extend here if you add a new graph type.
-const routeMap = {
-  // default pipeline
-  eda: "/eda-graph",
-  preprocess: "/preprocess-graph",
-  feature: "/feature-engineering-graph",
-  selection: "/model-selection-graph",
-  training: "/training-graph",
-  evaluation: "/evaluation-graph",
+const componentMap = {
+  eda: { component: EDAGraphPage, text: "EDA" },
+  preprocess: { component: Preprocessing, text: "Preprocessing" },
+  feature: { component: Feature, text: "Feature Engineering" },
+  selection: { component: Selection, text: "Model Selection" },
+  training: { component: Training, text: "Model Training" },
+  evaluation: { component: Evaluation, text: "Model Evaluation" },
 
-  // eda
-  summary: "/eda-graph",
-  profiles: "/preprocess-graph",
-  quality: "/eda-graph",
-  target: "/model-selection-graph",
+  summary: { component: null, text: "Summary" },
+  profiles: { component: null, text: "Profiles" },
+  quality: { component: null, text: "Quality" },
+  target: { component: null, text: "Target" },
 
-  // preprocessing
-  missing: "/preprocess-graph",
-  encoding: "/preprocess-graph",
-  scaling: "/preprocess-graph",
+  missing: { component: null, text: "Missing Values" },
+  encoding: { component: null, text: "Encoding" },
+  scaling: { component: null, text: "Scaling" },
 
-  // feature_engineering
-  creation: "/feature-engineering-graph",
+  creation: { component: null, text: "Creation" },
 
-  // model_selection
-  task: "/model-selection-graph",
-  models: "/model-selection-graph",
+  task: { component: null, text: "Task" },
+  models: { component: null, text: "Models" },
 
-  // training
-  load: "/training-graph",
-  train: "/training-graph",
-  leaderboard: "/training-graph",
+  load: { component: null, text: "Load" },
+  train: { component: null, text: "Train" },
+  leaderboard: { component: null, text: "Leaderboard" },
 
-  // evaluation
-  metrics: "/evaluation-graph",
-  shap: "/evaluation-graph",
-  report: "/evaluation-graph",
+  metrics: { component: null, text: "Metrics" },
+  shap: { component: null, text: "SHAP" },
+  report: { component: null, text: "Report" },
 };
 
-function GraphViewInner({ nodes = [], edges = [], loading = false, error = null }) {
-  const navigate = useNavigate();
+function GraphViewInner({
+  nodes = [],
+  edges = [],
+  loading = false,
+  error = null,
+}) {
+  const [activeNodeId, setActiveNodeId] = useState(null);
 
-  const onNodeClick = useCallback(
-    (_, node) => {
-      const path = routeMap[node.id];
-      if (path) navigate(path);
-    },
-    [navigate]
-  );
+  const onNodeClick = useCallback((_, node) => {
+    if (componentMap[node.id] !== undefined) {
+      setActiveNodeId(node.id);
+    }
+  }, []);
+
+  const ActiveComponent =
+    activeNodeId && componentMap[activeNodeId].component
+      ? componentMap[activeNodeId].component
+      : null;
 
   return (
     <div
       style={{
-        width: "100vw",
-        height: "100vh",
-        position: "fixed",
-        inset: 0,
+        position: "relative",
+        width: "100%",
+        height: "60vh",
         backgroundColor: "#fafcff",
+        borderRadius: "12px",
+        overflow: "hidden",
       }}
     >
       {loading && (
         <div style={overlayStyle}>
-          <span style={{ color: "#94a3b8" }}>Loading graph…</span>
-        </div>
-      )}
-      {!loading && error && (
-        <div style={overlayStyle}>
-          <span style={{ color: "#f87171" }}>Failed to load graph: {String(error)}</span>
+          <span style={{ color: "#94a3b8" }}>Loading graph...</span>
         </div>
       )}
 
+      {!loading && error && (
+        <div style={overlayStyle}>
+          <span style={{ color: "#ef4444" }}>
+            Failed to load graph: {String(error)}
+          </span>
+        </div>
+      )}
       <ReactFlow
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
         onNodeClick={onNodeClick}
         fitView
-        fitViewOptions={{ padding: 0.4, duration: 0 }}
+        fitViewOptions={{ padding: 0.4 }}
         minZoom={0.1}
         maxZoom={2}
       >
-        <Background color="#334155" gap={20} />
-        <Controls />
+        <Background color="#cbd5e1" gap={20} />
+
+        <Controls
+          position="bottom-right"
+          showZoom
+          showFitView
+          showInteractive
+          style={{
+            background: "#fff",
+            border: "1px solid #d1d5db",
+            borderRadius: "8px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          }}
+        />
       </ReactFlow>
+      <h1 className="sub-header">Pipeline</h1>
+      {ActiveComponent && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 20,
+            background: "rgba(250, 252, 255, 0.96)",
+            overflow: "auto",
+          }}
+        >
+          <Button onClick={() => setActiveNodeId(null)} size="2" variant="soft">
+            Back to Full Pipeline
+          </Button>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "20px",
+            }}
+          >
+            <h1 className="sub-header">{componentMap[activeNodeId].text}</h1>
+            <ActiveComponent />
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        .react-flow__controls {
+          z-index: 9999 !important;
+        }
+
+        .react-flow__controls-button {
+          background: #ffffff !important;
+          border-bottom: 1px solid #e5e7eb !important;
+          color: #000000 !important;
+        }
+
+        .react-flow__controls-button svg {
+          fill: #000000 !important;
+          color: #000000 !important;
+          stroke: #000000 !important;
+        }
+
+        .react-flow__controls-button:hover {
+          background: #f3f4f6 !important;
+        }
+      `}</style>
     </div>
   );
 }

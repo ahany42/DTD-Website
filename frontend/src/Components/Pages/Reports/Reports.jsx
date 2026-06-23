@@ -182,11 +182,11 @@ const Reports = () => {
       toast.error("Couldn't Send Complaint Please Try Again Later");
     }
   };
-  const viewReport = (id) => {
+  const viewReport = (id, mode) => {
     if (!id) {
       toast.info("Your report is being generated");
     } else {
-      navigate(`/view-report/${id}`);
+      navigate(`/view-report/${id}?mode=${mode}`);
     }
   };
 
@@ -295,7 +295,9 @@ const Reports = () => {
                       <IconButton
                         color="green"
                         variant="surface"
-                        onClick={() => viewReport(report._id)}
+                        onClick={() =>
+                          viewReport(report._id, report.dataset.mode)
+                        }
                         aria-label="View report"
                       >
                         <FaEye />

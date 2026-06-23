@@ -1,28 +1,38 @@
 import { useState, useEffect, useContext } from "react";
 import { Stepper } from "react-form-stepper";
 import { Button } from "@radix-ui/themes";
+import { useSearchParams } from "react-router-dom";
 import Raw from "../../Other/ReportStepper/Raw";
 import Preprocessing from "../../Other/ReportStepper/Preprocessing";
 import Clean from "../../Other/ReportStepper/Clean";
 import Automl from "../../Other/ReportStepper/Automl";
 import { AppContext, ReportContext } from "../../../App";
 import { useParams } from "react-router-dom";
+import KnowledgeGraph from "../KnowledgeGraph/KnowledgeGraph";
 import Loader from "../../Other/Loader/Loader";
 export default function ViewReport() {
   const [activeStep, setActiveStep] = useState(0);
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
 
+  const mode = searchParams.get("mode");
   const { BACKEND_URL } = useContext(AppContext);
   const { reportRefreshFlag, error, setError } = useContext(ReportContext);
   const { reportId } = useParams();
 
-  const steps = [
-    { label: "Raw Data", key: "raw_analysis" },
-    { label: "Preprocessing", key: "preprocessing" },
-    { label: "Clean Data", key: "clean_analysis" },
-    { label: "AutoML", key: "automl_training" },
-  ];
+  const steps =
+    mode === "quick"
+      ? [
+          { label: "Raw Data", key: "raw_analysis" },
+          { label: "AutoML", key: "automl_training" },
+        ]
+      : [
+          { label: "Raw Data", key: "raw_analysis" },
+          { label: "Preprocessing", key: "preprocessing" },
+          { label: "Clean Data", key: "clean_analysis" },
+          { label: "AutoML", key: "automl_training" },
+        ];
 
   const connectorStyleConfig = {
     circleFontSize: "1.2rem",
@@ -94,76 +104,97 @@ export default function ViewReport() {
 
   return (
     <div style={{ padding: "15px" }} className="page">
-      <Stepper
-        activeStep={activeStep}
-        steps={steps}
-        styleConfig={connectorStyleConfig}
-        connectorStyleConfig={connectorStyleConfig}
-        connectorStateColors={true}
-      />
+      {error && <span className="page">error</span>}
 
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          justifyContent: "center",
-          marginTop: "20px",
-        }}
-      >
-        <Button
-          onClick={handlePrev}
-          disabled={
-            activeStep === 0 ||
-            !steps.slice(0, activeStep).some((s) => hasStepData(s.key))
-          }
-          size="2"
-          variant="soft"
-          color="indigo"
-        >
-          Previous
-        </Button>
-        <Button
-          onClick={handleNext}
-          disabled={
-            activeStep === steps.length - 1 ||
-            !steps.slice(activeStep + 1).some((s) => hasStepData(s.key))
-          }
-          loading={
-            !(activeStep === steps.length - 1) &&
-            !steps.slice(activeStep + 1).some((s) => hasStepData(s.key)) &&
-            !error &&
-            loading
-          }
-          size="2"
-          variant="soft"
-          color="indigo"
-        >
-          Next
-        </Button>
+      <div style={{ margin: "10px 0" }}>
+        {mode === "custom" ? (
+          <div>
+            <h1 className="sub-header">Pipeline</h1>
 
-        {error && <span className="page">error</span>}
-      </div>
-      {(loading || !stepData) && (
-        <div>
-          <Loader />
-        </div>
-      )}
-      <div style={{ margin: "30px 0" }}>
-        {stepData &&
-          (() => {
-            switch (currentStepKey) {
-              case "raw_analysis":
-                return <Raw data={stepData} />;
-              case "preprocessing":
-                return <Preprocessing data={stepData} />;
-              case "clean_analysis":
-                return <Clean data={stepData} />;
-              case "automl_training":
-                return <Automl data={stepData} />;
-              default:
-                return null;
-            }
-          })()}
+            <KnowledgeGraph reportId={reportId} />
+          </div>
+        ) : (
+          <>
+            {loading ? (
+              <div>
+                <Loader />
+              </div>
+            ) : (
+              stepData && (
+                <>
+                  <Stepper
+                    activeStep={activeStep}
+                    steps={steps}
+                    styleConfig={connectorStyleConfig}
+                    connectorStyleConfig={connectorStyleConfig}
+                    connectorStateColors={true}
+                  />
+
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "10px",
+                      justifyContent: "center",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    <Button
+                      onClick={handlePrev}
+                      disabled={
+                        activeStep === 0 ||
+                        !steps
+                          .slice(0, activeStep)
+                          .some((s) => hasStepData(s.key))
+                      }
+                      size="2"
+                      variant="soft"
+                      color="indigo"
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      onClick={handleNext}
+                      disabled={
+                        activeStep === steps.length - 1 ||
+                        !steps
+                          .slice(activeStep + 1)
+                          .some((s) => hasStepData(s.key))
+                      }
+                      loading={
+                        !(activeStep === steps.length - 1) &&
+                        !steps
+                          .slice(activeStep + 1)
+                          .some((s) => hasStepData(s.key)) &&
+                        !error &&
+                        loading
+                      }
+                      size="2"
+                      variant="soft"
+                      color="indigo"
+                    >
+                      Next
+                    </Button>
+                  </div>
+
+                  {(() => {
+                    switch (currentStepKey) {
+                      case "raw_analysis":
+                        return <Raw data={stepData} />;
+                      case "preprocessing":
+                        return <Preprocessing data={stepData} />;
+                      case "clean_analysis":
+                        return <Clean data={stepData} />;
+                      case "automl_training":
+                        return <Automl data={stepData} />;
+                      default:
+                        return null;
+                    }
+                  })()}
+                </>
+              )
+            )}
+          </>
+        )}
       </div>
     </div>
   );

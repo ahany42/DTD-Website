@@ -211,11 +211,16 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/knowledge-graph" element={<KnowledgeGraph />}/>
           <Route path="/eda-graph" element={<EDAGraphPage />} />
           <Route path="/preprocess-graph" element={<PreprocessingGraph />} />
-          <Route path="/feature-engineering-graph" element={<FeatureEngineeringGraph />} />
-          <Route path="/model-selection-graph" element={<ModelSelectionGraph />} />
+          <Route
+            path="/feature-engineering-graph"
+            element={<FeatureEngineeringGraph />}
+          />
+          <Route
+            path="/model-selection-graph"
+            element={<ModelSelectionGraph />}
+          />
           <Route path="/training-graph" element={<ModelTrainGraph />} />
           <Route path="/evaluation-graph" element={<EvaluationGraphPage />} />
           <Route path="/signup" element={<SignUp />} />

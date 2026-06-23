@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import GraphView from "../../Other/KnowGraph/GraphView";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
-
 /**
  * type: one of "main" | "eda" | "preprocessing" | "feature_engineering"
  *       | "model_selection" | "training" | "evaluation"
@@ -10,7 +9,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
  * Defaults to "main" (the full pipeline overview), matching
  * graphBuilder.js's default case.
  */
-export default function KnowledgeGraph({ type = "main" }) {
+export default function KnowledgeGraph({ type = "main", reportId }) {
   const [graph, setGraph] = useState({ nodes: [], edges: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -51,6 +50,13 @@ export default function KnowledgeGraph({ type = "main" }) {
   }, [type]);
 
   return (
-    <GraphView nodes={graph.nodes} edges={graph.edges} loading={loading} error={error} />
+    <>
+      <GraphView
+        nodes={graph.nodes}
+        edges={graph.edges}
+        loading={loading}
+        error={error}
+      />
+    </>
   );
 }

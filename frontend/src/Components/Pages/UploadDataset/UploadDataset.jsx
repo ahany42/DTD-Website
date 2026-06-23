@@ -201,7 +201,7 @@ const UploadDataset = () => {
   return (
     <div className="upload-page">
       <div className="upload-container">
-        <div className="upload-header">
+        <div className="sub-header">
           <h1>Upload Dataset</h1>
           <p>Upload your data and configure the target</p>
         </div>
