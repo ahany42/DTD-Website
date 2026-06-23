@@ -36,14 +36,14 @@ export default function ViewReport() {
 
   const connectorStyleConfig = {
     circleFontSize: "1.2rem",
-    activeBgColor: "blue",
-    completedBgColor: "blue",
-    activeColor: "blue",
-    completedColor: "blue",
+    activeBgColor: "#0f766e",
+    completedBgColor: "#0f766e",
+    activeColor: "#0f766e",
+    completedColor: "#0f766e",
     activeTextColor: "white",
     completedTextColor: "white",
-    inactiveTextColor: "#333",
-    labelColor: "blue",
+    inactiveTextColor: "#64748b",
+    labelColor: "#64748b",
     borderRadius: "50%",
     style: "solid",
   };
@@ -93,17 +93,13 @@ export default function ViewReport() {
   };
 
   if (error)
-    return (
-      <div style={{ padding: "20px" }} className="page">
-        Report Not Found
-      </div>
-    );
+    return <div className="page report-status-page">Report Not Found</div>;
 
   const currentStepKey = steps[activeStep].key;
   const stepData = report?.[currentStepKey];
 
   return (
-    <div style={{ padding: "15px" }} className="page">
+    <div className="page view-report-page">
       {error && <span className="page">error</span>}
 
       <div style={{ margin: "10px 0" }}>
@@ -130,71 +126,61 @@ export default function ViewReport() {
                     connectorStateColors={true}
                   />
 
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "10px",
-                      justifyContent: "center",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    <Button
-                      onClick={handlePrev}
-                      disabled={
-                        activeStep === 0 ||
-                        !steps
-                          .slice(0, activeStep)
-                          .some((s) => hasStepData(s.key))
-                      }
-                      size="2"
-                      variant="soft"
-                      color="indigo"
-                    >
-                      Previous
-                    </Button>
-                    <Button
-                      onClick={handleNext}
-                      disabled={
-                        activeStep === steps.length - 1 ||
-                        !steps
-                          .slice(activeStep + 1)
-                          .some((s) => hasStepData(s.key))
-                      }
-                      loading={
-                        !(activeStep === steps.length - 1) &&
-                        !steps
-                          .slice(activeStep + 1)
-                          .some((s) => hasStepData(s.key)) &&
-                        !error &&
-                        loading
-                      }
-                      size="2"
-                      variant="soft"
-                      color="indigo"
-                    >
-                      Next
-                    </Button>
-                  </div>
+      <div className="report-step-actions">
+        <Button
+          onClick={handlePrev}
+          disabled={
+            activeStep === 0 ||
+            !steps.slice(0, activeStep).some((s) => hasStepData(s.key))
+          }
+          size="2"
+          variant="soft"
+          color="gray"
+        >
+          Previous
+        </Button>
+        <Button
+          onClick={handleNext}
+          disabled={
+            activeStep === steps.length - 1 ||
+            !steps.slice(activeStep + 1).some((s) => hasStepData(s.key))
+          }
+          loading={
+            !(activeStep === steps.length - 1) &&
+            !steps.slice(activeStep + 1).some((s) => hasStepData(s.key)) &&
+            !error &&
+            loading
+          }
+          size="2"
+          variant="soft"
+          color="gray"
+        >
+          Next
+        </Button>
 
-                  {(() => {
-                    switch (currentStepKey) {
-                      case "raw_analysis":
-                        return <Raw data={stepData} />;
-                      case "preprocessing":
-                        return <Preprocessing data={stepData} />;
-                      case "clean_analysis":
-                        return <Clean data={stepData} />;
-                      case "automl_training":
-                        return <Automl data={stepData} />;
-                      default:
-                        return null;
-                    }
-                  })()}
-                </>
-              )
-            )}
-          </>
-        )}
+        {error && <span className="page">error</span>}
+      </div>
+      {(loading || !stepData) && (
+        <div>
+          <Loader />
+        </div>
+      )}
+      <div className="report-step-content">
+        {stepData &&
+          (() => {
+            switch (currentStepKey) {
+              case "raw_analysis":
+                return <Raw data={stepData} />;
+              case "preprocessing":
+                return <Preprocessing data={stepData} />;
+              case "clean_analysis":
+                return <Clean data={stepData} />;
+              case "automl_training":
+                return <Automl data={stepData} />;
+              default:
+                return null;
+            }
+          })()}
       </div>
     </div>
   );

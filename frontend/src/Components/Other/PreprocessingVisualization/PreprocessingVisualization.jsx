@@ -52,9 +52,9 @@ useEffect(() => {
       {taskType && (
         <div className="stat-sub-container">
           <span className="stat-title">Preprocessing Actions</span>
-          <div className="card">
-            <span className="item-title">Task Type</span>
-            <span className="metadata-value ">
+          <div className="card task-type-card">
+            <span className="task-type-label">Task Type</span>
+            <span className="task-type-value">
               {taskType.charAt(0).toUpperCase() +
                 taskType.slice(1).toLowerCase()}
             </span>
@@ -76,7 +76,7 @@ useEffect(() => {
       <Select.Trigger
         className="column-selector"
         variant="soft"
-        color="indigo"
+        color="gray"
       />
 
       <Select.Content>
@@ -98,10 +98,9 @@ useEffect(() => {
   data
     .filter((col) => col.column === selectedColumn)
     .map((col) => (
-      <div
+        <div
         key={col.column}
         className="preprocessing-content"
-        style={{ marginTop: "20px" }}
       >
         <div>
           <span className="primary-color">Action:</span> {col.action}

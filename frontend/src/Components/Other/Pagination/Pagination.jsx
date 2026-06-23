@@ -65,20 +65,12 @@ export default function Pagination({ pagination, onPageChange }) {
   );
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        gap: 6,
-        marginTop: 40,
-        flexWrap: "wrap",
-      }}
-    >
+    <div className="pagination">
       {/* Prev */}
       <Button
         size="2"
         variant="soft"
-        color="indigo"
+        color="teal"
         disabled={page === 1}
         onClick={handlePrev}
         aria-label="Previous"
@@ -91,7 +83,7 @@ export default function Pagination({ pagination, onPageChange }) {
         p === "..." ? (
           <span
             key={`dots-${index}`}
-            style={{ padding: "0 6px", alignSelf: "center" }}
+            className="pagination-dots"
           >
             ...
           </span>
@@ -100,7 +92,7 @@ export default function Pagination({ pagination, onPageChange }) {
             key={p}
             size="2"
             variant={p === page ? "surface" : "soft"}
-            color="indigo"
+            color="teal"
             onClick={handlePageClick(p)}
             aria-label={`Page ${p}`}
           >
@@ -113,7 +105,7 @@ export default function Pagination({ pagination, onPageChange }) {
       <Button
         size="2"
         variant="soft"
-        color="indigo"
+        color="teal"
         disabled={page === totalPages}
         onClick={handleNext}
         aria-label="Next"

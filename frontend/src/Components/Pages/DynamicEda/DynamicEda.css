@@ -1,49 +1,24 @@
-:root {
-  --primary-color: #1e293b;
-  --light-blue: #38bdf8;
-  --hover-color: #334155;
-  --primary-rgb: 255, 178, 2;
-  --navbar-height: 5em;
-  --partners-bar-height: 50px;
-  --light-color: white;
-  --grey-color: #8b949e;
-  --dark-green: #0f1f17;
-  --page-margin-top: 20px;
-  --bg-color: #f8fafc;
-  --danger-color: #f85149;
-  --font-color: black;
-  --green-color: #2ea043;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: var(--bg-color);
-  font-family: Arial, sans-serif;
-  color: var(--font-color);
-}
-
 .eda-page {
   width: 100%;
   min-height: 100vh;
-  padding: 40px;
+  padding: clamp(28px, 5vw, 56px) 20px;
 }
 
 .eda-container {
-  max-width: 1400px;
+  width: min(100%, 1280px);
   margin: auto;
 }
 
 .eda-loading,
 .eda-error {
-  height: 100vh;
+  min-height: 70vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  padding: 20px;
+  color: var(--grey-color);
+  font-size: 1.05rem;
+  font-weight: 700;
 }
 
 .eda-error {
@@ -51,154 +26,150 @@ body {
 }
 
 .eda-card {
-  background: var(--light-color);
-  border-radius: 20px;
-  padding: 30px;
-  margin-bottom: 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  margin-bottom: 22px;
+  padding: clamp(22px, 4vw, 34px);
+  border: 1px solid var(--border-color);
+  border-radius: 22px;
+  background: var(--surface-glass);
+  box-shadow: var(--shadow-sm);
 }
 
 .eda-title {
-  font-size: 40px;
-  margin-bottom: 20px;
-  color: var(--primary-color);
+  margin-bottom: 16px;
+  color: var(--heading-color);
+  font-size: clamp(2rem, 5vw, 3.5rem);
 }
 
 .eda-summary {
-  font-size: 18px;
-  line-height: 1.8;
-  color: var(--grey-color);
+  max-width: 980px;
+  color: var(--grey-color) !important;
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  line-height: 1.85;
 }
 
-.section-title {
-  font-size: 28px;
-  margin-bottom: 25px;
-  color: var(--primary-color);
+.section-title,
+.plot-title {
+  margin-bottom: 18px;
+  color: var(--heading-color);
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
 }
 
-.section-content {
+.section-content,
+.recommendations-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
 }
 
 .text-item {
-  line-height: 1.9;
-  font-size: 17px;
+  color: var(--grey-color) !important;
+  font-size: 0.98rem;
+  line-height: 1.85;
 }
 
-.bullet-item {
-  background: #f1f5f9;
-  border-radius: 14px;
-  padding: 20px;
-  border: 1px solid #e2e8f0;
+.bullet-item,
+.recommendation-item {
+  padding: 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--surface-muted);
+}
+
+.bullet-item p,
+.recommendation-item {
+  color: var(--font-color) !important;
+  line-height: 1.75;
 }
 
 .bullet-label {
-  margin-top: 0;
-  margin-bottom: 10px;
-  color: var(--primary-color);
+  margin: 0 0 8px;
+  color: var(--heading-color);
 }
 
+.warning-card,
 .warning-item {
-  background: #fff7ed;
-  border-left: 5px solid orange;
-  padding: 20px;
-  border-radius: 12px;
-  line-height: 1.8;
+  padding: 18px;
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  border-left: 4px solid #f59e0b;
+  border-radius: 16px;
+  background: #fffbeb;
+  color: #92400e;
+  line-height: 1.75;
 }
 
 .metric-item {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  padding: 25px;
-  border-radius: 16px;
+  padding: 22px;
+  border: 1px solid rgba(var(--primary-rgb), 0.14);
+  border-radius: 18px;
+  background: var(--primary-soft);
 }
 
 .metric-label {
+  margin-bottom: 8px;
   color: var(--grey-color);
-  font-size: 14px;
-  margin-bottom: 10px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .metric-value {
-  font-size: 36px;
-  font-weight: bold;
-  color: var(--primary-color);
+  color: var(--heading-color);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
 }
 
 .plots-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-  gap: 25px;
-}
-
-.plot-title {
-  font-size: 24px;
-  margin-bottom: 10px;
-  color: var(--primary-color);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: 20px;
 }
 
 .plot-reason {
-  color: var(--grey-color);
+  color: var(--grey-color) !important;
   line-height: 1.7;
 }
 
 .plot-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.plot-type,
+.plot-column {
+  padding: 7px 11px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 800;
 }
 
 .plot-type {
-  background: var(--light-blue);
+  background: var(--primary-color);
   color: white;
-  padding: 8px 14px;
-  border-radius: 30px;
-  font-size: 14px;
 }
 
 .plot-column {
-  background: #e2e8f0;
-  color: var(--primary-color);
-  padding: 8px 14px;
-  border-radius: 30px;
-  font-size: 14px;
+  background: var(--surface-muted);
+  color: var(--font-color);
+  border: 1px solid var(--border-color);
 }
 
 .plot-image {
   width: 100%;
+  border: 1px solid var(--border-color);
   border-radius: 16px;
-  border: 1px solid #e2e8f0;
-}
-
-.recommendations-list {
-  display: flex;
-  color: var(--primary-color);
-  flex-direction: column;
-  gap: 20px;
+  background: white;
 }
 
 .recommendation-item {
-  background: #f8fafc;
-  border-left: 5px solid var(--green-color);
-  padding: 20px;
-  border-radius: 14px;
-  line-height: 1.8;
+  border-left: 4px solid var(--green-color);
 }
 
 @media (max-width: 768px) {
   .eda-page {
-    padding: 20px;
-  }
-
-  .eda-title {
-    font-size: 30px;
-  }
-
-  .plots-grid {
-    grid-template-columns: 1fr;
+    padding: 88px 14px 32px;
   }
 }

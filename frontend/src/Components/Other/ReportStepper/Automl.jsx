@@ -149,7 +149,7 @@ export default function Automl() {
       <Button
         size="2"
         variant="soft"
-        color="indigo"
+        color="gray"
         onClick={() => downloadReport(reportId)}
       >
         Download Full Report

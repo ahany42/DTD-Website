@@ -207,7 +207,7 @@ export default function HomePage() {
             >
               <motion.label>Name</motion.label>
               <TextField.Root
-                color="indigo"
+                color="teal"
                 variant="outline"
                 size="3"
                 name="name"
@@ -224,7 +224,7 @@ export default function HomePage() {
             >
               <motion.label>Email</motion.label>
               <TextField.Root
-                color="indigo"
+                color="teal"
                 variant="outline"
                 size="3"
                 name="email"
@@ -242,7 +242,7 @@ export default function HomePage() {
             >
               <motion.label>Message</motion.label>
               <TextArea
-                color="indigo"
+                color="teal"
                 variant="outline"
                 size="3"
                 name="message"

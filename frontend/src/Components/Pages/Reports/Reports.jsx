@@ -204,11 +204,9 @@ const Reports = () => {
     }
   };
   return (
-    <div className="page">
+    <div className="page reports-page">
       <h1 className="title">Your Reports</h1>
-      <div
-        style={{ display: "flex", gap: 10, marginBottom: 20, marginLeft: 60 }}
-      >
+      <div className="reports-filter-bar">
         <Button
           variant={filter === "ALL" ? "outline" : "soft"}
           onClick={() => handleSetFilter("ALL")}
@@ -303,7 +301,7 @@ const Reports = () => {
                         <FaEye />
                       </IconButton>
                       <IconButton
-                        color="indigo"
+                        color="teal"
                         variant="surface"
                         onClick={() => downloadReport(report._id)}
                         aria-label="Download report"

@@ -6,9 +6,9 @@ import AdminComplaints from "../Components/Pages/AdminComplaints/AdminComplaints
 import AdminReports from "../Components/Pages/AdminReports/AdminReports.jsx";
 export default function AdminLayout({ children }) {
   return (
-    <div style={{ display: "flex" }} className="page">
+    <div className="page admin-shell">
       <SideBar />
-      <div style={{ flex: 1 }} className="admin-page-layout">
+      <div className="admin-page-layout">
         {children}
         <Routes>
           <Route path="/messages" element={<Messages />} />
