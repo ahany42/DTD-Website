@@ -129,10 +129,12 @@ export default function HomePage() {
           </motion.p>
 
           <motion.div className="quick-links" variants={containerVariants}>
-            {["Dashboard", "Reports"].map((item) => (
+            {["Get Started", "Reports"].map((item) => (
               <motion.a
                 key={item}
-                onClick={() => navigate(`/${item.toLowerCase()}`)}
+                onClick={() =>
+                  navigate(`/${item.toLowerCase().replace(/\s+/g, "-")}`)
+                }
                 className="quick-link"
                 variants={itemVariants}
               >
