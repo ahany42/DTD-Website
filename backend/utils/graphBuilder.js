@@ -10,6 +10,7 @@ export const buildGraph = (items = []) => {
 
   const formatLabel = (value) =>
     String(value)
+      .replace(/^run/, "")
       .replace(/_/g, " ")
       .split(" ")
       .filter(Boolean)
