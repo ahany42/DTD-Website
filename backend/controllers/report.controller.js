@@ -9,6 +9,34 @@ import puppeteer from "puppeteer";
  * Create Report
  * report object is empty for now
  */
+export const getKnowledgeGraph = async (req, res) => {
+  try {
+    const { reportId } = req.params;
+
+    const report = await Report.findById(reportId).select(
+      "knowledge_graph dynamic_status target_column task_type"
+    );
+
+    if (!report) {
+      return res.status(404).json({
+        error: "Report not found",
+      });
+    }
+
+    return res.status(200).json({
+      knowledgeGraph: report.knowledge_graph || [],
+      dynamicStatus: report.dynamic_status,
+      targetColumn: report.target_column,
+      taskType: report.task_type,
+    });
+  } catch (error) {
+    console.error("Get Knowledge Graph Error:", error);
+
+    return res.status(500).json({
+      error: "Internal Server Error",
+    });
+  }
+};
 export const createReport = async (req, res) => {
   try {
     const { userId, report = {} } = req.body;

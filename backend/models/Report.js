@@ -38,6 +38,10 @@ const ReportSchema = new mongoose.Schema(
       type: Object,
       default: {},
     },
+    knowledge_graph: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true, // gives createdAt automatically
