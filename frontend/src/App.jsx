@@ -19,6 +19,13 @@ import ResetPassword from "./Components/Pages/ResetPassword/ResetPassword.jsx";
 import AdminLayout from "./Layouts/AdminLayout.jsx";
 import ViewReport from "./Components/Pages/ViewReport/ViewReport.jsx";
 import DynamicEda from "./Components/Pages/DynamicEda/DynamicEda.jsx";
+import KnowledgeGraph from "./Components/Pages/KnowledgeGraph/KnowledgeGraph.jsx";
+import EDAGraphPage from "./Components/Pages/KnowledgeGraph/EDAGraphPage.jsx";
+import PreprocessingGraph from "./Components/Pages/KnowledgeGraph/PreprocessingGraph.jsx";
+import FeatureEngineeringGraph from "./Components/Pages/KnowledgeGraph/FeatureEngineeringGraph.jsx";
+import ModelSelectionGraph from "./Components/Pages/KnowledgeGraph/ModelSelectionGraph.jsx";
+import ModelTrainGraph from "./Components/Pages/KnowledgeGraph/ModelTrainGraph.jsx";
+import EvaluationGraphPage from "./Components/Pages/KnowledgeGraph/EvaluationGraphPage.jsx";
 // Contexts
 export const AppContext = createContext();
 export const ReportContext = createContext();
@@ -204,6 +211,18 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/eda-graph" element={<EDAGraphPage />} />
+          <Route path="/preprocess-graph" element={<PreprocessingGraph />} />
+          <Route
+            path="/feature-engineering-graph"
+            element={<FeatureEngineeringGraph />}
+          />
+          <Route
+            path="/model-selection-graph"
+            element={<ModelSelectionGraph />}
+          />
+          <Route path="/training-graph" element={<ModelTrainGraph />} />
+          <Route path="/evaluation-graph" element={<EvaluationGraphPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />

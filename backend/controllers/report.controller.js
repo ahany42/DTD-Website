@@ -107,7 +107,7 @@ export const getStarredReportsByUser = async (req, res) => {
       userId,
       isStarred: true,
     })
-      .populate("dataset", "fileName fileSize")
+      .populate("dataset", "fileName fileSize mode")
       .populate("userId", "name email")
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -154,7 +154,7 @@ export const getReportById = async (req, res) => {
 
     const report = await Report.findById(id)
       .populate("userId", "name email")
-      .populate("dataset", "fileName fileSize");
+      .populate("dataset", "fileName fileSize mode");
 
     if (!report) {
       return res.status(404).json({
@@ -212,7 +212,7 @@ export const getReportsByUser = async (req, res) => {
     const total = await Report.countDocuments({ userId });
 
     const reports = await Report.find({ userId })
-      .populate("dataset", "fileName fileSize")
+      .populate("dataset", "fileName fileSize mode")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -247,7 +247,7 @@ export const getAllReports = async (req, res) => {
 
     const reports = await Report.find()
       .populate("userId", "name email")
-      .populate("dataset", "fileName fileSize")
+      .populate("dataset", "fileName fileSize mode")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
