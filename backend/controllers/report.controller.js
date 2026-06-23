@@ -4,6 +4,7 @@ import Report from "../models/Report.js";
 import User from "../models/User.js";
 
 import puppeteer from "puppeteer";
+import { buildGraph } from "../utils/graphBuilder.js";
 
 /**
  * Create Report
@@ -23,11 +24,14 @@ export const getKnowledgeGraph = async (req, res) => {
       });
     }
 
+    const graph = buildGraph(report.knowledge_graph);
+
     return res.status(200).json({
       knowledgeGraph: report.knowledge_graph || [],
       dynamicStatus: report.dynamic_status,
       targetColumn: report.target_column,
       taskType: report.task_type,
+      graph,
     });
   } catch (error) {
     console.error("Get Knowledge Graph Error:", error);

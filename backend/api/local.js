@@ -8,7 +8,6 @@ import complaintRoutes from "../routes/complaint.routes.js";
 import reportRoutes from "../routes/report.routes.js";
 import datasetRoutes from "../routes/dataset.routes.js";
 import statsRoutes from "../routes/stats.routes.js";
-import graphRoutes from "../routes/graph.routes.js";
 const app = express();
 
 // Middleware
@@ -34,8 +33,6 @@ app.use("/api/complaint", complaintRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/datasets", express.static(path.join(process.cwd(), "datasets")));
-app.use("/api/graph", graphRoutes);
-// Health checks
 app.get("/", (req, res) => res.json({ status: "API running" }));
 app.get("/api", (req, res) => res.json({ message: "API is working!" }));
 
