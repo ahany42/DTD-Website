@@ -149,7 +149,11 @@ function GraphViewInner({
               padding: "20px",
             }}
           >
-            <Callout>Detail view is available for {activeNode?.text}.</Callout>
+            <Callout.Root>
+              <Callout.Text>
+                Detail view is available for {activeNode?.text}.
+              </Callout.Text>
+            </Callout.Root>
           </div>
         </div>
       )}

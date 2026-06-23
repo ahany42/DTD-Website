@@ -10,6 +10,7 @@ import { AppContext, ReportContext } from "../../../App";
 import { useParams } from "react-router-dom";
 import KnowledgeGraph from "../KnowledgeGraph/KnowledgeGraph";
 import Loader from "../../Other/Loader/Loader";
+import { Callout } from "@radix-ui/themes";
 export default function ViewReport() {
   const [activeStep, setActiveStep] = useState(0);
   const [report, setReport] = useState(null);
@@ -107,6 +108,12 @@ export default function ViewReport() {
         {mode === "custom" ? (
           <div>
             <h1 className="sub-header">Pipeline</h1>
+            <Callout.Root>
+              <Callout.Text>
+                Click on the nodes to view the details of each step in the
+                pipeline.
+              </Callout.Text>
+            </Callout.Root>
 
             <KnowledgeGraph reportId={reportId} />
           </div>
