@@ -149,7 +149,7 @@ const UploadDataset = () => {
       }
 
       toast.success("Dataset uploaded successfully!");
-      navigate(`/view-report/${data.report._id}`);
+      navigate(`/view-report/${data.report._id}?mode=${mode}`);
       console.log("Uploaded dataset:", data);
 
       // get datasetId from backend response
