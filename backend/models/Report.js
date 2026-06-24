@@ -47,5 +47,7 @@ const ReportSchema = new mongoose.Schema(
     timestamps: true, // gives createdAt automatically
   }
 );
-
+ReportSchema.index({ createdAt: -1 });
+ReportSchema.index({ userId: 1, createdAt: -1 });
+ReportSchema.index({ userId: 1, isStarred: 1, createdAt: -1 });
 export default mongoose.model("Report", ReportSchema);

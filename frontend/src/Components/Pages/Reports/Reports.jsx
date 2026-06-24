@@ -54,7 +54,7 @@ const Reports = () => {
     if (user?.id) {
       fetchReports(user.id);
     }
-  }, [user, filter, page]); // Re-fetch when user or filter changes
+  }, [user?.id, filter, page]); // Re-fetch when user or filter changes
 
   // Fetch reports based on filter
   const fetchReports = async (userId) => {
@@ -124,7 +124,14 @@ const Reports = () => {
       if (response.ok) {
         // Refresh reports after toggling star
         if (user?.id) {
-          fetchReports(user.id);
+          if (filter === "STARRED" && isCurrentlyStarred) {
+            // If the report was starred and we are in STARRED filter, remove it from the list
+            setReports(reports.filter((report) => report._id !== reportId));
+          } else {
+            reports.filter((report) => report._id === reportId)[0].isStarred =
+              !isCurrentlyStarred;
+            setReports([...reports]);
+          }
         }
         toast.success(
           !isCurrentlyStarred ? "Report starred" : "Report unstarred"
@@ -291,7 +298,7 @@ const Reports = () => {
                   <Table.Cell>
                     <div className="table-icon-container">
                       <IconButton
-                        color="green"
+                        color="teal"
                         variant="surface"
                         onClick={() =>
                           viewReport(report._id, report.dataset.mode)
