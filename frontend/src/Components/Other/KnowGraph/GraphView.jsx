@@ -9,7 +9,7 @@ import "@xyflow/react/dist/style.css";
 
 import CircleNode from "../../Other/KnowGraph/CircleNode";
 
-import { Button, Callout } from "@radix-ui/themes";
+import { Button } from "@radix-ui/themes";
 import KnowledgeGraph from "../../Pages/KnowledgeGraph/KnowledgeGraph";
 
 /* ---------------- NODE TYPES ---------------- */
@@ -33,17 +33,24 @@ function GraphViewInner({
   edges = [],
   loading = false,
   reportId,
+  level = "1",
+  parentNode = null,
   error = null,
 }) {
   const [activeNodeId, setActiveNodeId] = useState(null);
 
-  const onNodeClick = useCallback((_, node) => {
-    const key = node?.id?.toLowerCase();
+  const onNodeClick = useCallback(
+    (_, node) => {
+      const key = node?.id?.toLowerCase();
 
-    if (componentMap[key]) {
+      console.log(
+        `Node clicked: ${key}, level: ${level}, parentNode: ${parentNode}`
+      );
+
       setActiveNodeId(key);
-    }
-  }, []);
+    },
+    [level, parentNode]
+  );
 
   const activeNode = componentMap?.[activeNodeId] ?? null;
 
@@ -105,8 +112,8 @@ function GraphViewInner({
         </ReactFlow>
       )}
 
-      {/* ---------------- DETAIL MODE ---------------- */}
-      {activeNodeId && (
+      {/* ---------------- LEVEL 1 -> LEVEL 2 ---------------- */}
+      {activeNodeId && level === "1" && (
         <div>
           <Button onClick={() => setActiveNodeId(null)} size="2" variant="soft">
             Back to Full Pipeline
@@ -116,27 +123,43 @@ function GraphViewInner({
             style={{
               textAlign: "center",
               color: "var(--primary-color)",
-              margin: "0",
+              margin: 0,
             }}
           >
             {activeNode?.text}
           </h4>
-          <div
+
+          <KnowledgeGraph
+            type={activeNodeId}
+            reportId={reportId}
+            level="2"
+            parentNode={activeNodeId}
+          />
+        </div>
+      )}
+
+      {/* ---------------- LEVEL 2 -> LEVEL 3 ---------------- */}
+      {activeNodeId && level === "2" && (
+        <div>
+          <h4
             style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: "20px",
+              textAlign: "center",
+              color: "var(--primary-color)",
+              margin: 0,
             }}
           >
-            <Callout.Root>
-              <Callout.Text>
-                Detail view is available for {activeNode?.text}.
-              </Callout.Text>
-            </Callout.Root>
-          </div>
-          <KnowledgeGraph type={activeNodeId} reportId={reportId} />
+            {activeNodeId
+              .split(" ")
+              .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1) : w))
+              .join(" ")}
+          </h4>
+
+          <KnowledgeGraph
+            reportId={reportId}
+            level="3"
+            name={activeNodeId}
+            parentNode={parentNode}
+          />
         </div>
       )}
 

@@ -9,6 +9,7 @@ import {
   getSubNodeNamesByType,
   toggleStarReport,
   deleteReport,
+  getSubNodeDetails,
   getStarredReportsByUser,
   downloadFullReport,
 } from "../controllers/report.controller.js";
@@ -48,6 +49,7 @@ const router = express.Router();
  */
 router.get("/:reportId/knowledge-graph", getKnowledgeGraph);
 router.get("/:reportId/knowledge-graph/:type", getSubNodeNamesByType);
+router.get("/:reportId/knowledge-graph/sub/:type/:name", getSubNodeDetails);
 router.post("/", createReport);
 
 /**

@@ -52,7 +52,10 @@ function RenderValue({ value }) {
     typeof value === "string" &&
     (value.includes(",") || value.includes(":"))
   ) {
-    const parts = value.split(",").map((part) => part.trim()).filter(Boolean);
+    const parts = value
+      .split(",")
+      .map((part) => part.trim())
+      .filter(Boolean);
     const groups = [];
     let activeGroup = null;
 
@@ -125,9 +128,9 @@ const splitValue = (value) => {
   );
 };
 export default function EdaVisualization({ dataJson }) {
-const [activeSection, setActiveSection] = useState("");
+  const [activeSection, setActiveSection] = useState("");
 
-const parsed = dataJson || {};
+  const parsed = dataJson || {};
 
   const summary = parsed.summary || [];
   const target_analysis = parsed.target_analysis || [];
@@ -154,44 +157,44 @@ const parsed = dataJson || {};
       }))
       ?.sort((a, b) => b.value - a.value) || [];
 
-const sections = [
-  summary.length > 0 && {
-    id: "summary",
-    label: "Summary",
-  },
-  target_analysis.length > 0 && {
-    id: "target",
-    label: "Target Analysis",
-  },
-  data_quality.length > 0 && {
-    id: "quality",
-    label: "Data Quality",
-  },
-  relationshipData.length > 0 && {
-    id: "importance",
-    label: "Feature Importance",
-  },
-  columns.length > 0 && {
-    id: "columns",
-    label: "Columns",
-  },
-  columns.some((c) => c?.top_values?.length) && {
-    id: "topvalues",
-    label: "Top Values",
-  },
-  warnings.length > 0 && {
-    id: "warnings",
-    label: "Warnings",
-  },
-].filter(Boolean);
+  const sections = [
+    summary.length > 0 && {
+      id: "summary",
+      label: "Summary",
+    },
+    target_analysis.length > 0 && {
+      id: "target",
+      label: "Target Analysis",
+    },
+    data_quality.length > 0 && {
+      id: "quality",
+      label: "Data Quality",
+    },
+    relationshipData.length > 0 && {
+      id: "importance",
+      label: "Feature Importance",
+    },
+    columns.length > 0 && {
+      id: "columns",
+      label: "Columns",
+    },
+    columns.some((c) => c?.top_values?.length) && {
+      id: "topvalues",
+      label: "Top Values",
+    },
+    warnings.length > 0 && {
+      id: "warnings",
+      label: "Warnings",
+    },
+  ].filter(Boolean);
 
-useEffect(() => {
-  if (!activeSection && sections.length > 0) {
-    setActiveSection(sections[0].id);
-  }
-}, [sections, activeSection]);
+  useEffect(() => {
+    if (!activeSection && sections.length > 0) {
+      setActiveSection(sections[0].id);
+    }
+  }, [sections, activeSection]);
 
-return (
+  return (
     <div>
       <div className="results-navbar">
         {sections.map((section) => (
@@ -294,7 +297,10 @@ return (
 
           <div className="stat-sub-container">
             {data_quality.map((item) => (
-              <div key={item?.title} className="stat-item card data-quality-card">
+              <div
+                key={item?.title}
+                className="stat-item card data-quality-card"
+              >
                 <span className="item-title">{item?.title}</span>
                 <RenderValue value={item?.value} />
               </div>
