@@ -149,28 +149,26 @@ const UploadDataset = () => {
       }
 
       toast.success("Dataset uploaded successfully!");
-      navigate(`/view-report/${data.report._id}?mode=${mode}`);
-      console.log("Uploaded dataset:", data);
-
-      // get datasetId from backend response
+      
       const datasetId = data.dataset?._id;
       const reportId = data.report?._id;
-      console.log("Dataset ID:", datasetId);
-      console.log("Report ID:", reportId);
+      navigate(`/view-report/${reportId}?mode=${mode}`);
+      console.log("Uploaded dataset:", data);
+      console.log("Dataset ID:", datasetId, "Report ID:", reportId);
       if (!datasetId) {
         toast.error("Dataset ID missing");
         setIsLoading(false);
         return;
       }
 
-      const eventSource = new EventSource(
+            const eventSource = new EventSource(
         `${BACKEND_URL}/api/dataset/run-pipeline/${datasetId}/${reportId}`
       );
       eventSource.onmessage = (event) => {
         const streamData = JSON.parse(event.data);
         triggerReportRefresh();
         console.log("Pipeline update:", streamData);
-        if (streamData.error) {
+                if (streamData.error) {
           toast.error(streamData.error || data.error || "Pipeline error");
           eventSource.close();
           return;

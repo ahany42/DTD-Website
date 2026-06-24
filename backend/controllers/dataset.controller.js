@@ -90,29 +90,72 @@ export const runPipelineStream = async (req, res) => {
     }
     const report = await Report.findById(reportId);
     if (!report) {
-      res.write(`data: ${JSON.stringify({ error: "Report not found" })}\n\n`);
-      return res.end();
+      return res.status(404).json({ error: "Report not found" });
     }
     const targetColumn = report.report?.targetColumn;
     if (!targetColumn) {
-      res.write(
-        `data: ${JSON.stringify({ error: "Target column is required but was empty." })}\n\n`
-      );
-      return res.end();
+      return res
+        .status(400)
+        .json({ error: "Target column is required but was empty." });
     }
+
+    // ── Dynamic (custom) mode → SSE, emit one event then wait for human ──────
+    // Starts the pipeline, emits one SSE event (status: paused|completed|error),
+    // then closes the stream. Human resumes via POST /dynamic-resume/:runId.
+    if (dataset.mode === "custom") {
+
+      try {
+        const form = new FormData();
+        form.append("file", fs.createReadStream(dataset.filePath));
+        form.append("prompt", dataset.prompt || "");
+        form.append("target_column", String(targetColumn));
+
+        // ── Step 1: start the dynamic pipeline ──────────────────────────────
+        let aiResponse = await axios.post(
+          `${AI_BACKEND_URL}/dynamic/run/${reportId}`,
+          form,
+          {
+            headers: form.getHeaders(),
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity,
+          }
+        );
+        let state = aiResponse.data;
+
+        // Emit one event with the current state (paused | completed | error)
+        // then close the stream — the human decides when to resume via
+        // POST /api/dataset/dynamic-resume/:runId
+        res.write(
+          `data: ${JSON.stringify({
+            agent: state.paused_at ?? null,
+            status: state.status,
+            error: state.error ?? null,
+            run_id: state.run_id,
+            reportId,
+            datasetId,
+          })}\n\n`
+        );
+      } catch (error) {
+        res.write(
+          `data: ${JSON.stringify({ error: error.response?.data ?? error.message })}\n\n`
+        );
+      } finally {
+        res.end();
+      }
+      return;
+    }
+
+    // ── Static (standard) mode → /run-pipeline/{datasetId}/{reportId} (SSE) ──
 
     const form = new FormData();
     form.append("file", fs.createReadStream(dataset.filePath));
-    form.append("prompt", dataset.prompt);
+    form.append("prompt", dataset.prompt || "");
     form.append("mode", dataset.mode);
     form.append("target_column", String(targetColumn));
 
     const response = await axios({
       method: "post",
-      url:
-        dataset.mode === "custom"
-          ? `${AI_BACKEND_URL}/run-custom-pipeline/${datasetId}/${reportId}`
-          : `${AI_BACKEND_URL}/run-pipeline/${datasetId}/${reportId}`,
+      url: `${AI_BACKEND_URL}/run-pipeline/${datasetId}/${reportId}`,
       data: form,
       headers: form.getHeaders(),
       responseType: "stream",
@@ -126,7 +169,38 @@ export const runPipelineStream = async (req, res) => {
       res.end();
     });
   } catch (error) {
-    res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
-    res.end();
+    // If SSE headers were already flushed we can only write an event.
+    // Otherwise, send a normal JSON error.
+    if (res.headersSent) {
+      res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+      res.end();
+    } else {
+      res
+        .status(500)
+        .json({ error: error.response?.data || error.message });
+    }
+  }
+};
+
+// ── HITL resume → /dynamic/resume/{runId} ─────────────────────────────────
+export const dynamicResume = async (req, res) => {
+  try {
+    const { runId } = req.params;
+    const { decision, feedback_text = "" } = req.body;
+
+    if (!decision) {
+      return res.status(400).json({ error: '"decision" is required (accept | feedback)' });
+    }
+
+    const params = new URLSearchParams({ decision, feedback_text });
+    const response = await axios.post(
+      `${AI_BACKEND_URL}/dynamic/resume/${runId}`,
+      params.toString(),
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
+
+    return res.status(200).json(response.data);
+  } catch (error) {
+    return res.status(500).json({ error: error.response?.data || error.message });
   }
 };

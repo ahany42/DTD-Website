@@ -133,6 +133,7 @@ function App() {
     []
   );
   const [reportRefreshFlag, setReportRefreshFlag] = useState(0);
+  const [reportError, setReportError] = useState("");
 
   const triggerReportRefresh = () => {
     // Increment flag to tell components to refetch
@@ -143,8 +144,10 @@ function App() {
     () => ({
       triggerReportRefresh,
       reportRefreshFlag,
+      error: reportError,
+      setError: setReportError,
     }),
-    [reportRefreshFlag]
+    [reportRefreshFlag, reportError]
   );
 
   return (

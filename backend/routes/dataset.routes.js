@@ -72,6 +72,7 @@ import {
   // runPipeline,
   suggestTarget,
   runPipelineStream,
+  dynamicResume,
 } from "../controllers/dataset.controller.js";
 
 const router = express.Router();
@@ -84,5 +85,6 @@ const memoryStorage = multer.memoryStorage();
 const uploadMemory = multer({ storage: memoryStorage });
 router.post("/suggest-target", uploadMemory.single("file"), suggestTarget);
 router.get("/run-pipeline/:datasetId/:reportId", runPipelineStream);
+router.post("/dynamic-resume/:runId", dynamicResume);
 
 export default router;
