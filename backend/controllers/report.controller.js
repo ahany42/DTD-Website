@@ -128,6 +128,57 @@ export const getStarredReportsByUser = async (req, res) => {
   }
 };
 
+// Get sub-node names for a given type in a report
+export const getSubNodeNamesByType = async (req, res) => {
+  try {
+    const { reportId, type } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(reportId)) {
+      return res.status(400).json({
+        error: "Invalid reportId",
+      });
+    }
+
+    const report = await Report.findById(reportId).select(
+      `report.${type}.sub_nodes dynamic_status target_column task_type`
+    );
+
+    if (!report) {
+      return res.status(404).json({
+        error: "Report not found",
+      });
+    }
+
+    const subNodes = report?.report?.[type]?.sub_nodes;
+
+    if (!Array.isArray(subNodes)) {
+      return res.status(404).json({
+        error: `No sub_nodes found for '${type}'`,
+      });
+    }
+
+    // Extract only names
+    const names = subNodes.map((node) => node?.name).filter(Boolean);
+
+    // Build graph from names
+    const graph = buildGraph(names);
+
+    return res.status(200).json({
+      knowledgeGraph: names,
+      dynamicStatus: report.dynamic_status,
+      targetColumn: report.target_column,
+      taskType: report.task_type,
+      graph,
+    });
+  } catch (error) {
+    console.error("Get SubNode Names Error:", error);
+
+    return res.status(500).json({
+      error: "Internal Server Error",
+    });
+  }
+};
+
 /**
  * Get Report By ID
  */

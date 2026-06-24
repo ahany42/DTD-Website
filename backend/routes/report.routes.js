@@ -6,6 +6,7 @@ import {
   getReportsByUser,
   getAllReports,
   getKnowledgeGraph,
+  getSubNodeNamesByType,
   toggleStarReport,
   deleteReport,
   getStarredReportsByUser,
@@ -46,6 +47,7 @@ const router = express.Router();
  *         description: Report created
  */
 router.get("/:reportId/knowledge-graph", getKnowledgeGraph);
+router.get("/:reportId/knowledge-graph/:type", getSubNodeNamesByType);
 router.post("/", createReport);
 
 /**

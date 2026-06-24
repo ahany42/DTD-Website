@@ -14,7 +14,7 @@ export default function KnowledgeGraph({ type = "main", reportId }) {
     const url =
       type && type === "main"
         ? `${BACKEND_URL}/api/reports/${reportId}/knowledge-graph`
-        : `${BACKEND_URL}/api/reports/type/${type}`;
+        : `${BACKEND_URL}/api/reports/${reportId}/knowledge-graph/${type}`;
 
     fetch(url)
       .then((res) => {
@@ -48,6 +48,7 @@ export default function KnowledgeGraph({ type = "main", reportId }) {
         nodes={graph.nodes}
         edges={graph.edges}
         loading={loading}
+        reportId={reportId}
         error={error}
       />
     </>

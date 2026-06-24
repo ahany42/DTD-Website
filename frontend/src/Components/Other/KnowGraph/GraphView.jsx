@@ -10,6 +10,7 @@ import "@xyflow/react/dist/style.css";
 import CircleNode from "../../Other/KnowGraph/CircleNode";
 
 import { Button, Callout } from "@radix-ui/themes";
+import KnowledgeGraph from "../../Pages/KnowledgeGraph/KnowledgeGraph";
 
 /* ---------------- NODE TYPES ---------------- */
 const nodeTypes = {
@@ -19,32 +20,11 @@ const nodeTypes = {
 /* ---------------- COMPONENT MAP ---------------- */
 const componentMap = {
   eda: { text: "EDA" },
-  preprocess: { text: "Preprocessing" },
-  feature: { text: "Feature Engineering" },
-  selection: { text: "Model Selection" },
+  preprocessing: { text: "Preprocessing" },
+  feature_engineering: { text: "Feature Engineering" },
+  model_selection: { text: "Model Selection" },
   training: { text: "Model Training" },
   evaluation: { text: "Model Evaluation" },
-
-  summary: { text: "Summary" },
-  profiles: { text: "Profiles" },
-  quality: { text: "Quality" },
-  target: { text: "Target" },
-
-  missing: { text: "Missing Values" },
-  encoding: { text: "Encoding" },
-  scaling: { text: "Scaling" },
-
-  creation: { text: "Creation" },
-  task: { text: "Task" },
-  models: { text: "Models" },
-
-  load: { text: "Load" },
-  train: { text: "Train" },
-  leaderboard: { text: "Leaderboard" },
-
-  metrics: { text: "Metrics" },
-  shap: { text: "SHAP" },
-  report: { text: "Report" },
 };
 
 /* ---------------- INNER COMPONENT ---------------- */
@@ -52,6 +32,7 @@ function GraphViewInner({
   nodes = [],
   edges = [],
   loading = false,
+  reportId,
   error = null,
 }) {
   const [activeNodeId, setActiveNodeId] = useState(null);
@@ -155,6 +136,7 @@ function GraphViewInner({
               </Callout.Text>
             </Callout.Root>
           </div>
+          <KnowledgeGraph type={activeNodeId} reportId={reportId} />
         </div>
       )}
 

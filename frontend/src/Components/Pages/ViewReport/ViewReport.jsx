@@ -108,7 +108,7 @@ export default function ViewReport() {
         {mode === "custom" ? (
           <div>
             <h1 className="sub-header">Pipeline</h1>
-            <Callout.Root>
+            <Callout.Root style={{ margin: "20px 0" }}>
               <Callout.Text>
                 Click on the nodes to view the details of each step in the
                 pipeline.
