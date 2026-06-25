@@ -192,6 +192,14 @@ export const dynamicResume = async (req, res) => {
       return res.status(400).json({ error: '"decision" is required (accept | feedback)' });
     }
 
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders();
+
+    // Emit running state immediately so the frontend UI goes to 'running'
+    res.write(`data: ${JSON.stringify({ status: "running" })}\n\n`);
+
     const params = new URLSearchParams({ decision, feedback_text });
     const response = await axios.post(
       `${AI_BACKEND_URL}/dynamic/resume/${runId}`,
@@ -199,8 +207,27 @@ export const dynamicResume = async (req, res) => {
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
 
-    return res.status(200).json(response.data);
+    const state = response.data;
+    res.write(
+      `data: ${JSON.stringify({
+        agent: state.paused_at ?? null,
+        status: state.status,
+        error: state.error ?? null,
+        run_id: state.run_id,
+      })}\n\n`
+    );
   } catch (error) {
-    return res.status(500).json({ error: error.response?.data || error.message });
+    if (res.headersSent) {
+      res.write(
+        `data: ${JSON.stringify({
+          status: "error",
+          error: error.response?.data || error.message,
+        })}\n\n`
+      );
+    } else {
+      return res.status(500).json({ error: error.response?.data || error.message });
+    }
+  } finally {
+    res.end();
   }
 };

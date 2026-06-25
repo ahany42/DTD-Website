@@ -1,19 +1,44 @@
 import { Handle, Position } from "@xyflow/react";
 
+/**
+ * CircleNode
+ *
+ * Pill-shaped node for the ReactFlow knowledge graph.
+ *
+ * Supported `data.status` values:
+ *   "default"   — teal  (static pipeline nodes)
+ *   "active"    — blue + spinner overlay (currently executing, not yet paused)
+ *   "complete"  — dark green  (legacy alias)
+ *   "completed" — green (HITL: agent finished and accepted)
+ *   "paused"    — orange + pulse ring (HITL: waiting for human decision)
+ *   "pending"   — gray  (HITL: not yet reached)
+ *   "error"     — red
+ *
+ * Nodes are always clickable regardless of status — the parent decides
+ * what clicking does (drill-down is allowed for every status now).
+ */
 export default function CircleNode({ data, selected }) {
-  const status = data?.status || "default"; // "default" | "active" | "complete" | "error"
+  const status = data?.status || "default";
 
-  const statusColors = {
-    default: { bg: "#0f766e", border: "#38bdf8" },
-    active: { bg: "#1e3a8a", border: "#60a5fa" },
-    complete: { bg: "#14532d", border: "#4ade80" },
-    error: { bg: "#7f1d1d", border: "#f87171" },
+  /* ── Color map ──────────────────────────────────────────────────── */
+  const COLOR_MAP = {
+    default: { bg: "#0f766e", border: "#38bdf8", text: "#ffffff" },
+    active: { bg: "#1e3a8a", border: "#60a5fa", text: "#ffffff" },
+    complete: { bg: "#14532d", border: "#4ade80", text: "#ffffff" },
+    completed: { bg: "#15803d", border: "#4ade80", text: "#ffffff" },
+    paused: { bg: "#c2410c", border: "#fb923c", text: "#ffffff" },
+    pending: { bg: "#4b5563", border: "#9ca3af", text: "#d1d5db" },
+    error: { bg: "#7f1d1d", border: "#f87171", text: "#ffffff" },
   };
 
-  const colors = statusColors[status] || statusColors.default;
+  const colors = COLOR_MAP[status] ?? COLOR_MAP.default;
+
+  /* Pulse ring for paused nodes — defined in GraphView.css */
+  const className = status === "paused" ? "circle-node--paused" : "";
 
   return (
     <div
+      className={className}
       style={{
         width: "140px",
         height: "44px",
@@ -21,7 +46,7 @@ export default function CircleNode({ data, selected }) {
         borderRadius: "999px",
         backgroundColor: colors.bg,
         border: `2px solid ${selected ? "#facc15" : colors.border}`,
-        color: "white",
+        color: colors.text,
         fontSize: "13px",
         fontWeight: "600",
         textAlign: "center",
@@ -34,6 +59,7 @@ export default function CircleNode({ data, selected }) {
         boxSizing: "border-box",
         position: "relative",
         cursor: "pointer",
+        transition: "background-color 0.3s, border-color 0.3s",
       }}
     >
       <Handle
@@ -43,6 +69,15 @@ export default function CircleNode({ data, selected }) {
       />
 
       {data?.label}
+
+      {/* Spinner overlay — shown only while this node is actively executing */}
+      {status === "active" && (
+        <span
+          className="circle-node__spinner"
+          aria-label="Running"
+          title="Running"
+        />
+      )}
 
       <Handle
         type="source"

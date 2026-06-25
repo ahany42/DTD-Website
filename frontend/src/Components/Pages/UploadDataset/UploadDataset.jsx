@@ -152,7 +152,6 @@ const UploadDataset = () => {
       
       const datasetId = data.dataset?._id;
       const reportId = data.report?._id;
-      navigate(`/view-report/${reportId}?mode=${mode}`);
       console.log("Uploaded dataset:", data);
       console.log("Dataset ID:", datasetId, "Report ID:", reportId);
       if (!datasetId) {
@@ -161,14 +160,21 @@ const UploadDataset = () => {
         return;
       }
 
-            const eventSource = new EventSource(
+      if (mode === "custom") {
+        navigate(`/view-report/${reportId}?mode=${mode}`, { state: { datasetId } });
+        return;
+      }
+
+      navigate(`/view-report/${reportId}?mode=${mode}`);
+
+      const eventSource = new EventSource(
         `${BACKEND_URL}/api/dataset/run-pipeline/${datasetId}/${reportId}`
       );
       eventSource.onmessage = (event) => {
         const streamData = JSON.parse(event.data);
         triggerReportRefresh();
         console.log("Pipeline update:", streamData);
-                if (streamData.error) {
+        if (streamData.error) {
           toast.error(streamData.error || data.error || "Pipeline error");
           eventSource.close();
           return;

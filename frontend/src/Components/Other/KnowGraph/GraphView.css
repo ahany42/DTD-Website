@@ -1,0 +1,81 @@
+/* GraphView.css — styles for the ReactFlow knowledge graph container */
+
+/* Pulse animation used by the paused node ring in CircleNode */
+@keyframes hitl-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.6), 0 2px 12px rgba(0,0,0,0.15);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(249, 115, 22, 0), 0 2px 12px rgba(0,0,0,0.15);
+  }
+}
+
+/* Pulse animation for the HITL panel status dot */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.85); }
+}
+
+/* Spin animation for the "active / executing" node indicator */
+@keyframes circle-node-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Slide-up entrance for the bottom HITL drawer */
+@keyframes hitl-drawer-in {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* Apply pulse ring to paused nodes */
+.circle-node--paused {
+  animation: hitl-pulse 1.6s ease-in-out infinite;
+}
+
+/* Small spinning ring overlaid on the right side of an actively-executing node */
+.circle-node__spinner {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  width: 14px;
+  height: 14px;
+  margin-top: -7px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  animation: circle-node-spin 0.8s linear infinite;
+  pointer-events: none;
+}
+
+/* Bottom HITL drawer — full width, dedicated row below the graph */
+.hitl-drawer {
+  width: 100%;
+  flex-shrink: 0;
+  animation: hitl-drawer-in 0.22s ease-out;
+  border-top: 1px solid #e2e8f0;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+}
+
+/* ReactFlow panel override to ensure controls are always on top */
+.react-flow__controls {
+  z-index: 9999 !important;
+}
+
+.react-flow__controls-button {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  color: #000000 !important;
+}
+
+.react-flow__controls-button svg {
+  fill: #000000 !important;
+  stroke: #000000 !important;
+}
+
+.react-flow__controls-button:hover {
+  background: #f3f4f6 !important;
+}
