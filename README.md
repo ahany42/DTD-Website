@@ -116,7 +116,7 @@ python api.py
 
 ## 🔗 Repository Links
 
-- Frontend: https://github.com/ahany42/DTD-Website
+- Frontend / Backend: https://github.com/ahany42/DTD-Website
 - AI server: https://github.com/ahany42/DTD-Automl
 
 ## 🧩 Core Idea
