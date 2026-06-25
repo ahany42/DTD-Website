@@ -45,8 +45,11 @@ export default function DynamicTraining({ data }) {
       {/* ── Primary metrics ── */}
       <div className="grid-2">
         <div className="card">
-          <div className="card-label">Best Score ({metric_name})</div>
+          <div className="card-label">Test {metric_name}</div>
           <div className="score-value">{pct(best_score)}</div>
+          <div style={{ fontSize: "0.75rem", color: "var(--grey-color)", marginTop: "4px" }}>
+            Final score on held-out test set
+          </div>
         </div>
         <div className="card">
           <div className="card-label">Best Model</div>
@@ -59,7 +62,7 @@ export default function DynamicTraining({ data }) {
         <div className="grid-2">
           {f1 != null && (
             <div className="card">
-              <div className="card-label">F1 Score</div>
+              <div className="card-label">Test F1 Score</div>
               <div className="card-value" style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--primary-color)" }}>
                 {pct(f1)}
               </div>
@@ -79,7 +82,12 @@ export default function DynamicTraining({ data }) {
       {/* ── All models ── */}
       {all_models.length > 0 && (
         <div className="card">
-          <div className="card-label">Models Trained ({models_trained})</div>
+          <div className="card-label">
+            Models Trained ({models_trained})
+            <span style={{ fontWeight: 400, marginLeft: "6px", color: "var(--grey-color)", textTransform: "none", letterSpacing: 0 }}>
+              — validation scores
+            </span>
+          </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "10px" }}>
             {all_models.map((model, i) => (
               <Badge
