@@ -15,7 +15,6 @@ import DynamicPreprocessing from "../DynamicPreprocessing/DynamicPreprocessing";
 import DynamicFeatureEngineering from "../DynamicFeatureEngineering/DynamicFeatureEngineering";
 import DynamicModelSelection from "../DynamicModelSelection/DynamicModelSelection";
 import DynamicTraining from "../DynamicTraining/DynamicTraining";
-import DynamicEvaluation from "../DynamicEvaluation/DynamicEvaluation";
 import DynamicDeployment from "../DynamicDeployment/DynamicDeployment";
 
 const connectorStyleConfig = {
@@ -82,7 +81,6 @@ const dynamicComponentMap = {
     component: DynamicModelSelection,
   },
   training: { text: "Model Training", component: DynamicTraining },
-  evaluation: { text: "Model Evaluation", component: DynamicEvaluation },
   deployment: { text: "Model Deployment", component: DynamicDeployment },
 };
 
@@ -196,7 +194,9 @@ export default function ViewReport() {
       })
       .then((data) => {
         if (!data.data) throw new Error("Report is empty or missing stages");
-        const nextReport = data.data.report;
+        const doc = data.data;
+        const nextReport = doc.report;
+        console.log("[ViewReport] report keys:", Object.keys(nextReport ?? {}));
         setReport(nextReport);
 
         if (mode === "custom" && !currentDynamicReport) {
@@ -213,14 +213,18 @@ export default function ViewReport() {
         setError(err.message);
       })
       .finally(() => setLoading(false));
-  }, [
-    reportId,
-    BACKEND_URL,
-    reportRefreshFlag,
-    setError,
-    mode,
-    currentDynamicReport,
-  ]);
+  }, [reportId, BACKEND_URL, reportRefreshFlag, setError]);
+
+  useEffect(() => {
+    if (mode === "custom" && report && !currentDynamicReport) {
+      const firstAvailableDynamicKey = Object.keys(dynamicComponentMap).find(
+        (key) => report[key]
+      );
+      if (firstAvailableDynamicKey) {
+        setCurrentDynamicReport(firstAvailableDynamicKey);
+      }
+    }
+  }, [report, mode]);
 
   // ── Custom Mode: Start the pipeline on mount ─────────────────────────────
   useEffect(() => {
@@ -472,17 +476,19 @@ export default function ViewReport() {
 
   const currentStepKey = steps[activeStep].key;
   const stepData = report?.[currentStepKey];
-  const currentDynamicKey =
+  const rawDynamicKey =
     typeof currentDynamicReport === "string"
       ? currentDynamicReport
       : currentDynamicReport?.key ||
         currentDynamicReport?.id ||
         currentDynamicReport?.type;
+  // Strip "run_" / "run" prefix so "run_training" resolves to "training"
+  const currentDynamicKey = rawDynamicKey?.replace(/^run_?/, "") || rawDynamicKey;
   const DynamicComponent = currentDynamicKey
     ? dynamicComponentMap[currentDynamicKey]?.component
     : null;
   const dynamicStepData = currentDynamicKey
-    ? (report?.[currentDynamicKey] ?? report)
+    ? report?.[currentDynamicKey] ?? null
     : null;
 
   return (

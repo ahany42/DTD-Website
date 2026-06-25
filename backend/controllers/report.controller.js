@@ -131,7 +131,9 @@ export const getStarredReportsByUser = async (req, res) => {
 // Get sub-node names for a given type in a report
 export const getSubNodeNamesByType = async (req, res) => {
   try {
-    const { reportId, type } = req.params;
+    const { reportId } = req.params;
+    // Strip "run_" or "run" prefix so "run_training" resolves to "training"
+    const type = req.params.type.replace(/^run_?/, "");
 
     if (!mongoose.Types.ObjectId.isValid(reportId)) {
       return res.status(400).json({
@@ -151,9 +153,11 @@ export const getSubNodeNamesByType = async (req, res) => {
 
     const subNodes = report?.report?.[type]?.sub_nodes;
 
-    if (!Array.isArray(subNodes)) {
-      return res.status(404).json({
-        error: `No sub_nodes found for '${type}'`,
+    // No sub_nodes for this agent — return empty graph (not an error)
+    if (!Array.isArray(subNodes) || subNodes.length === 0) {
+      return res.status(200).json({
+        knowledgeGraph: [],
+        graph: { nodes: [], edges: [] },
       });
     }
 
