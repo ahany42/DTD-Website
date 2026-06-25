@@ -1,483 +1,595 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
+import { AppContext } from "../../../App";
 import "./DynamicEda.css";
 
-export default function DynamicEDAReport() {
-  const [report, setReport] = useState(null);
+const CORE_REPORT_KEYS = new Set([
+  "title",
+  "summary",
+  "description",
+  "overview",
+  "status",
+  "sections",
+  "recommendations",
+  "warnings",
+  "generated_plots",
+  "visualizations",
+  "visualization_paths",
+  "plots",
+  "charts",
+  "analysis_report_path",
+  "report_path",
+  "local_path",
+  "frontend_path",
+  "filename",
+]);
 
+const PLOT_KEYS = [
+  "generated_plots",
+  "plots",
+  "charts",
+  "visualizations",
+  "visualization_paths",
+];
+
+const AI_BACKEND_URL =
+  import.meta.env.VITE_AI_BACKEND_URL || "http://127.0.0.1:8000";
+
+const isPlainObject = (value) =>
+  value !== null && typeof value === "object" && !Array.isArray(value);
+
+const isEmptyValue = (value) => {
+  if (value === null || value === undefined || value === "") return true;
+  if (Array.isArray(value)) return value.length === 0;
+  if (isPlainObject(value)) return Object.keys(value).length === 0;
+  return false;
+};
+
+const hasRenderableData = (value) => !isEmptyValue(value);
+
+const humanizeKey = (key = "") =>
+  String(key)
+    .replace(/[_-]/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+const formatPrimitive = (value) => {
+  if (value === null || value === undefined || value === "") return "-";
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  if (typeof value === "number") return Number.isInteger(value) ? value : value.toFixed(4);
+  return String(value);
+};
+
+const renderFormattedText = (value) => {
+  const text = formatPrimitive(value);
+
+  return text.split(/(\*\*.*?\*\*)/g).map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={index}>{part.replace(/\*\*/g, "")}</strong>;
+    }
+
+    return <span key={index}>{part}</span>;
+  });
+};
+
+const getItemLabel = (item, fallback) =>
+  item?.label || item?.title || item?.name || humanizeKey(fallback);
+
+const extractEdaPayload = (result) => {
+  if (!result) return null;
+
+  if (Object.prototype.hasOwnProperty.call(result, "data")) {
+    return (
+      result?.data?.report?.eda ||
+      result?.data?.eda ||
+      (hasRenderableData(result?.data) ? result.data : null)
+    );
+  }
+
+  return (
+    result?.report?.eda ||
+    result?.eda ||
+    (result?.title ||
+    result?.summary ||
+    result?.sections ||
+    result?.recommendations ||
+    result?.warnings
+      ? result
+      : null)
+  );
+};
+
+const getFallbackReportId = () => {
+  if (typeof window === "undefined") return "";
+
+  const pathMatch = window.location.pathname.match(/[a-f0-9]{24}/i);
+  if (pathMatch?.[0]) return pathMatch[0];
+
+  return "";
+};
+
+const getImagePath = (plot) => {
+  if (typeof plot === "string") return plot;
+
+  return (
+    plot?.frontend_path ||
+    plot?.frontendPath ||
+    plot?.url ||
+    plot?.src ||
+    plot?.image ||
+    plot?.image_path ||
+    plot?.imagePath ||
+    plot?.path ||
+    plot?.plot_path ||
+    plot?.plotPath ||
+    plot?.local_path ||
+    ""
+  );
+};
+
+const resolveImageSource = (path) => {
+  if (!path) return "";
+
+  const normalizedPath = String(path).replaceAll("\\", "/");
+  const aiBackendUrl = AI_BACKEND_URL.replace(/\/$/, "");
+
+  if (/^https?:\/\//i.test(normalizedPath)) return normalizedPath;
+
+  const dynamicPipelineIndex = normalizedPath.indexOf("dynamic_pipeline/");
+  if (dynamicPipelineIndex >= 0) {
+    return `${aiBackendUrl}/Output/${normalizedPath.slice(dynamicPipelineIndex)}`;
+  }
+
+  const outputIndex = normalizedPath.toLowerCase().indexOf("output/");
+  if (outputIndex >= 0) {
+    return `${aiBackendUrl}/${normalizedPath.slice(outputIndex)}`;
+  }
+
+  if (normalizedPath.startsWith("/")) return normalizedPath;
+
+  return `/${normalizedPath.replace(/^\.?\//, "")}`;
+};
+
+const getPlotTitle = (plot, index) => {
+  if (typeof plot === "string") {
+    const fileName = plot.replaceAll("\\", "/").split("/").pop() || `Plot ${index + 1}`;
+    return humanizeKey(fileName.replace(/\.[^.]+$/, ""));
+  }
+
+  return plot?.title || plot?.name || plot?.filename || `Visualization ${index + 1}`;
+};
+
+const normalizePlotItems = (report) => {
+  if (!isPlainObject(report)) return [];
+
+  return PLOT_KEYS.flatMap((key) => {
+    const value = report[key];
+    if (!Array.isArray(value)) return [];
+
+    return value
+      .filter((item) => hasRenderableData(getImagePath(item)))
+      .map((item, index) =>
+        isPlainObject(item)
+          ? { ...item, sourceKey: key, fallbackIndex: index }
+          : { path: item, sourceKey: key, fallbackIndex: index }
+      );
+  });
+};
+
+const normalizeSections = (report) => {
+  if (!isPlainObject(report)) return [];
+
+  const explicitSections = Array.isArray(report.sections) ? report.sections : [];
+
+  const extraSections = Object.entries(report)
+    .filter(([key, value]) => !CORE_REPORT_KEYS.has(key) && hasRenderableData(value))
+    .map(([key, value]) => ({
+      title: humanizeKey(key),
+      content: value,
+      generated: true,
+    }));
+
+  return [...explicitSections, ...extraSections];
+};
+
+const canRenderTable = (items) => {
+  if (!Array.isArray(items) || items.length === 0) return false;
+  if (!items.every(isPlainObject)) return false;
+
+  return items.every((item) =>
+    Object.values(item).every(
+      (value) => !Array.isArray(value) && !isPlainObject(value)
+    )
+  );
+};
+
+const renderTable = (items) => {
+  const columns = Array.from(
+    items.reduce((keys, item) => {
+      Object.keys(item).forEach((key) => keys.add(key));
+      return keys;
+    }, new Set())
+  );
+
+  return (
+    <div className="eda-table-wrap">
+      <table className="eda-table">
+        <thead>
+          <tr>
+            {columns.map((column) => (
+              <th key={column}>{humanizeKey(column)}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((item, rowIndex) => (
+            <tr key={rowIndex}>
+              {columns.map((column) => (
+                <td key={column}>{renderFormattedText(item[column])}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+const renderDataNode = (value, keyPrefix = "node") => {
+  if (isEmptyValue(value)) {
+    return <p className="text-item">No data available.</p>;
+  }
+
+  if (Array.isArray(value)) {
+    if (canRenderTable(value)) return renderTable(value);
+
+    return (
+      <div className="eda-list">
+        {value.map((item, index) => (
+          <div key={`${keyPrefix}-${index}`} className="eda-list-item">
+            {renderDataNode(item, `${keyPrefix}-${index}`)}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (isPlainObject(value)) {
+    return (
+      <div className="eda-details-grid">
+        {Object.entries(value).map(([key, itemValue]) => (
+          <div key={`${keyPrefix}-${key}`} className="eda-detail-card">
+            <span className="eda-detail-label">{humanizeKey(key)}</span>
+            <div className="eda-detail-value">
+              {Array.isArray(itemValue) || isPlainObject(itemValue)
+                ? renderDataNode(itemValue, `${keyPrefix}-${key}`)
+                : renderFormattedText(itemValue)}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return <span>{renderFormattedText(value)}</span>;
+};
+
+const renderContentItem = (item, index) => {
+  if (!isPlainObject(item)) {
+    return (
+      <div key={index} className="text-item">
+        {renderDataNode(item, `content-${index}`)}
+      </div>
+    );
+  }
+
+  const type = String(item.type || "").toLowerCase();
+  const label = getItemLabel(item, `Item ${index + 1}`);
+  const value = item.value ?? item.content ?? item.description ?? item.message;
+
+  if (type === "metric") {
+    return (
+      <div key={index} className="metric-item">
+        <div className="metric-label">{label}</div>
+        <div className="metric-value">{formatPrimitive(value)}</div>
+      </div>
+    );
+  }
+
+  if (type === "warning" || type === "error") {
+    return (
+      <div key={index} className="warning-card">
+        {label && <strong>{label}: </strong>}
+        {renderFormattedText(value)}
+      </div>
+    );
+  }
+
+  if (type === "bullet") {
+    return (
+      <div key={index} className="bullet-item">
+        {item.label && <h4 className="bullet-label">{item.label}</h4>}
+        <p>• {renderFormattedText(value)}</p>
+      </div>
+    );
+  }
+
+  if (type === "table" && Array.isArray(value)) {
+    return <div key={index}>{renderTable(value)}</div>;
+  }
+
+  if (value !== undefined) {
+    return (
+      <div key={index} className="text-item">
+        {item.label && <strong className="eda-inline-label">{item.label}: </strong>}
+        {renderDataNode(value, `content-${index}`)}
+      </div>
+    );
+  }
+
+  return (
+    <div key={index} className="eda-section-block">
+      {renderDataNode(item, `content-${index}`)}
+    </div>
+  );
+};
+
+const renderSectionContent = (content, sectionIndex) => {
+  if (Array.isArray(content)) {
+    return content.map((item, itemIndex) =>
+      renderContentItem(item, `${sectionIndex}-${itemIndex}`)
+    );
+  }
+
+  return renderDataNode(content, `section-${sectionIndex}`);
+};
+
+const requestJson = async (url) => {
+  const response = await fetch(url);
+  const rawText = await response.text();
+  let parsed = null;
+
+  try {
+    parsed = rawText ? JSON.parse(rawText) : null;
+  } catch {
+    parsed = rawText;
+  }
+
+  if (!response.ok) {
+    const message =
+      parsed?.message ||
+      parsed?.error ||
+      `Request failed with status ${response.status}`;
+
+    throw new Error(message);
+  }
+
+  return parsed;
+};
+
+function PlotCard({ plot, index, BACKEND_URL }) {
+  const [imageFailed, setImageFailed] = useState(false);
+  const imagePath = getImagePath(plot);
+  const imageSource = resolveImageSource(imagePath);
+  const title = getPlotTitle(plot, index);
+  const columns = Array.isArray(plot?.columns) ? plot.columns : [];
+
+  if (!imageSource) return null;
+
+  return (
+    <div className="eda-card">
+      <h2 className="plot-title">{title}</h2>
+
+      {plot?.reason && <p className="plot-reason">{plot.reason}</p>}
+
+      <div className="plot-tags">
+        {plot?.plot_type && <span className="plot-type">{plot.plot_type}</span>}
+
+        {columns.map((column, columnIndex) => (
+          <span key={`${column}-${columnIndex}`} className="plot-column">
+            {column}
+          </span>
+        ))}
+      </div>
+
+      {imageFailed ? (
+        <div className="plot-placeholder">
+          Plot image is listed in the report, but it is not available to display.
+        </div>
+      ) : (
+        <img
+          src={imageSource}
+          alt={title}
+          className="plot-image"
+          onError={() => setImageFailed(true)}
+        />
+      )}
+    </div>
+  );
+}
+
+export default function DynamicEDAReport({ data }) {
+  const { BACKEND_URL } = useContext(AppContext);
+  const { reportId: routeReportId } = useParams();
+  const [searchParams] = useSearchParams();
+  const reportId =
+    routeReportId ||
+    searchParams.get("reportId") ||
+    searchParams.get("id") ||
+    getFallbackReportId();
+
+  const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchReport = async () => {
-      try {
-        //TODO: Fetch report from backend
-        // const response = ``
+    let ignore = false;
 
-        // const data = await response.json();
-        const data = JSON.parse(`{
-    "title": "Titanic Passenger Survival Prediction Dataset Analysis",
-    "summary": "This dataset contains information about passengers aboard the Titanic, with the primary goal of predicting survival. It comprises 891 entries across 12 features, including passenger demographics, ticket information, and survival status. Initial analysis reveals several categorical and numerical features, with significant missing values in 'Age', 'Cabin', and 'Embarked' that require preprocessing.",
-    "sections": [
-        {
-            "title": "Dataset Overview",
-            "content": [
-                {
-                    "type": "text",
-                    "value": "The dataset provides a comprehensive record of Titanic passengers, suitable for a binary classification task to predict survival."
-                },
-                {
-                    "type": "metric",
-                    "label": "Number of Rows",
-                    "value": "891"
-                },
-                {
-                    "type": "metric",
-                    "label": "Number of Columns",
-                    "value": "12"
-                }
-            ]
-        },
-        {
-            "title": "Column Details and Data Types",
-            "content": [
-                {
-                    "type": "bullet",
-                    "value": "PassengerId (int64): A unique identifier for each passenger."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Survived (int64): The target variable, indicating survival (0 = No, 1 = Yes)."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Pclass (int64): Passenger class (1st, 2nd, 3rd), a proxy for socio-economic status."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Name (object): Passenger's name, potentially useful for title extraction."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Sex (object): Gender of the passenger."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Age (float64): Age in years."
-                },
-                {
-                    "type": "bullet",
-                    "value": "SibSp (int64): Number of siblings/spouses aboard."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Parch (int64): Number of parents/children aboard."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Ticket (object): Ticket number, potentially containing useful patterns."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Fare (float64): Passenger fare."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Cabin (object): Cabin number, often indicating deck level."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Embarked (object): Port of embarkation (C = Cherbourg, Q = Queenstown, S = Southampton)."
-                }
-            ]
-        },
-        {
-            "title": "Missing Values Analysis",
-            "content": [
-                {
-                    "type": "text",
-                    "value": "Several columns contain missing values, which will require careful handling during the data preprocessing phase."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Age: 177 missing values (approximately 19.87% of the dataset)."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Cabin: 687 missing values (approximately 77.10% of the dataset)."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Embarked: 2 missing values (approximately 0.22% of the dataset)."
-                },
-                {
-                    "type": "warning",
-                    "value": "The 'Cabin' column has a very high percentage of missing values. This suggests that direct use of this feature might be challenging, and strategies like dropping it, imputing with a 'Unknown' category, or extracting deck information (if available for non-missing values) should be considered."
-                }
-            ]
-        },
-        {
-            "title": "Target Variable Identification",
-            "content": [
-                {
-                    "type": "text",
-                    "value": "The 'Survived' column is the target variable for this analysis. It is a binary categorical variable (0 for not survived, 1 for survived), indicating a classification problem."
-                }
-            ]
+    const fetchReport = async () => {
+      setLoading(true);
+      setError("");
+
+      try {
+        if (!reportId) {
+          const propReport = extractEdaPayload(data);
+
+          if (hasRenderableData(propReport)) {
+            setReport(propReport);
+            return;
+          }
+
+          throw new Error("Missing report id for EDA report.");
         }
-    ],
-    "visualizations": [
-        {
-            "plot_type": "missing_values",
-            "columns": [
-                "PassengerId",
-                "Survived",
-                "Pclass",
-                "Name",
-                "Sex",
-                "Age",
-                "SibSp",
-                "Parch",
-                "Ticket",
-                "Fare",
-                "Cabin",
-                "Embarked"
-            ],
-            "title": "Overview of Missing Values Across All Columns",
-            "reason": "To visually identify and quantify missing data in each column, guiding imputation strategies and feature engineering decisions."
-        },
-        {
-            "plot_type": "countplot",
-            "columns": [
-                "Survived"
-            ],
-            "title": "Distribution of Survival Status",
-            "reason": "To understand the class balance of the target variable and assess potential imbalance issues."
-        },
-        {
-            "plot_type": "histogram",
-            "columns": [
-                "Age"
-            ],
-            "title": "Distribution of Passenger Age",
-            "reason": "To understand the age profile of passengers, identify potential skewness, and inform imputation strategies for missing 'Age' values."
-        },
-        {
-            "plot_type": "histogram",
-            "columns": [
-                "Fare"
-            ],
-            "title": "Distribution of Passenger Fare",
-            "reason": "To understand the distribution of ticket prices, which is often right-skewed, and identify potential outliers."
-        },
-        {
-            "plot_type": "countplot",
-            "columns": [
-                "Sex",
-                "Survived"
-            ],
-            "title": "Survival Rate by Sex",
-            "reason": "To explore the relationship between gender and survival, which is historically a significant predictor in the Titanic disaster."
-        },
-        {
-            "plot_type": "countplot",
-            "columns": [
-                "Pclass",
-                "Survived"
-            ],
-            "title": "Survival Rate by Passenger Class",
-            "reason": "To investigate how passenger class correlates with survival, indicating the impact of socio-economic status."
-        },
-        {
-            "plot_type": "boxplot",
-            "columns": [
-                "Age",
-                "Survived"
-            ],
-            "title": "Age Distribution by Survival Status",
-            "reason": "To visually compare the age distributions of survivors versus non-survivors and identify age-related survival patterns."
-        },
-        {
-            "plot_type": "boxplot",
-            "columns": [
-                "Fare",
-                "Survived"
-            ],
-            "title": "Fare Distribution by Survival Status",
-            "reason": "To visually compare the fare distributions of survivors versus non-survivors and assess the impact of ticket price on survival."
+
+        const fullReportUrl = `${BACKEND_URL}/api/reports/${reportId}?stage=eda`;
+        const fullReportResult = await requestJson(fullReportUrl);
+        console.log("[DynamicEda] Full report API response:", fullReportResult);
+
+        const fallbackPayload = extractEdaPayload(fullReportResult);
+
+        if (!hasRenderableData(fallbackPayload)) {
+          throw new Error("No EDA data was found for this report.");
         }
-    ],
-    "recommendations": [
-        "**Handle Missing Values:** Impute 'Age' (e.g., using median, mean, or more advanced methods like regression imputation). Impute 'Embarked' (e.g., using the mode). For 'Cabin', consider creating a 'Has_Cabin' binary feature or extracting deck information, or dropping the column due to high missingness.",
-        "**Feature Engineering:** Extract titles from the 'Name' column (e.g., Mr., Mrs., Miss, Master) as they often correlate with age and survival. Create a 'FamilySize' feature by combining 'SibSp' and 'Parch' plus one (for the passenger themselves).",
-        "**Categorical Encoding:** Convert categorical features such as 'Sex', 'Embarked', 'Pclass' (if treated as categorical), and any engineered categorical features (e.g., 'Title', 'Deck') into numerical representations using techniques like One-Hot Encoding.",
-        "**Feature Scaling:** Apply scaling (e.g., StandardScaler or MinMaxScaler) to numerical features like 'Age' and 'Fare' to ensure that no single feature dominates the model due to its scale, especially for distance-based algorithms.",
-        "**Model Selection and Training:** Train various classification models (e.g., Logistic Regression, Random Forest, Gradient Boosting, Support Vector Machines) on the prepared dataset. Utilize cross-validation for robust model evaluation.",
-        "**Model Evaluation:** Evaluate model performance using appropriate metrics such as accuracy, precision, recall, F1-score, and ROC-AUC, paying attention to potential class imbalance in the 'Survived' target variable."
-    ],
-    "generated_plots": [
-        {
-            "title": "Overview of Missing Values Across All Columns",
-            "reason": "To visually identify and quantify missing data in each column, guiding imputation strategies and feature engineering decisions.",
-            "plot_type": "missing_values",
-            "columns": [
-                "PassengerId",
-                "Survived",
-                "Pclass",
-                "Name",
-                "Sex",
-                "Age",
-                "SibSp",
-                "Parch",
-                "Ticket",
-                "Fare",
-                "Cabin",
-                "Embarked"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_0.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_0.png",
-            "filename": "plot_0.png"
-        },
-        {
-            "title": "Distribution of Survival Status",
-            "reason": "To understand the class balance of the target variable and assess potential imbalance issues.",
-            "plot_type": "countplot",
-            "columns": [
-                "Survived"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_1.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_1.png",
-            "filename": "plot_1.png"
-        },
-        {
-            "title": "Distribution of Passenger Age",
-            "reason": "To understand the age profile of passengers, identify potential skewness, and inform imputation strategies for missing 'Age' values.",
-            "plot_type": "histogram",
-            "columns": [
-                "Age"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_2.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_2.png",
-            "filename": "plot_2.png"
-        },
-        {
-            "title": "Distribution of Passenger Fare",
-            "reason": "To understand the distribution of ticket prices, which is often right-skewed, and identify potential outliers.",
-            "plot_type": "histogram",
-            "columns": [
-                "Fare"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_3.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_3.png",
-            "filename": "plot_3.png"
-        },
-        {
-            "title": "Survival Rate by Sex",
-            "reason": "To explore the relationship between gender and survival, which is historically a significant predictor in the Titanic disaster.",
-            "plot_type": "countplot",
-            "columns": [
-                "Sex",
-                "Survived"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_4.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_4.png",
-            "filename": "plot_4.png"
-        },
-        {
-            "title": "Survival Rate by Passenger Class",
-            "reason": "To investigate how passenger class correlates with survival, indicating the impact of socio-economic status.",
-            "plot_type": "countplot",
-            "columns": [
-                "Pclass",
-                "Survived"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_5.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_5.png",
-            "filename": "plot_5.png"
-        },
-        {
-            "title": "Age Distribution by Survival Status",
-            "reason": "To visually compare the age distributions of survivors versus non-survivors and identify age-related survival patterns.",
-            "plot_type": "boxplot",
-            "columns": [
-                "Age",
-                "Survived"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_6.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_6.png",
-            "filename": "plot_6.png"
-        },
-        {
-            "title": "Fare Distribution by Survival Status",
-            "reason": "To visually compare the fare distributions of survivors versus non-survivors and assess the impact of ticket price on survival.",
-            "plot_type": "boxplot",
-            "columns": [
-                "Fare",
-                "Survived"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_7.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_7.png",
-            "filename": "plot_7.png"
+
+        if (!ignore) setReport(fallbackPayload);
+      } catch (fetchError) {
+        console.error("[DynamicEda] Failed to load EDA report:", fetchError);
+
+        if (!ignore) {
+          setReport(null);
+          setError(fetchError.message || "Failed to load EDA report.");
         }
-    ]
-}`);
-        setReport(data);
-      } catch (error) {
-        console.error("Failed to load report:", error);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
 
     fetchReport();
-  }, []);
+
+    return () => {
+      ignore = true;
+    };
+  }, [BACKEND_URL, reportId]);
+
+  const sections = useMemo(() => normalizeSections(report), [report]);
+  const plots = useMemo(() => normalizePlotItems(report), [report]);
+  const recommendations = Array.isArray(report?.recommendations)
+    ? report.recommendations
+    : [];
+  const warnings = Array.isArray(report?.warnings) ? report.warnings : [];
 
   if (loading) {
-    return <div className="eda-loading">Loading Report...</div>;
+    return <div className="eda-loading">Loading EDA report...</div>;
   }
 
-  if (!report) {
-    return <div className="eda-error">Failed to load report </div>;
+  if (error) {
+    return (
+      <div className="eda-error">
+        <div>
+          <h2>EDA report could not be loaded</h2>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasRenderableData(report)) {
+    return (
+      <div className="eda-empty">
+        <h2>No EDA report yet</h2>
+        <p>There is no EDA data available for this report.</p>
+      </div>
+    );
   }
 
   return (
     <div className="eda-page">
       <div className="eda-container">
-        {/* ========================================= */}
-        {/* HEADER */}
-        {/* ========================================= */}
-        <div className="eda-card">
-          <h1 className="eda-title">{report.title}</h1>
+        <div className="eda-card eda-hero-card">
+          <div className="eda-header-meta">
+            {report?.status && (
+              <span className={`status-pill status-${String(report.status).toLowerCase()}`}>
+                {humanizeKey(report.status)}
+              </span>
+            )}
+            {reportId && <span className="eda-report-id">Report ID: {reportId}</span>}
+          </div>
 
-          <p className="eda-summary">{report.summary}</p>
+          <h1 className="eda-title">{report?.title || "EDA Report"}</h1>
+
+          {(report?.summary || report?.description || report?.overview) && (
+            <p className="eda-summary">
+              {renderFormattedText(
+                report.summary || report.description || report.overview
+              )}
+            </p>
+          )}
         </div>
 
-        {/* ========================================= */}
-        {/* SECTIONS */}
-        {/* ========================================= */}
-        {report.sections?.map((section, sectionIndex) => (
-          <div key={sectionIndex} className="eda-card">
-            <h2 className="section-title">{section.title}</h2>
+        {sections.map((section, sectionIndex) => (
+          <div key={`${section?.title || "section"}-${sectionIndex}`} className="eda-card">
+            <h2 className="section-title">
+              {section?.title || section?.name || `Section ${sectionIndex + 1}`}
+            </h2>
 
             <div className="section-content">
-              {section.content?.map((item, itemIndex) => {
-                // =====================================
-                // TEXT
-                // =====================================
-                if (item.type === "text") {
-                  return (
-                    <p key={itemIndex} className="text-item">
-                      {item.value}
-                    </p>
-                  );
-                }
-
-                // =====================================
-                // BULLET
-                // =====================================
-                if (item.type === "bullet") {
-                  return (
-                    <div key={itemIndex} className="bullet-item">
-                      {item.label && (
-                        <h4 className="bullet-label">{item.label}</h4>
-                      )}
-
-                      <p>• {item.value}</p>
-                    </div>
-                  );
-                }
-
-                // =====================================
-                // WARNING
-                // =====================================
-                if (item.type === "warning") {
-                  return (
-                    <div key={itemIndex} className="warning-card ">
-                      {item.value}
-                    </div>
-                  );
-                }
-
-                // =====================================
-                // METRIC
-                // =====================================
-                if (item.type === "metric") {
-                  return (
-                    <div key={itemIndex} className="metric-item">
-                      <div className="metric-label">{item.label}</div>
-
-                      <div className="metric-value">{item.value}</div>
-                    </div>
-                  );
-                }
-
-                return null;
-              })}
+              {renderSectionContent(
+                section?.content ?? section?.value ?? section,
+                sectionIndex
+              )}
             </div>
           </div>
         ))}
 
-        {/* ========================================= */}
-        {/* PLOTS */}
-        {/* ========================================= */}
-        <div className="plots-grid">
-          {report.generated_plots?.map((plot, index) => (
-            <div key={index} className="eda-card">
-              <h2 className="plot-title">{plot.title}</h2>
-
-              <p className="plot-reason">{plot.reason}</p>
-
-              <div className="plot-tags">
-                <span className="plot-type">{plot.plot_type}</span>
-
-                {plot.columns?.map((column, colIndex) => (
-                  <span key={colIndex} className="plot-column">
-                    {column}
-                  </span>
-                ))}
-              </div>
-              {console.log("Plot frontend path:", plot.frontend_path)}
-              <img
-                //FIXME: src should be from backend, not local path
-                src={`${plot.frontend_path}`}
-                alt={plot.title}
-                className="plot-image"
+        {plots.length > 0 && (
+          <div className="plots-grid">
+            {plots.map((plot, index) => (
+              <PlotCard
+                key={`${plot.sourceKey}-${index}`}
+                plot={plot}
+                index={index}
+                BACKEND_URL={BACKEND_URL}
               />
-            </div>
-          ))}
-        </div>
-
-        {/* ========================================= */}
-        {/* RECOMMENDATIONS */}
-        {/* ========================================= */}
-        <div className="eda-card">
-          <h2 className="section-title">Recommendations</h2>
-
-          <div className="recommendations-list">
-            {report.recommendations?.map((recommendation, index) => {
-              const formattedRecommendation = recommendation
-                .split(/(\*\*.*?\*\*)/g)
-                .map((part, partIndex) => {
-                  // =====================================
-                  // BOLD TEXT
-                  // =====================================
-                  if (part.startsWith("**") && part.endsWith("**")) {
-                    return (
-                      <strong key={partIndex}>
-                        {part.replace(/\*\*/g, "")}
-                      </strong>
-                    );
-                  }
-
-                  return <span key={partIndex}>{part}</span>;
-                });
-
-              return (
-                <div key={index} className="recommendation-item">
-                  {formattedRecommendation}
-                </div>
-              );
-            })}
+            ))}
           </div>
-        </div>
+        )}
+
+        {warnings.length > 0 && (
+          <div className="eda-card">
+            <h2 className="section-title">Warnings</h2>
+            <div className="recommendations-list">
+              {warnings.map((warning, index) => (
+                <div key={index} className="warning-card">
+                  <strong>{humanizeKey(warning?.type || `Warning ${index + 1}`)}: </strong>
+                  {renderFormattedText(warning?.message || warning?.value || warning)}
+                  {Array.isArray(warning?.columns) && warning.columns.length > 0 && (
+                    <div className="eda-chip-list">
+                      {warning.columns.map((column) => (
+                        <span key={column} className="plot-column">
+                          {column}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {recommendations.length > 0 && (
+          <div className="eda-card">
+            <h2 className="section-title">Recommendations</h2>
+
+            <div className="recommendations-list">
+              {recommendations.map((recommendation, index) => (
+                <div key={index} className="recommendation-item">
+                  {renderFormattedText(recommendation)}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
