@@ -11,9 +11,17 @@ import { useParams } from "react-router-dom";
 import KnowledgeGraph from "../KnowledgeGraph/KnowledgeGraph";
 import Loader from "../../Other/Loader/Loader";
 import { Callout } from "@radix-ui/themes";
+import DynamicEDA from "../DynamicEDA/DynamicEDA";
+import DynamicPreprocessing from "../DynamicPreprocessing/DynamicPreprocessing";
+import DynamicFeatureEngineering from "../DynamicFeatureEngineering/DynamicFeatureEngineering";
+import DynamicModelSelection from "../DynamicModelSelection/DynamicModelSelection";
+import DynamicTraining from "../DynamicTraining/DynamicTraining";
+import DynamicEvaluation from "../DynamicEvaluation/DynamicEvaluation";
+import DynamicDeployment from "../DynamicDeployment/DynamicDeployment";
 export default function ViewReport() {
   const [activeStep, setActiveStep] = useState(0);
   const [report, setReport] = useState(null);
+  const [currentDynamicReport, setCurrentDynamicReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [localError, setLocalError] = useState("");
   const [searchParams] = useSearchParams();
@@ -49,7 +57,21 @@ export default function ViewReport() {
     borderRadius: "50%",
     style: "solid",
   };
-
+  const dynamicComponentMap = {
+    eda: { text: "EDA", component: DynamicEDA },
+    preprocessing: { text: "Preprocessing", component: DynamicPreprocessing },
+    feature_engineering: {
+      text: "Feature Engineering",
+      component: DynamicFeatureEngineering,
+    },
+    model_selection: {
+      text: "Model Selection",
+      component: DynamicModelSelection,
+    },
+    training: { text: "Model Training", component: DynamicTraining },
+    evaluation: { text: "Model Evaluation", component: DynamicEvaluation },
+    deployment: { text: "Model Deployment", component: DynamicDeployment },
+  };
   const hasStepData = (stepKey) => {
     const data = report?.[stepKey];
     // return true if data exists and has keys or is non-null array/object
@@ -69,14 +91,32 @@ export default function ViewReport() {
       })
       .then((data) => {
         if (!data.data) throw new Error("Report is empty or missing stages");
-        setReport(data.data.report);
+        const nextReport = data.data.report;
+        setReport(nextReport);
+
+        if (mode === "custom" && !currentDynamicReport) {
+          const firstAvailableDynamicKey = Object.keys(
+            dynamicComponentMap
+          ).find((key) => nextReport?.[key]);
+
+          if (firstAvailableDynamicKey) {
+            setCurrentDynamicReport(firstAvailableDynamicKey);
+          }
+        }
       })
       .catch((err) => {
         setLocalError(err.message);
         setError(err.message);
       })
       .finally(() => setLoading(false));
-  }, [reportId, BACKEND_URL, reportRefreshFlag, setError]);
+  }, [
+    reportId,
+    BACKEND_URL,
+    reportRefreshFlag,
+    setError,
+    mode,
+    currentDynamicReport,
+  ]);
 
   const handleNext = () => {
     for (let i = activeStep + 1; i < steps.length; i++) {
@@ -101,6 +141,18 @@ export default function ViewReport() {
 
   const currentStepKey = steps[activeStep].key;
   const stepData = report?.[currentStepKey];
+  const currentDynamicKey =
+    typeof currentDynamicReport === "string"
+      ? currentDynamicReport
+      : currentDynamicReport?.key ||
+        currentDynamicReport?.id ||
+        currentDynamicReport?.type;
+  const DynamicComponent = currentDynamicKey
+    ? dynamicComponentMap[currentDynamicKey]?.component
+    : null;
+  const dynamicStepData = currentDynamicKey
+    ? (report?.[currentDynamicKey] ?? report)
+    : null;
 
   return (
     <div className="page view-report-page">
@@ -115,7 +167,28 @@ export default function ViewReport() {
               </Callout.Text>
             </Callout.Root>
 
-            <KnowledgeGraph reportId={reportId} />
+            <KnowledgeGraph
+              reportId={reportId}
+              currentDynamicReport={currentDynamicReport}
+              setCurrentDynamicReport={setCurrentDynamicReport}
+              dynamicComponentMap={dynamicComponentMap}
+            />
+
+            <div className="report-step-content">
+              {loading ? (
+                <Loader />
+              ) : DynamicComponent ? (
+                (() => {
+                  console.log(
+                    "[ViewReport] Rendering Dynamic Component:",
+                    currentDynamicKey
+                  );
+                  return <DynamicComponent data={dynamicStepData} />;
+                })()
+              ) : (
+                <Loader />
+              )}
+            </div>
           </div>
         ) : (
           <>
@@ -169,12 +242,28 @@ export default function ViewReport() {
                     (() => {
                       switch (currentStepKey) {
                         case "raw_analysis":
+                          console.log(
+                            "[ViewReport] Rendering Raw component:",
+                            stepData
+                          );
                           return <Raw data={stepData} />;
                         case "preprocessing":
+                          console.log(
+                            "[ViewReport] Rendering Preprocessing component:",
+                            stepData
+                          );
                           return <Preprocessing data={stepData} />;
                         case "clean_analysis":
+                          console.log(
+                            "[ViewReport] Rendering Clean component:",
+                            stepData
+                          );
                           return <Clean data={stepData} />;
                         case "automl_training":
+                          console.log(
+                            "[ViewReport] Rendering Automl component:",
+                            stepData
+                          );
                           return <Automl data={stepData} />;
                         default:
                           return null;

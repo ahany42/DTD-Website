@@ -18,14 +18,6 @@ const nodeTypes = {
 };
 
 /* ---------------- COMPONENT MAP ---------------- */
-const componentMap = {
-  eda: { text: "EDA" },
-  preprocessing: { text: "Preprocessing" },
-  feature_engineering: { text: "Feature Engineering" },
-  model_selection: { text: "Model Selection" },
-  training: { text: "Model Training" },
-  evaluation: { text: "Model Evaluation" },
-};
 
 /* ---------------- INNER COMPONENT ---------------- */
 function GraphViewInner({
@@ -36,6 +28,9 @@ function GraphViewInner({
   level = "1",
   parentNode = null,
   error = null,
+  dynamicComponentMap = {},
+  currentDynamicReport = null,
+  setCurrentDynamicReport = () => {},
 }) {
   const [activeNodeId, setActiveNodeId] = useState(null);
 
@@ -46,13 +41,15 @@ function GraphViewInner({
       console.log(
         `Node clicked: ${key}, level: ${level}, parentNode: ${parentNode}`
       );
-
+      if (level === "1") {
+        setCurrentDynamicReport(key);
+      }
       setActiveNodeId(key);
     },
-    [level, parentNode]
+    [level, parentNode, setCurrentDynamicReport]
   );
 
-  const activeNode = componentMap?.[activeNodeId] ?? null;
+  const activeNode = dynamicComponentMap?.[activeNodeId] ?? null;
 
   return (
     <div
@@ -133,7 +130,10 @@ function GraphViewInner({
             type={activeNodeId}
             reportId={reportId}
             level="2"
+            currentDynamicReport={currentDynamicReport}
+            setCurrentDynamicReport={setCurrentDynamicReport}
             parentNode={activeNodeId}
+            dynamicComponentMap={dynamicComponentMap}
           />
         </div>
       )}
@@ -158,7 +158,10 @@ function GraphViewInner({
             reportId={reportId}
             level="3"
             name={activeNodeId}
+            currentDynamicReport={currentDynamicReport}
+            setCurrentDynamicReport={setCurrentDynamicReport}
             parentNode={parentNode}
+            dynamicComponentMap={dynamicComponentMap}
           />
         </div>
       )}

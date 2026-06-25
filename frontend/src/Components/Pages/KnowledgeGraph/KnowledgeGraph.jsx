@@ -8,6 +8,9 @@ export default function KnowledgeGraph({
   reportId,
   level = "1",
   name = "",
+  currentDynamicReport,
+  setCurrentDynamicReport,
+  dynamicComponentMap = {},
   parentNode,
   details = {},
 }) {
@@ -78,6 +81,9 @@ export default function KnowledgeGraph({
           details={nodeDetails}
           type={type}
           name={name}
+          currentDynamicReport={currentDynamicReport}
+          setCurrentDynamicReport={setCurrentDynamicReport}
+          dynamicComponentMap={dynamicComponentMap}
           level={level}
           error={error}
         />
