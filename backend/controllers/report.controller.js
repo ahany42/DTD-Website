@@ -247,8 +247,14 @@ export const getReportById = async (req, res) => {
     const { stage } = req.query; // optional query param to specify stage
     const allowedStages = [
       "preprocessing",
+      "eda",
       "raw_analysis",
+      "feature_engineering",
       "clean_analysis",
+      "model_selection",
+      "training",
+      "evaluation",
+      "deployment",
       "automl_training",
     ];
 

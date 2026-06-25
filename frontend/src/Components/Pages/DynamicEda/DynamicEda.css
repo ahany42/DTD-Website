@@ -10,7 +10,8 @@
 }
 
 .eda-loading,
-.eda-error {
+.eda-error,
+.eda-empty {
   min-height: 70vh;
   display: flex;
   align-items: center;
@@ -25,6 +26,18 @@
   color: var(--danger-color);
 }
 
+.eda-empty {
+  flex-direction: column;
+  color: var(--grey-color);
+  text-align: center;
+}
+
+.eda-error h2,
+.eda-empty h2 {
+  margin-bottom: 10px;
+  color: var(--heading-color);
+}
+
 .eda-card {
   margin-bottom: 22px;
   padding: clamp(22px, 4vw, 34px);
@@ -32,6 +45,45 @@
   border-radius: 22px;
   background: var(--surface-glass);
   box-shadow: var(--shadow-sm);
+}
+
+.eda-hero-card {
+  background: linear-gradient(135deg, var(--surface-glass), var(--surface-muted));
+}
+
+.eda-header-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.status-pill,
+.eda-report-id {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 7px 11px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--surface-muted);
+  color: var(--grey-color);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.status-success {
+  border-color: rgba(var(--primary-rgb), 0.24);
+  background: var(--primary-soft);
+  color: var(--primary-color);
+}
+
+.status-error,
+.status-failed {
+  border-color: rgba(220, 38, 38, 0.24);
+  background: rgba(254, 226, 226, 0.72);
+  color: var(--danger-color);
 }
 
 .eda-title {
@@ -51,7 +103,7 @@
 .plot-title {
   margin-bottom: 18px;
   color: var(--heading-color);
-  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  font-size: clamp(1.2rem, 2.4vw, 1.65rem);
 }
 
 .section-content,
@@ -59,6 +111,15 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.eda-section-block {
+  display: grid;
+  gap: 14px;
+}
+
+.eda-inline-label {
+  color: var(--heading-color);
 }
 
 .text-item {
@@ -86,6 +147,82 @@
   color: var(--heading-color);
 }
 
+.eda-list {
+  display: grid;
+  gap: 12px;
+}
+
+.eda-list-item {
+  min-width: 0;
+}
+
+.eda-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.eda-detail-card {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--surface-muted);
+}
+
+.eda-detail-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--grey-color);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.eda-detail-value {
+  color: var(--font-color);
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.eda-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--surface-glass);
+}
+
+.eda-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 560px;
+}
+
+.eda-table th,
+.eda-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--font-color);
+  text-align: left;
+  vertical-align: top;
+}
+
+.eda-table th {
+  background: var(--surface-muted);
+  color: var(--grey-color);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.eda-table tr:last-child td {
+  border-bottom: 0;
+}
+
 .warning-card,
 .warning-item {
   padding: 18px;
@@ -98,7 +235,7 @@
 }
 
 .metric-item {
-  padding: 22px;
+  padding: clamp(16px, 3vw, 22px);
   border: 1px solid rgba(var(--primary-rgb), 0.14);
   border-radius: 18px;
   background: var(--primary-soft);
@@ -115,9 +252,11 @@
 
 .metric-value {
   color: var(--heading-color);
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(1.45rem, 3.4vw, 2.15rem);
   font-weight: 800;
-  letter-spacing: -0.05em;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
 }
 
 .plots-grid {
@@ -157,11 +296,32 @@
   border: 1px solid var(--border-color);
 }
 
+.eda-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 .plot-image {
   width: 100%;
   border: 1px solid var(--border-color);
   border-radius: 16px;
   background: white;
+}
+
+.plot-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  padding: 20px;
+  border: 1px dashed var(--border-color);
+  border-radius: 16px;
+  background: var(--surface-muted);
+  color: var(--grey-color);
+  font-weight: 700;
+  text-align: center;
 }
 
 .recommendation-item {

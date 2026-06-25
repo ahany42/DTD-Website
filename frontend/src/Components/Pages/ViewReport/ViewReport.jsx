@@ -30,7 +30,45 @@ const connectorStyleConfig = {
   borderRadius: "50%",
   style: "solid",
 };
-
+const COLOR_MAP = {
+  default: {
+    bg: "#0f766e",
+    border: "#38bdf8",
+    text: "#ffffff",
+    label: "Default",
+  },
+  active: {
+    bg: "#1e3a8a",
+    border: "#60a5fa",
+    text: "#ffffff",
+    label: "Active",
+  },
+  complete: {
+    bg: "#14532d",
+    border: "#4ade80",
+    text: "#ffffff",
+    label: "Complete",
+  },
+  completed: {
+    bg: "#15803d",
+    border: "#4ade80",
+    text: "#ffffff",
+    label: "Completed",
+  },
+  paused: {
+    bg: "#c2410c",
+    border: "#fb923c",
+    text: "#ffffff",
+    label: "Paused",
+  },
+  pending: {
+    bg: "#4b5563",
+    border: "#9ca3af",
+    text: "#d1d5db",
+    label: "Pending",
+  },
+  error: { bg: "#7f1d1d", border: "#f87171", text: "#ffffff", label: "Error" },
+};
 const dynamicComponentMap = {
   eda: { text: "EDA", component: DynamicEDA },
   preprocessing: { text: "Preprocessing", component: DynamicPreprocessing },
@@ -90,7 +128,11 @@ async function streamPostSse(url, body, onMessage) {
             const parsed = JSON.parse(dataStr);
             onMessage(parsed);
           } catch (err) {
-            console.error("[ViewReport][streamPostSse] Failed to parse SSE line:", line, err);
+            console.error(
+              "[ViewReport][streamPostSse] Failed to parse SSE line:",
+              line,
+              err
+            );
           }
         }
       }
@@ -109,7 +151,8 @@ export default function ViewReport() {
 
   const mode = searchParams.get("mode");
   const { BACKEND_URL } = useContext(AppContext);
-  const { reportRefreshFlag, triggerReportRefresh, error, setError } = useContext(ReportContext);
+  const { reportRefreshFlag, triggerReportRefresh, error, setError } =
+    useContext(ReportContext);
   const { reportId } = useParams();
 
   // HITL State
@@ -156,16 +199,13 @@ export default function ViewReport() {
         console.log("[ViewReport] report keys:", Object.keys(nextReport ?? {}));
         setReport(nextReport);
 
-        // Restore HITL state for existing paused reports (e.g. page refresh)
-        if (doc.dynamic_status === "paused" && doc.pipeline_state?.__paused_at__) {
-          setHitlState((prev) =>
-            prev ? prev : {
-              status: "paused",
-              pausedAt: doc.pipeline_state.__paused_at__,
-              runId: doc.pipeline_state.__run_id__ || doc._id,
-            }
-          );
-          setPipelineStatus("paused");
+        if (mode === "custom" && !currentDynamicReport) {
+          const firstAvailableDynamicKey = Object.keys(
+            dynamicComponentMap
+          ).find((key) => nextReport?.[key]);
+          if (firstAvailableDynamicKey) {
+            setCurrentDynamicReport(firstAvailableDynamicKey);
+          }
         }
       })
       .catch((err) => {
@@ -251,7 +291,9 @@ export default function ViewReport() {
     });
 
     const completedAgents = Object.keys(dynamicComponentMap).filter(
-      (key) => report?.[key] && (hitlState.status !== "paused" || key !== hitlState.pausedAt)
+      (key) =>
+        report?.[key] &&
+        (hitlState.status !== "paused" || key !== hitlState.pausedAt)
     );
 
     return {
@@ -306,49 +348,52 @@ export default function ViewReport() {
     }
   }, [hitlState?.runId, BACKEND_URL, triggerReportRefresh, setError]);
 
-  const handleFeedback = useCallback(async (text) => {
-    if (!hitlState?.runId) return;
-    setResuming(true);
-    setPipelineStatus("running");
-    try {
-      await streamPostSse(
-        `${BACKEND_URL}/api/dataset/dynamic-resume/${hitlState.runId}`,
-        { decision: "feedback", feedback_text: text },
-        (streamData) => {
-          console.log("[ViewReport][Feedback] SSE update:", streamData);
-          if (streamData.error) {
-            setPipelineStatus("error");
-            setLocalError(streamData.error);
-            setError(streamData.error);
-            return;
+  const handleFeedback = useCallback(
+    async (text) => {
+      if (!hitlState?.runId) return;
+      setResuming(true);
+      setPipelineStatus("running");
+      try {
+        await streamPostSse(
+          `${BACKEND_URL}/api/dataset/dynamic-resume/${hitlState.runId}`,
+          { decision: "feedback", feedback_text: text },
+          (streamData) => {
+            console.log("[ViewReport][Feedback] SSE update:", streamData);
+            if (streamData.error) {
+              setPipelineStatus("error");
+              setLocalError(streamData.error);
+              setError(streamData.error);
+              return;
+            }
+            if (streamData.status === "running") {
+              setPipelineStatus("running");
+            } else if (streamData.status === "paused") {
+              setHitlState({
+                status: "paused",
+                pausedAt: streamData.agent,
+                runId: streamData.run_id,
+              });
+              triggerReportRefresh();
+            } else if (streamData.status === "completed") {
+              setHitlState((prev) => ({
+                ...prev,
+                status: "completed",
+              }));
+              triggerReportRefresh();
+            }
           }
-          if (streamData.status === "running") {
-            setPipelineStatus("running");
-          } else if (streamData.status === "paused") {
-            setHitlState({
-              status: "paused",
-              pausedAt: streamData.agent,
-              runId: streamData.run_id,
-            });
-            triggerReportRefresh();
-          } else if (streamData.status === "completed") {
-            setHitlState((prev) => ({
-              ...prev,
-              status: "completed",
-            }));
-            triggerReportRefresh();
-          }
-        }
-      );
-    } catch (err) {
-      console.error("Feedback error:", err);
-      setLocalError(err.message);
-      setError(err.message || "Failed to submit feedback");
-      setPipelineStatus("error");
-    } finally {
-      setResuming(false);
-    }
-  }, [hitlState?.runId, BACKEND_URL, triggerReportRefresh, setError]);
+        );
+      } catch (err) {
+        console.error("Feedback error:", err);
+        setLocalError(err.message);
+        setError(err.message || "Failed to submit feedback");
+        setPipelineStatus("error");
+      } finally {
+        setResuming(false);
+      }
+    },
+    [hitlState?.runId, BACKEND_URL, triggerReportRefresh, setError]
+  );
 
   // ── Render Status Banner ──────────────────────────────────────────────────
   const renderStatusBanner = () => {
@@ -364,7 +409,9 @@ export default function ViewReport() {
       case "running":
         return (
           <Callout.Root color="teal" style={{ margin: "10px 0" }}>
-            <Callout.Text style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Callout.Text
+              style={{ display: "flex", alignItems: "center", gap: "8px" }}
+            >
               <div style={spinnerStyle} />
               ⚙️ AI Agent is currently executing. Please wait...
             </Callout.Text>
@@ -374,8 +421,9 @@ export default function ViewReport() {
         return (
           <Callout.Root color="amber" style={{ margin: "10px 0" }}>
             <Callout.Text>
-              ⏸️ Pipeline paused at <strong>{hitlState?.pausedAt?.toUpperCase()}</strong> stage. 
-              Click the orange node in the graph below to review outputs and decide.
+              ⏸️ Pipeline paused at{" "}
+              <strong>{hitlState?.pausedAt?.toUpperCase()}</strong> stage. Click
+              the orange node in the graph below to review outputs and decide.
             </Callout.Text>
           </Callout.Root>
         );
@@ -383,7 +431,8 @@ export default function ViewReport() {
         return (
           <Callout.Root color="green" style={{ margin: "10px 0" }}>
             <Callout.Text>
-              ✅ Pipeline execution completed successfully! All stages are complete.
+              ✅ Pipeline execution completed successfully! All stages are
+              complete.
             </Callout.Text>
           </Callout.Root>
         );
@@ -391,7 +440,8 @@ export default function ViewReport() {
         return (
           <Callout.Root color="red" style={{ margin: "10px 0" }}>
             <Callout.Text>
-              ❌ Pipeline Error: {localError || error || "An unexpected error occurred."}
+              ❌ Pipeline Error:{" "}
+              {localError || error || "An unexpected error occurred."}
             </Callout.Text>
           </Callout.Root>
         );
@@ -447,9 +497,37 @@ export default function ViewReport() {
         {mode === "custom" ? (
           <div>
             <h1 className="sub-header">Pipeline</h1>
-            
-            {renderStatusBanner()}
 
+            {renderStatusBanner()}
+            <Callout.Root style={{ margin: "20px 0" }}>
+              <Callout.Text>
+                <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+                  {Object.entries(COLOR_MAP).map(([key, value]) => (
+                    <div
+                      key={key}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "14px",
+                          height: "14px",
+                          borderRadius: "50%",
+                          backgroundColor: value.bg,
+                          border: `2px solid ${value.border}`,
+                        }}
+                      />
+                      <span style={{ fontSize: "13px" }}>
+                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </Callout.Text>
+            </Callout.Root>
             <Callout.Root style={{ margin: "20px 0" }}>
               <Callout.Text>
                 Click on the nodes to view the details of each step in the
