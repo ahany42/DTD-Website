@@ -1,483 +1,132 @@
-import React, { useEffect, useState } from "react";
+import { useContext } from "react";
+import { AppContext } from "../../../App";
 import "./DynamicEda.css";
 
-export default function DynamicEDAReport() {
-  const [report, setReport] = useState(null);
+function toImageUrl(backendUrl, vizPath) {
+  // vizPath looks like "../../../Output/eda/<id>/filename.png"
+  // extract everything from "Output/" onwards
+  const match = vizPath?.match(/Output\/.+/);
+  if (!match) return null;
+  return `${backendUrl}/${match[0]}`;
+}
 
-  const [loading, setLoading] = useState(true);
+export default function DynamicEDAReport({ data }) {
+  const { BACKEND_URL } = useContext(AppContext);
 
-  useEffect(() => {
-    const fetchReport = async () => {
-      try {
-        //TODO: Fetch report from backend
-        // const response = ``
-
-        // const data = await response.json();
-        const data = JSON.parse(`{
-    "title": "Titanic Passenger Survival Prediction Dataset Analysis",
-    "summary": "This dataset contains information about passengers aboard the Titanic, with the primary goal of predicting survival. It comprises 891 entries across 12 features, including passenger demographics, ticket information, and survival status. Initial analysis reveals several categorical and numerical features, with significant missing values in 'Age', 'Cabin', and 'Embarked' that require preprocessing.",
-    "sections": [
-        {
-            "title": "Dataset Overview",
-            "content": [
-                {
-                    "type": "text",
-                    "value": "The dataset provides a comprehensive record of Titanic passengers, suitable for a binary classification task to predict survival."
-                },
-                {
-                    "type": "metric",
-                    "label": "Number of Rows",
-                    "value": "891"
-                },
-                {
-                    "type": "metric",
-                    "label": "Number of Columns",
-                    "value": "12"
-                }
-            ]
-        },
-        {
-            "title": "Column Details and Data Types",
-            "content": [
-                {
-                    "type": "bullet",
-                    "value": "PassengerId (int64): A unique identifier for each passenger."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Survived (int64): The target variable, indicating survival (0 = No, 1 = Yes)."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Pclass (int64): Passenger class (1st, 2nd, 3rd), a proxy for socio-economic status."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Name (object): Passenger's name, potentially useful for title extraction."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Sex (object): Gender of the passenger."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Age (float64): Age in years."
-                },
-                {
-                    "type": "bullet",
-                    "value": "SibSp (int64): Number of siblings/spouses aboard."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Parch (int64): Number of parents/children aboard."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Ticket (object): Ticket number, potentially containing useful patterns."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Fare (float64): Passenger fare."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Cabin (object): Cabin number, often indicating deck level."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Embarked (object): Port of embarkation (C = Cherbourg, Q = Queenstown, S = Southampton)."
-                }
-            ]
-        },
-        {
-            "title": "Missing Values Analysis",
-            "content": [
-                {
-                    "type": "text",
-                    "value": "Several columns contain missing values, which will require careful handling during the data preprocessing phase."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Age: 177 missing values (approximately 19.87% of the dataset)."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Cabin: 687 missing values (approximately 77.10% of the dataset)."
-                },
-                {
-                    "type": "bullet",
-                    "value": "Embarked: 2 missing values (approximately 0.22% of the dataset)."
-                },
-                {
-                    "type": "warning",
-                    "value": "The 'Cabin' column has a very high percentage of missing values. This suggests that direct use of this feature might be challenging, and strategies like dropping it, imputing with a 'Unknown' category, or extracting deck information (if available for non-missing values) should be considered."
-                }
-            ]
-        },
-        {
-            "title": "Target Variable Identification",
-            "content": [
-                {
-                    "type": "text",
-                    "value": "The 'Survived' column is the target variable for this analysis. It is a binary categorical variable (0 for not survived, 1 for survived), indicating a classification problem."
-                }
-            ]
-        }
-    ],
-    "visualizations": [
-        {
-            "plot_type": "missing_values",
-            "columns": [
-                "PassengerId",
-                "Survived",
-                "Pclass",
-                "Name",
-                "Sex",
-                "Age",
-                "SibSp",
-                "Parch",
-                "Ticket",
-                "Fare",
-                "Cabin",
-                "Embarked"
-            ],
-            "title": "Overview of Missing Values Across All Columns",
-            "reason": "To visually identify and quantify missing data in each column, guiding imputation strategies and feature engineering decisions."
-        },
-        {
-            "plot_type": "countplot",
-            "columns": [
-                "Survived"
-            ],
-            "title": "Distribution of Survival Status",
-            "reason": "To understand the class balance of the target variable and assess potential imbalance issues."
-        },
-        {
-            "plot_type": "histogram",
-            "columns": [
-                "Age"
-            ],
-            "title": "Distribution of Passenger Age",
-            "reason": "To understand the age profile of passengers, identify potential skewness, and inform imputation strategies for missing 'Age' values."
-        },
-        {
-            "plot_type": "histogram",
-            "columns": [
-                "Fare"
-            ],
-            "title": "Distribution of Passenger Fare",
-            "reason": "To understand the distribution of ticket prices, which is often right-skewed, and identify potential outliers."
-        },
-        {
-            "plot_type": "countplot",
-            "columns": [
-                "Sex",
-                "Survived"
-            ],
-            "title": "Survival Rate by Sex",
-            "reason": "To explore the relationship between gender and survival, which is historically a significant predictor in the Titanic disaster."
-        },
-        {
-            "plot_type": "countplot",
-            "columns": [
-                "Pclass",
-                "Survived"
-            ],
-            "title": "Survival Rate by Passenger Class",
-            "reason": "To investigate how passenger class correlates with survival, indicating the impact of socio-economic status."
-        },
-        {
-            "plot_type": "boxplot",
-            "columns": [
-                "Age",
-                "Survived"
-            ],
-            "title": "Age Distribution by Survival Status",
-            "reason": "To visually compare the age distributions of survivors versus non-survivors and identify age-related survival patterns."
-        },
-        {
-            "plot_type": "boxplot",
-            "columns": [
-                "Fare",
-                "Survived"
-            ],
-            "title": "Fare Distribution by Survival Status",
-            "reason": "To visually compare the fare distributions of survivors versus non-survivors and assess the impact of ticket price on survival."
-        }
-    ],
-    "recommendations": [
-        "**Handle Missing Values:** Impute 'Age' (e.g., using median, mean, or more advanced methods like regression imputation). Impute 'Embarked' (e.g., using the mode). For 'Cabin', consider creating a 'Has_Cabin' binary feature or extracting deck information, or dropping the column due to high missingness.",
-        "**Feature Engineering:** Extract titles from the 'Name' column (e.g., Mr., Mrs., Miss, Master) as they often correlate with age and survival. Create a 'FamilySize' feature by combining 'SibSp' and 'Parch' plus one (for the passenger themselves).",
-        "**Categorical Encoding:** Convert categorical features such as 'Sex', 'Embarked', 'Pclass' (if treated as categorical), and any engineered categorical features (e.g., 'Title', 'Deck') into numerical representations using techniques like One-Hot Encoding.",
-        "**Feature Scaling:** Apply scaling (e.g., StandardScaler or MinMaxScaler) to numerical features like 'Age' and 'Fare' to ensure that no single feature dominates the model due to its scale, especially for distance-based algorithms.",
-        "**Model Selection and Training:** Train various classification models (e.g., Logistic Regression, Random Forest, Gradient Boosting, Support Vector Machines) on the prepared dataset. Utilize cross-validation for robust model evaluation.",
-        "**Model Evaluation:** Evaluate model performance using appropriate metrics such as accuracy, precision, recall, F1-score, and ROC-AUC, paying attention to potential class imbalance in the 'Survived' target variable."
-    ],
-    "generated_plots": [
-        {
-            "title": "Overview of Missing Values Across All Columns",
-            "reason": "To visually identify and quantify missing data in each column, guiding imputation strategies and feature engineering decisions.",
-            "plot_type": "missing_values",
-            "columns": [
-                "PassengerId",
-                "Survived",
-                "Pclass",
-                "Name",
-                "Sex",
-                "Age",
-                "SibSp",
-                "Parch",
-                "Ticket",
-                "Fare",
-                "Cabin",
-                "Embarked"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_0.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_0.png",
-            "filename": "plot_0.png"
-        },
-        {
-            "title": "Distribution of Survival Status",
-            "reason": "To understand the class balance of the target variable and assess potential imbalance issues.",
-            "plot_type": "countplot",
-            "columns": [
-                "Survived"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_1.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_1.png",
-            "filename": "plot_1.png"
-        },
-        {
-            "title": "Distribution of Passenger Age",
-            "reason": "To understand the age profile of passengers, identify potential skewness, and inform imputation strategies for missing 'Age' values.",
-            "plot_type": "histogram",
-            "columns": [
-                "Age"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_2.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_2.png",
-            "filename": "plot_2.png"
-        },
-        {
-            "title": "Distribution of Passenger Fare",
-            "reason": "To understand the distribution of ticket prices, which is often right-skewed, and identify potential outliers.",
-            "plot_type": "histogram",
-            "columns": [
-                "Fare"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_3.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_3.png",
-            "filename": "plot_3.png"
-        },
-        {
-            "title": "Survival Rate by Sex",
-            "reason": "To explore the relationship between gender and survival, which is historically a significant predictor in the Titanic disaster.",
-            "plot_type": "countplot",
-            "columns": [
-                "Sex",
-                "Survived"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_4.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_4.png",
-            "filename": "plot_4.png"
-        },
-        {
-            "title": "Survival Rate by Passenger Class",
-            "reason": "To investigate how passenger class correlates with survival, indicating the impact of socio-economic status.",
-            "plot_type": "countplot",
-            "columns": [
-                "Pclass",
-                "Survived"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_5.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_5.png",
-            "filename": "plot_5.png"
-        },
-        {
-            "title": "Age Distribution by Survival Status",
-            "reason": "To visually compare the age distributions of survivors versus non-survivors and identify age-related survival patterns.",
-            "plot_type": "boxplot",
-            "columns": [
-                "Age",
-                "Survived"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_6.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_6.png",
-            "filename": "plot_6.png"
-        },
-        {
-            "title": "Fare Distribution by Survival Status",
-            "reason": "To visually compare the fare distributions of survivors versus non-survivors and assess the impact of ticket price on survival.",
-            "plot_type": "boxplot",
-            "columns": [
-                "Fare",
-                "Survived"
-            ],
-            "local_path": "output/dynamic_pipeline/20260526_022203/plots/plot_7.png",
-            "frontend_path": "/dynamic_pipeline/20260526_022203/plots/plot_7.png",
-            "filename": "plot_7.png"
-        }
-    ]
-}`);
-        setReport(data);
-      } catch (error) {
-        console.error("Failed to load report:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchReport();
-  }, []);
-
-  if (loading) {
-    return <div className="eda-loading">Loading Report...</div>;
-  }
-
-  if (!report) {
-    return <div className="eda-error">Failed to load report </div>;
+  if (!data) {
+    return (
+      <div style={{ padding: "24px", color: "#94a3b8", textAlign: "center" }}>
+        No EDA data available yet.
+      </div>
+    );
   }
 
   return (
     <div className="eda-page">
       <div className="eda-container">
-        {/* ========================================= */}
-        {/* HEADER */}
-        {/* ========================================= */}
-        <div className="eda-card">
-          <h1 className="eda-title">{report.title}</h1>
 
-          <p className="eda-summary">{report.summary}</p>
+        {/* HEADER */}
+        <div className="eda-card">
+          <h1 className="eda-title">{data.title}</h1>
+          <p className="eda-summary">{data.summary}</p>
         </div>
 
-        {/* ========================================= */}
         {/* SECTIONS */}
-        {/* ========================================= */}
-        {report.sections?.map((section, sectionIndex) => (
-          <div key={sectionIndex} className="eda-card">
+        {data.sections?.map((section, si) => (
+          <div key={si} className="eda-card">
             <h2 className="section-title">{section.title}</h2>
-
             <div className="section-content">
-              {section.content?.map((item, itemIndex) => {
-                // =====================================
-                // TEXT
-                // =====================================
+              {section.content?.map((item, ii) => {
                 if (item.type === "text") {
                   return (
-                    <p key={itemIndex} className="text-item">
+                    <p key={ii} className="text-item">
+                      {item.label && <strong>{item.label}: </strong>}
                       {item.value}
                     </p>
                   );
                 }
-
-                // =====================================
-                // BULLET
-                // =====================================
                 if (item.type === "bullet") {
                   return (
-                    <div key={itemIndex} className="bullet-item">
-                      {item.label && (
-                        <h4 className="bullet-label">{item.label}</h4>
-                      )}
-
+                    <div key={ii} className="bullet-item">
+                      {item.label && <h4 className="bullet-label">{item.label}</h4>}
                       <p>• {item.value}</p>
                     </div>
                   );
                 }
-
-                // =====================================
-                // WARNING
-                // =====================================
                 if (item.type === "warning") {
                   return (
-                    <div key={itemIndex} className="warning-card ">
+                    <div key={ii} className="warning-card">
+                      {item.label && <strong>{item.label}: </strong>}
                       {item.value}
                     </div>
                   );
                 }
-
-                // =====================================
-                // METRIC
-                // =====================================
                 if (item.type === "metric") {
                   return (
-                    <div key={itemIndex} className="metric-item">
+                    <div key={ii} className="metric-item">
                       <div className="metric-label">{item.label}</div>
-
                       <div className="metric-value">{item.value}</div>
                     </div>
                   );
                 }
-
                 return null;
               })}
             </div>
           </div>
         ))}
 
-        {/* ========================================= */}
         {/* PLOTS */}
-        {/* ========================================= */}
-        <div className="plots-grid">
-          {report.generated_plots?.map((plot, index) => (
-            <div key={index} className="eda-card">
-              <h2 className="plot-title">{plot.title}</h2>
-
-              <p className="plot-reason">{plot.reason}</p>
-
-              <div className="plot-tags">
-                <span className="plot-type">{plot.plot_type}</span>
-
-                {plot.columns?.map((column, colIndex) => (
-                  <span key={colIndex} className="plot-column">
-                    {column}
-                  </span>
-                ))}
-              </div>
-              {console.log("Plot frontend path:", plot.frontend_path)}
-              <img
-                //FIXME: src should be from backend, not local path
-                src={`${plot.frontend_path}`}
-                alt={plot.title}
-                className="plot-image"
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* ========================================= */}
-        {/* RECOMMENDATIONS */}
-        {/* ========================================= */}
-        <div className="eda-card">
-          <h2 className="section-title">Recommendations</h2>
-
-          <div className="recommendations-list">
-            {report.recommendations?.map((recommendation, index) => {
-              const formattedRecommendation = recommendation
-                .split(/(\*\*.*?\*\*)/g)
-                .map((part, partIndex) => {
-                  // =====================================
-                  // BOLD TEXT
-                  // =====================================
-                  if (part.startsWith("**") && part.endsWith("**")) {
-                    return (
-                      <strong key={partIndex}>
-                        {part.replace(/\*\*/g, "")}
-                      </strong>
-                    );
-                  }
-
-                  return <span key={partIndex}>{part}</span>;
-                });
-
+        {data.visualization_paths?.length > 0 && (
+          <div className="plots-grid">
+            {data.visualization_paths.map((vizPath, i) => {
+              const src = toImageUrl(BACKEND_URL, vizPath);
+              const filename = vizPath.split("/").pop().replace(".png", "").replace(/_/g, " ");
               return (
-                <div key={index} className="recommendation-item">
-                  {formattedRecommendation}
+                <div key={i} className="eda-card">
+                  <h2 className="plot-title" style={{ textTransform: "capitalize" }}>{filename}</h2>
+                  {src ? (
+                    <img src={src} alt={filename} className="plot-image" />
+                  ) : (
+                    <p style={{ color: "#94a3b8", fontSize: "13px" }}>Image path unavailable</p>
+                  )}
                 </div>
               );
             })}
           </div>
-        </div>
+        )}
+
+        {/* RECOMMENDATIONS */}
+        {data.recommendations?.length > 0 && (
+          <div className="eda-card">
+            <h2 className="section-title">Recommendations</h2>
+            <div className="recommendations-list">
+              {data.recommendations.map((rec, i) => {
+                const parts = rec.split(/(\*\*.*?\*\*)/g).map((part, j) => {
+                  if (part.startsWith("**") && part.endsWith("**")) {
+                    return <strong key={j}>{part.slice(2, -2)}</strong>;
+                  }
+                  return <span key={j}>{part}</span>;
+                });
+                return <div key={i} className="recommendation-item">{parts}</div>;
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* WARNINGS */}
+        {data.warnings?.length > 0 && (
+          <div className="eda-card">
+            <h2 className="section-title">Warnings</h2>
+            <div className="section-content">
+              {data.warnings.map((w, i) => (
+                <div key={i} className="warning-card">
+                  <strong>{w.columns?.join(", ")}: </strong>{w.message}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
