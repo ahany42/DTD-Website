@@ -199,6 +199,18 @@ export default function ViewReport() {
         console.log("[ViewReport] report keys:", Object.keys(nextReport ?? {}));
         setReport(nextReport);
 
+        // Restore HITL state for existing paused reports (e.g. page refresh)
+        if (doc.dynamic_status === "paused" && doc.pipeline_state?.__paused_at__) {
+          setHitlState((prev) =>
+            prev ? prev : {
+              status: "paused",
+              pausedAt: doc.pipeline_state.__paused_at__,
+              runId: doc.pipeline_state.__run_id__ || doc._id,
+            }
+          );
+          setPipelineStatus("paused");
+        }
+
         if (mode === "custom" && !currentDynamicReport) {
           const firstAvailableDynamicKey = Object.keys(
             dynamicComponentMap

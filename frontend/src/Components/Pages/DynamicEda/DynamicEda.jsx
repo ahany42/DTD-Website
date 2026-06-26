@@ -156,7 +156,17 @@ const getPlotTitle = (plot, index) => {
     return humanizeKey(fileName.replace(/\.[^.]+$/, ""));
   }
 
-  return plot?.title || plot?.name || plot?.filename || `Visualization ${index + 1}`;
+  if (plot?.title || plot?.name || plot?.filename) {
+    return plot.title || plot.name || plot.filename;
+  }
+
+  const imagePath = getImagePath(plot);
+  if (imagePath) {
+    const fileName = imagePath.replaceAll("\\", "/").split("/").pop() || "";
+    if (fileName) return humanizeKey(fileName.replace(/\.[^.]+$/, ""));
+  }
+
+  return `Visualization ${index + 1}`;
 };
 
 const normalizePlotItems = (report) => {
