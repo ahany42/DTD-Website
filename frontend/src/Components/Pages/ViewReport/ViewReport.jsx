@@ -84,10 +84,6 @@ const dynamicComponentMap = {
   deployment: { text: "Model Deployment", component: DynamicDeployment },
 };
 
-/**
- * streamPostSse
- * Helper function to handle SSE streaming for POST requests.
- */
 async function streamPostSse(url, body, onMessage) {
   const response = await fetch(url, {
     method: "POST",
@@ -200,13 +196,18 @@ export default function ViewReport() {
         setReport(nextReport);
 
         // Restore HITL state for existing paused reports (e.g. page refresh)
-        if (doc.dynamic_status === "paused" && doc.pipeline_state?.__paused_at__) {
+        if (
+          doc.dynamic_status === "paused" &&
+          doc.pipeline_state?.__paused_at__
+        ) {
           setHitlState((prev) =>
-            prev ? prev : {
-              status: "paused",
-              pausedAt: doc.pipeline_state.__paused_at__,
-              runId: doc.pipeline_state.__run_id__ || doc._id,
-            }
+            prev
+              ? prev
+              : {
+                  status: "paused",
+                  pausedAt: doc.pipeline_state.__paused_at__,
+                  runId: doc.pipeline_state.__run_id__ || doc._id,
+                }
           );
           setPipelineStatus("paused");
         }
@@ -495,12 +496,13 @@ export default function ViewReport() {
         currentDynamicReport?.id ||
         currentDynamicReport?.type;
   // Strip "run_" / "run" prefix so "run_training" resolves to "training"
-  const currentDynamicKey = rawDynamicKey?.replace(/^run_?/, "") || rawDynamicKey;
+  const currentDynamicKey =
+    rawDynamicKey?.replace(/^run_?/, "") || rawDynamicKey;
   const DynamicComponent = currentDynamicKey
     ? dynamicComponentMap[currentDynamicKey]?.component
     : null;
   const dynamicStepData = currentDynamicKey
-    ? report?.[currentDynamicKey] ?? null
+    ? (report?.[currentDynamicKey] ?? null)
     : null;
 
   return (
