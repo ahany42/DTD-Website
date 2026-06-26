@@ -149,7 +149,7 @@ const UploadDataset = () => {
       }
 
       toast.success("Dataset uploaded successfully!");
-      
+
       const datasetId = data.dataset?._id;
       const reportId = data.report?._id;
       console.log("Uploaded dataset:", data);
@@ -161,7 +161,9 @@ const UploadDataset = () => {
       }
 
       if (mode === "custom") {
-        navigate(`/view-report/${reportId}?mode=${mode}`, { state: { datasetId } });
+        navigate(`/view-report/${reportId}?mode=${mode}`, {
+          state: { datasetId },
+        });
         return;
       }
 
@@ -184,6 +186,7 @@ const UploadDataset = () => {
         console.log(streamData.agent);
         if (streamData.agent && streamData.output) {
           console.log(streamData.agent);
+          toast.info(`Agent ${streamData.agent} output: ${streamData.output}`);
           triggerReportRefresh(); // tell ViewReport to fetch new data
         }
         if (streamData) {
