@@ -158,18 +158,12 @@ export default function ViewReport() {
 
   const datasetId = location.state?.datasetId;
 
-  const steps =
-    mode === "quick"
-      ? [
-          { label: "Raw Data", key: "raw_analysis" },
-          { label: "AutoML", key: "automl_training" },
-        ]
-      : [
-          { label: "Raw Data", key: "raw_analysis" },
-          { label: "Preprocessing", key: "preprocessing" },
-          { label: "Clean Data", key: "clean_analysis" },
-          { label: "AutoML", key: "automl_training" },
-        ];
+  const steps = [
+    { label: "Raw Data", key: "raw_analysis" },
+    { label: "Preprocessing", key: "preprocessing" },
+    { label: "Clean Data", key: "clean_analysis" },
+    { label: "AutoML", key: "automl_training" },
+  ];
 
   const hasStepData = (stepKey) => {
     const data = report?.[stepKey];

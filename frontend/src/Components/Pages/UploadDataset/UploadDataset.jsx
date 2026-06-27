@@ -186,7 +186,6 @@ const UploadDataset = () => {
         console.log(streamData.agent);
         if (streamData.agent && streamData.output) {
           console.log(streamData.agent);
-          toast.info(`Agent ${streamData.agent} output: ${streamData.output}`);
           triggerReportRefresh(); // tell ViewReport to fetch new data
         }
         if (streamData) {
