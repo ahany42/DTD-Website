@@ -307,14 +307,7 @@ const Reports = () => {
                       >
                         <FaEye />
                       </IconButton>
-                      <IconButton
-                        color="teal"
-                        variant="surface"
-                        onClick={() => downloadReport(report._id)}
-                        aria-label="Download report"
-                      >
-                        <FiDownload />
-                      </IconButton>
+
                       <IconButton
                         color="yellow"
                         variant={report.isStarred ? "solid" : "outline"}
