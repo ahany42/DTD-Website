@@ -106,7 +106,8 @@ export const runPipelineStream = async (req, res) => {
 
       try {
         const form = new FormData();
-        form.append("file", fs.createReadStream(dataset.filePath));
+        const fileStreamResponse = await axios.get(dataset.filePath, { responseType: "stream" });
+        form.append("file", fileStreamResponse.data, { filename: dataset.fileName });
         form.append("prompt", dataset.prompt || "");
         form.append("target_column", String(targetColumn));
 
@@ -148,7 +149,8 @@ export const runPipelineStream = async (req, res) => {
     // ── Static (standard) mode → /run-pipeline/{datasetId}/{reportId} (SSE) ──
 
     const form = new FormData();
-    form.append("file", fs.createReadStream(dataset.filePath));
+    const fileStreamResponse = await axios.get(dataset.filePath, { responseType: "stream" });
+    form.append("file", fileStreamResponse.data, { filename: dataset.fileName });
     form.append("prompt", dataset.prompt || "");
     form.append("mode", dataset.mode);
     form.append("target_column", String(targetColumn));
