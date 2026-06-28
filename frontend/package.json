@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "npx -y node@22.12.0 ./node_modules/vite/bin/vite.js --host 127.0.0.1 --port 3000",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
