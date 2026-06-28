@@ -20,7 +20,7 @@ function CorrelationBar({ value }) {
           style={{
             width: `${pct.toFixed(1)}%`,
             height: "100%",
-            background: positive ? "var(--primary-color)" : "#ef4444",
+            background: positive ? "var(--primary-color)" : "var(--danger-color)",
             borderRadius: "3px",
             transition: "width 0.3s",
           }}
@@ -89,7 +89,7 @@ function FeatureCard({ feat, isSelected }) {
 export default function DynamicFeatureEngineering({ data }) {
   if (!data) {
     return (
-      <div style={{ padding: "24px", color: "#94a3b8", textAlign: "center" }}>
+      <div style={{ padding: "24px", color: "var(--grey-color)", textAlign: "center" }}>
         No feature engineering data available yet.
       </div>
     );

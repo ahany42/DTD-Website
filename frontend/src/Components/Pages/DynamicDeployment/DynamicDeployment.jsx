@@ -59,7 +59,7 @@ const featureSchema = {
 const styles = {
   page: {
     padding: "24px",
-    background: "var(--background-color, #f8fafc)",
+    background: "var(--bg-color)",
   },
   container: {
     maxWidth: "1200px",
@@ -69,19 +69,19 @@ const styles = {
     gap: "14px",
   },
   card: {
-    background: "var(--card-background, #fff)",
-    borderRadius: "12px",
-    border: "1px solid var(--border-color, #e2e8f0)",
+    background: "var(--surface-color)",
+    borderRadius: "var(--radius-md)",
+    border: "1px solid var(--border-color)",
     padding: "16px",
   },
   title: {
     margin: 0,
     fontSize: "1.35rem",
     fontWeight: 800,
-    color: "var(--heading-color, #1e293b)",
+    color: "var(--heading-color)",
   },
   muted: {
-    color: "var(--grey-color, #64748b)",
+    color: "var(--grey-color)",
     marginTop: "10px",
     fontSize: "0.88rem",
     lineHeight: 1.7,
@@ -93,25 +93,25 @@ const styles = {
     alignItems: "center",
   },
   input: {
-    border: "1px solid var(--border-color, #d7deea)",
+    border: "1px solid var(--border-strong)",
     borderRadius: "10px",
     padding: "9px 10px",
     outline: "none",
     fontSize: "0.85rem",
-    background: "var(--card-background, #fff)",
-    color: "var(--text-color, #0f172a)",
+    background: "var(--surface-color)",
+    color: "var(--font-color)",
   },
   endpointInput: {
     width: "360px",
     maxWidth: "100%",
   },
   button: {
-    border: "none",
+    border: "1px solid transparent",
     borderRadius: "10px",
     padding: "9px 14px",
     cursor: "pointer",
-    background: "var(--primary-color, #2563eb)",
-    color: "#fff",
+    background: "var(--primary-color)",
+    color: "var(--light-color)",
     fontWeight: 700,
     fontSize: "0.82rem",
   },
@@ -119,7 +119,7 @@ const styles = {
     marginTop: 0,
     marginBottom: "12px",
     fontSize: "1rem",
-    color: "var(--heading-color, #1e293b)",
+    color: "var(--heading-color)",
   },
   grid: {
     display: "grid",
@@ -131,14 +131,14 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     gap: "4px",
-    color: "var(--heading-color, #334155)",
+    color: "var(--heading-color)",
     fontSize: "0.8rem",
     fontWeight: 600,
   },
   error: {
-    color: "#b91c1c",
-    background: "#fef2f2",
-    border: "1px solid #fecaca",
+    color: "var(--danger-color)",
+    background: "var(--danger-soft)",
+    border: "1px solid color-mix(in srgb, var(--danger-color) 32%, var(--border-color))",
     borderRadius: "10px",
     padding: "10px",
   },
@@ -146,7 +146,7 @@ const styles = {
     margin: 0,
     paddingLeft: 0,
     listStyle: "none",
-    color: "var(--heading-color, #334155)",
+    color: "var(--heading-color)",
     lineHeight: 1.5,
   },
   statusBadge: {
@@ -157,16 +157,16 @@ const styles = {
     fontSize: "0.72rem",
     fontWeight: 700,
     textTransform: "capitalize",
-    background: "#e2e8f0",
-    color: "#334155",
+    background: "var(--surface-muted)",
+    color: "var(--font-color)",
   },
   statusSuccess: {
-    background: "#dcfce7",
-    color: "#166534",
+    background: "color-mix(in srgb, var(--green-color) 16%, var(--surface-color))",
+    color: "var(--green-color)",
   },
   statusFailed: {
-    background: "#fee2e2",
-    color: "#991b1b",
+    background: "var(--danger-soft)",
+    color: "var(--danger-color)",
   },
   stepCard: {
     padding: "12px 16px",
@@ -174,9 +174,9 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "flex-start",
     gap: "12px",
-    border: "1px solid var(--border-color, #e2e8f0)",
+    border: "1px solid var(--border-color)",
     borderRadius: "10px",
-    background: "var(--card-background, #fff)",
+    background: "var(--surface-color)",
   },
 };
 
@@ -300,7 +300,7 @@ const DynamicDeployment = () => {
             <div
               style={{
                 marginTop: "12px",
-                color: "var(--heading-color, #334155)",
+                color: "var(--heading-color)",
                 fontSize: "0.85rem",
               }}
             >
@@ -312,7 +312,7 @@ const DynamicDeployment = () => {
                 <div
                   style={{
                     marginTop: "6px",
-                    color: "var(--grey-color, #64748b)",
+                    color: "var(--grey-color)",
                   }}
                 >
                   <small>
@@ -326,7 +326,7 @@ const DynamicDeployment = () => {
                 <div
                   style={{
                     marginTop: "6px",
-                    color: "var(--grey-color, #64748b)",
+                    color: "var(--grey-color)",
                     wordBreak: "break-word",
                   }}
                 >
@@ -342,7 +342,7 @@ const DynamicDeployment = () => {
             <div
               style={{
                 marginTop: "16px",
-                color: "var(--heading-color, #334155)",
+                color: "var(--heading-color)",
                 fontSize: "0.85rem",
                 lineHeight: 1.8,
               }}
@@ -373,7 +373,7 @@ const DynamicDeployment = () => {
                       style={{
                         fontWeight: 700,
                         fontSize: "0.88rem",
-                        color: "var(--heading-color, #1e293b)",
+                        color: "var(--heading-color)",
                         marginBottom: "4px",
                       }}
                     >
@@ -382,7 +382,7 @@ const DynamicDeployment = () => {
                     <div
                       style={{
                         fontSize: "0.82rem",
-                        color: "var(--grey-color, #64748b)",
+                        color: "var(--grey-color)",
                         lineHeight: 1.5,
                       }}
                     >

@@ -38,7 +38,7 @@
 }
 
 .react-multiple-carousel__arrow:hover {
-  background: var(--light-color) !important;
+  background: var(--surface-glass) !important;
   opacity: 1;
 }
 .react-multiple-carousel__arrow {
@@ -46,7 +46,7 @@
 }
 .carousel-container:hover .react-multiple-carousel__arrow {
   display: grid !important;
-  background: var(--light-color) !important;
+  background: var(--surface-glass) !important;
   z-index: 20;
   border-radius: 50%;
   transition:
@@ -75,17 +75,17 @@
   top: -5px !important;
 }
 .custom-dot-list li button {
-  background: var(--light-color) !important;
+  background: var(--surface-glass) !important;
   opacity: 0.6;
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  border: none;
+  border: 1px solid var(--border-color);
   transition: background-color 0.3s ease;
 }
 
 .custom-dot-list li.react-multi-carousel-dot--active button {
-  background: var(--light-color) !important;
+  background: var(--primary-color) !important;
   opacity: 1;
 }
 

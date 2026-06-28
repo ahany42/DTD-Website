@@ -53,9 +53,9 @@
   width: 100%;
   flex-shrink: 0;
   animation: hitl-drawer-in 0.22s ease-out;
-  border-top: 1px solid #e2e8f0;
-  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
-  background: #ffffff;
+  border-top: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  background: var(--surface-elevated);
   border-radius: 12px 12px 0 0;
   overflow: hidden;
 }
@@ -66,16 +66,16 @@
 }
 
 .react-flow__controls-button {
-  background: #ffffff !important;
-  border-bottom: 1px solid #e5e7eb !important;
-  color: #000000 !important;
+  background: var(--surface-elevated) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  color: var(--heading-color) !important;
 }
 
 .react-flow__controls-button svg {
-  fill: #000000 !important;
-  stroke: #000000 !important;
+  fill: var(--heading-color) !important;
+  stroke: var(--heading-color) !important;
 }
 
 .react-flow__controls-button:hover {
-  background: #f3f4f6 !important;
+  background: var(--surface-muted) !important;
 }

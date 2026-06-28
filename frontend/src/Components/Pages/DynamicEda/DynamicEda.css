@@ -229,8 +229,8 @@
   border: 1px solid rgba(217, 119, 6, 0.25);
   border-left: 4px solid #f59e0b;
   border-radius: 16px;
-  background: #fffbeb;
-  color: #92400e;
+  background: var(--warning-soft);
+  color: var(--warning-color);
   line-height: 1.75;
 }
 
@@ -287,7 +287,7 @@
 
 .plot-type {
   background: var(--primary-color);
-  color: white;
+  color: var(--light-color);
 }
 
 .plot-column {
@@ -307,7 +307,7 @@
   width: 100%;
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  background: white;
+  background: var(--surface-color);
 }
 
 .plot-placeholder {

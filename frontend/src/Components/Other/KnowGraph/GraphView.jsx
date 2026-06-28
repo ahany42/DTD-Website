@@ -167,7 +167,8 @@ function GraphViewInner({
         style={{
           width: "100%",
           height: "60vh",
-          backgroundColor: "#fafcff",
+          backgroundColor: "var(--surface-color)",
+          border: "1px solid var(--border-color)",
           borderRadius: "12px",
           overflow: "hidden",
           position: "relative",
@@ -176,14 +177,14 @@ function GraphViewInner({
         {/* LOADING */}
         {loading && (
           <div style={overlayStyle}>
-            <span style={{ color: "#94a3b8" }}>Loading graph...</span>
+            <span style={{ color: "var(--grey-color)" }}>Loading graph...</span>
           </div>
         )}
 
         {/* ERROR */}
         {!loading && error && (
           <div style={overlayStyle}>
-            <span style={{ color: "#ef4444" }}>
+            <span style={{ color: "var(--danger-color)" }}>
               Failed to load graph: {String(error)}
             </span>
           </div>
@@ -201,7 +202,7 @@ function GraphViewInner({
             minZoom={0.5}
             maxZoom={4}
           >
-            <Background color="#cbd5e1" gap={20} />
+            <Background color="var(--border-strong)" gap={20} />
 
             <Controls
               position="top-right"
@@ -211,10 +212,10 @@ function GraphViewInner({
               style={{
                 position: "absolute",
                 zIndex: 1000,
-                background: "#fff",
-                border: "1px solid #d1d5db",
-                borderRadius: "8px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                background: "var(--surface-elevated)",
+                border: "1px solid var(--border-color)",
+                borderRadius: "var(--radius-sm)",
+                boxShadow: "var(--shadow-md)",
               }}
             />
           </ReactFlow>

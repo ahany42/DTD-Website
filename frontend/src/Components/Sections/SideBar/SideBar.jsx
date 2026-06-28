@@ -101,7 +101,7 @@ const SideBar = () => {
         </MenuItem>
 
         <MenuItem
-          icon={<FaSignOutAlt style={{ color: "red" }} />}
+          icon={<FaSignOutAlt style={{ color: "var(--danger-color)" }} />}
           as="button"
           onClick={handleLogout}
         >

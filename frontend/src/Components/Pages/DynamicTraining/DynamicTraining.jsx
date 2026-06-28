@@ -4,7 +4,7 @@ import "../../Other/Visualization/Visualization.css";
 export default function DynamicTraining({ data }) {
   if (!data) {
     return (
-      <div style={{ padding: "24px", color: "#94a3b8", textAlign: "center" }}>
+      <div style={{ padding: "24px", color: "var(--grey-color)", textAlign: "center" }}>
         No training data available yet.
       </div>
     );

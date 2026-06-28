@@ -101,7 +101,7 @@ export default function ChatWidget() {
           <div className="chat-messages">
             {messages.map((msg, index) => (
               <div key={index} className={`chat-message ${msg.sender}`}>
-                {msg.sender === "bot" && <FaRobot size={28} color="black" />}
+                {msg.sender === "bot" && <FaRobot size={28} color="var(--primary-color)" />}
                 <div className={`chat-bubble ${msg.sender}`}>
                   {parseMessageText(msg.text)}
                 </div>

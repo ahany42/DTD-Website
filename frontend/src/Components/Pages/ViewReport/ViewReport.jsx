@@ -19,14 +19,14 @@ import DynamicDeployment from "../DynamicDeployment/DynamicDeployment";
 
 const connectorStyleConfig = {
   circleFontSize: "1.2rem",
-  activeBgColor: "#0f766e",
-  completedBgColor: "#0f766e",
-  activeColor: "#0f766e",
-  completedColor: "#0f766e",
-  activeTextColor: "white",
-  completedTextColor: "white",
-  inactiveTextColor: "#64748b",
-  labelColor: "#64748b",
+  activeBgColor: "var(--primary-color)",
+  completedBgColor: "var(--primary-color)",
+  activeColor: "var(--primary-color)",
+  completedColor: "var(--primary-color)",
+  activeTextColor: "var(--light-color)",
+  completedTextColor: "var(--light-color)",
+  inactiveTextColor: "var(--grey-color)",
+  labelColor: "var(--grey-color)",
   borderRadius: "50%",
   style: "solid",
 };

@@ -22,7 +22,7 @@ export default function CircleNode({ data, selected }) {
 
   /* ── Color map ──────────────────────────────────────────────────── */
   const COLOR_MAP = {
-    default: { bg: "#0f766e", border: "#38bdf8", text: "#ffffff" },
+    default: { bg: "var(--primary-color)", border: "var(--light-blue)", text: "var(--light-color)" },
     active: { bg: "#1e3a8a", border: "#60a5fa", text: "#ffffff" },
     complete: { bg: "#14532d", border: "#4ade80", text: "#ffffff" },
     completed: { bg: "#15803d", border: "#4ade80", text: "#ffffff" },
@@ -45,7 +45,7 @@ export default function CircleNode({ data, selected }) {
         padding: "0 16px",
         borderRadius: "999px",
         backgroundColor: colors.bg,
-        border: `2px solid ${selected ? "#facc15" : colors.border}`,
+        border: `2px solid ${selected ? "var(--warning-color, #facc15)" : colors.border}`,
         color: colors.text,
         fontSize: "13px",
         fontWeight: "600",
