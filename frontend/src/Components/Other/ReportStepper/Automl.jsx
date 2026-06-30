@@ -38,7 +38,7 @@ function DownloadButton({ reportId, size = "normal" }) {
     return <span className="download-loading">✗ Failed</span>;
 
   return (
-    <Button onClick={handleDownload} color="green" variant="surface" siz="1">
+    <Button onClick={handleDownload} color="green" variant="surface" size="1">
       ⬇ {size === "small" ? ".pkl" : "Download Model (.pkl)"}
     </Button>
   );
@@ -82,6 +82,59 @@ function renderMessage(msg) {
   });
 }
 
+function cleanAgentMessage(message) {
+  if (Array.isArray(message)) {
+    return message
+      .map((item) => cleanAgentMessage(item))
+      .filter(Boolean)
+      .join("\n\n");
+  }
+
+  if (message && typeof message === "object") {
+    return cleanAgentMessage(
+      message.thinking ?? message.content ?? message.message ?? message.text ?? ""
+    );
+  }
+
+  return String(message ?? "")
+    .trim()
+    .replace(/^\s*\[\s*\{\s*['"]type['"]\s*:\s*['"][^'"]+['"]\s*,\s*['"]thinking['"]\s*:\s*['"]/, "")
+    .replace(/['"]\s*\}\s*,?\s*\]?\s*$/, "")
+    .replace(/\\n/g, "\n")
+    .replace(/\\t/g, " ")
+    .replace(/\\'/g, "'")
+    .replace(/\\"/g, '"')
+    .replace(/\$\\approx\$/g, " approx ")
+    .replace(/\\approx/g, " approx ")
+    .replace(/\s*\$\s*/g, "")
+    .replace(/\n\s+/g, "\n")
+    .trim();
+}
+
+function renderAgentMessage(message) {
+  const lines = cleanAgentMessage(message)
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (!lines.length) {
+    return <p className="message-muted">No agent message available.</p>;
+  }
+
+  return lines.map((line, index) => {
+    const isBullet = /^[-*]\s+/.test(line);
+    const text = isBullet ? line.replace(/^[-*]\s+/, "") : line;
+
+    return isBullet ? (
+      <div key={`${text}-${index}`} className="message-bullet">
+        <span aria-hidden="true">-</span>
+        <p>{renderMessage(text)}</p>
+      </div>
+    ) : (
+      <p key={`${text}-${index}`}>{renderMessage(text)}</p>
+    );
+  });
+}
 export default function Automl() {
   const { formatCustomTimestamp } = useContext(AppContext);
   const [dataJson, setDataJson] = useState(null);
@@ -230,22 +283,19 @@ export default function Automl() {
 
       <h2 className="stat-title">Agent Messages</h2>
 
-      {agent_messages.map((m, i) => (
-        <div key={i}>
-          <h2 className="stat-title">
-            {m.agent.charAt(0).toUpperCase() + m.agent.slice(1)}
-          </h2>
+      {agent_messages.map((m, i) => {
+        const agentName = String(m?.agent ?? `Agent ${i + 1}`);
 
-          <div className="message-box">
-            {m.message.split("\n\n").map((p, i) => (
-              <>
-                <p key={i}>{renderMessage(p)}</p>
-                <br />
-              </>
-            ))}
+        return (
+          <div key={`${agentName}-${i}`}>
+            <h2 className="stat-title">
+              {agentName.charAt(0).toUpperCase() + agentName.slice(1)}
+            </h2>
+
+            <div className="message-box">{renderAgentMessage(m?.message)}</div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       <div className="path-box">
         📁 <span className="path">{data_path}</span>
@@ -253,3 +303,4 @@ export default function Automl() {
     </div>
   );
 }
+

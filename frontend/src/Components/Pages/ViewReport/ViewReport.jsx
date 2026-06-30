@@ -10,7 +10,7 @@ import { AppContext, ReportContext } from "../../../App";
 import KnowledgeGraph from "../KnowledgeGraph/KnowledgeGraph";
 import Loader from "../../Other/Loader/Loader";
 import { Callout } from "@radix-ui/themes";
-import DynamicEDA from "../DynamicEDA/DynamicEDA";
+import DynamicEDA from "../DynamicEda/DynamicEda";
 import DynamicPreprocessing from "../DynamicPreprocessing/DynamicPreprocessing";
 import DynamicFeatureEngineering from "../DynamicFeatureEngineering/DynamicFeatureEngineering";
 import DynamicModelSelection from "../DynamicModelSelection/DynamicModelSelection";
@@ -19,14 +19,14 @@ import DynamicDeployment from "../DynamicDeployment/DynamicDeployment";
 
 const connectorStyleConfig = {
   circleFontSize: "1.2rem",
-  activeBgColor: "var(--primary-color)",
-  completedBgColor: "var(--primary-color)",
-  activeColor: "var(--primary-color)",
-  completedColor: "var(--primary-color)",
-  activeTextColor: "var(--light-color)",
-  completedTextColor: "var(--light-color)",
-  inactiveTextColor: "var(--grey-color)",
-  labelColor: "var(--grey-color)",
+  activeBgColor: "#0f766e",
+  completedBgColor: "#0f766e",
+  activeColor: "#0f766e",
+  completedColor: "#0f766e",
+  activeTextColor: "#ffffff",
+  completedTextColor: "#ffffff",
+  inactiveTextColor: "#64748b",
+  labelColor: "#64748b",
   borderRadius: "50%",
   style: "solid",
 };
